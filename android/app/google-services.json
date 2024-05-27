@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "8429996416",
+    "project_id": "bookstore-a5453",
+    "storage_bucket": "bookstore-a5453.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8429996416:android:6c5b4a76225ecddbf15965",
+        "android_client_info": {
+          "package_name": "com.example.bookstore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc9o56jTSBAXykJJ-Mojykv52J39PTVD8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
