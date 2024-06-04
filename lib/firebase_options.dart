@@ -49,6 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '8429996416',
     projectId: 'bookstore-a5453',
     authDomain: 'bookstore-a5453.firebaseapp.com',
+    databaseURL: 'https://bookstore-a5453-default-rtdb.firebaseio.com',
     storageBucket: 'bookstore-a5453.appspot.com',
   );
 
