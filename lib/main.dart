@@ -1,3 +1,6 @@
+import 'package:bookstore/Views/index.dart';
+import 'package:bookstore/Views/productAdd.dart';
+import 'package:bookstore/Views/productmanager.dart';
 import 'package:bookstore/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +23,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: null,
+      home: Index(),
     );
   }
 }
