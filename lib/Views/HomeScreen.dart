@@ -73,7 +73,8 @@ class _HomeState extends State<Home> {
             width: double.infinity,
             height: 150,
             child: Image.network(
-              "https://product.hstatic.net/1000237375/product/2_2d76f54ca66841ab82871ed32452b6cb_master.png",
+              // "https://product.hstatic.net/1000237375/product/2_2d76f54ca66841ab82871ed32452b6cb_master.png"
+              product.image,
               fit: BoxFit.cover,
             ),
           ),

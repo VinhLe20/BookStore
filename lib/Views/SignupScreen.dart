@@ -1,4 +1,4 @@
-import 'package:bookstore/LoginScreen.dart';
+import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

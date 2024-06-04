@@ -1,5 +1,5 @@
-import 'package:bookstore/Views/home.dart';
-import 'package:bookstore/Views/profile.dart';
+import 'package:bookstore/Views/HomeScreen.dart';
+import 'package:bookstore/Views/ProfileScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 

@@ -1,5 +1,5 @@
-import 'package:bookstore/LoginScreen.dart';
-import 'package:bookstore/SIgnupScreen.dart';
+import 'package:bookstore/Views/LoginScreen.dart';
+import 'package:bookstore/Views/SIgnupScreen.dart';
 import 'package:flutter/material.dart';
 
 class Welcomescreen extends StatefulWidget {

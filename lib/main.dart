@@ -1,6 +1,8 @@
-import 'package:bookstore/LoginScreen.dart';
-import 'package:bookstore/SIgnupScreen.dart';
-import 'package:bookstore/WelcomeScreen.dart';
+import 'package:bookstore/Views/LoginScreen.dart';
+import 'package:bookstore/Views/ProductAddScreen.dart';
+import 'package:bookstore/Views/SignupScreen.dart';
+import 'package:bookstore/Views/WelcomeScreen.dart';
+import 'package:bookstore/Views/index.dart';
 import 'package:bookstore/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,6 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: const Welcomescreen());
+        home: const Index());
   }
 }
