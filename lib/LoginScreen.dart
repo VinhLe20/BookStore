@@ -1,6 +1,8 @@
+import 'package:bookstore/Profile.dart';
 import 'package:bookstore/SIgnupScreen.dart';
 import 'package:bookstore/WelcomeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class Loginscreen extends StatefulWidget {
@@ -8,6 +10,8 @@ class Loginscreen extends StatefulWidget {
   @override
   State<Loginscreen> createState() => _LoginscreenState();
 }
+
+final databaseReference = FirebaseDatabase.instance.ref("BookStore");
 
 class _LoginscreenState extends State<Loginscreen> {
   String _userError = '';
@@ -167,11 +171,18 @@ class _LoginscreenState extends State<Loginscreen> {
                       print(user);
 
                       if (user != null) {
+                        final id = DateTime.now().microsecond.toString();
+                        databaseReference.child(id).set({
+                          'email': _usercontroller.text.trim(),
+                          'password': _passwordcontroller.text.trim(),
+                          'id': id
+                        });
                         print("Email là : " + _usercontroller.text);
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Welcomescreen()));
+                                builder: (context) =>
+                                    Profile(email: _usercontroller.text)));
                         //Gọi hàm đăng nhập thành công
                       } else {
                         print("User or Password is not Correct !!");

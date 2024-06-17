@@ -1,4 +1,5 @@
 import 'package:bookstore/LoginScreen.dart';
+import 'package:bookstore/Profile.dart';
 import 'package:bookstore/SIgnupScreen.dart';
 import 'package:bookstore/WelcomeScreen.dart';
 import 'package:bookstore/firebase_options.dart';
