@@ -1,8 +1,10 @@
 import 'dart:io';
-
-import 'package:bookstore/Model/imagePicker.dart';
 import 'package:bookstore/Model/product.dart';
+import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ProductAdd extends StatefulWidget {
   const ProductAdd({super.key});
@@ -14,81 +16,110 @@ class ProductAdd extends StatefulWidget {
 class _ProductAddState extends State<ProductAdd> {
   Product newproduct =
       Product(id: "", name: "", quantity: "", image: "", price: "", mota: "");
-  imagePicker image = imagePicker();
   var tensp = TextEditingController();
   var soluongsp = TextEditingController();
   var dongiasp = TextEditingController();
   var motasp = TextEditingController();
-  String imagenetwork = '';
+  File? _image;
+  final picker = ImagePicker();
+
+  Future<void> choiceImage() async {
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = pickedImage != null ? File(pickedImage.path) : null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Thêm sản phẩm mới'),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => ProductManager()));
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             TextButton(
-                onPressed: () async {
-                  await image.pickImage();
-                  setState(() {});
-                },
-                child: Text('tai anh')),
+              onPressed: () async {
+                await choiceImage();
+              },
+              child: Text('Tải ảnh'),
+            ),
             Container(
               width: 100,
               height: 100,
-              child: imagePicker.path.isEmpty
+              child: _image == null
                   ? null
-                  : Image.file(File(imagePicker.path), fit: BoxFit.cover),
+                  : Image.file(_image!, fit: BoxFit.cover),
             ),
-            Text('ten san pham'),
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.all(10),
               child: TextField(
                 controller: tensp,
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                  labelText: 'Tên sản phẩm',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                ),
               ),
             ),
-            Text('so luong san pham'),
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.all(10),
               child: TextField(
                 controller: soluongsp,
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                  labelText: 'Số lượng sản phẩm',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                ),
               ),
             ),
-            Text('don gia san pham'),
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.all(10),
               child: TextField(
                 controller: dongiasp,
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                  labelText: 'Đơn giá sản phẩm',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                ),
               ),
             ),
-            Text('mo ta san pham'),
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.all(10),
               child: TextField(
                 controller: motasp,
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                  labelText: 'Mô tả sản phẩm',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                ),
               ),
             ),
             TextButton(
-                onPressed: () async {
-                  String imageNetwork = await image.uploadImageToFirebase();
-                  newproduct.ProductAdd(tensp.text, soluongsp.text,
-                      dongiasp.text, motasp.text, imageNetwork);
-                },
-                child: Text('Them moi'))
+              onPressed: () async {
+                Product add = Product(
+                    id: '',
+                    name: tensp.text,
+                    quantity: soluongsp.text,
+                    image: _image?.path ?? '',
+                    price: dongiasp.text,
+                    mota: motasp.text);
+                await newproduct.productAdd(add);
+              },
+              child: Text('Thêm mới'),
+            ),
           ],
         ),
       ),

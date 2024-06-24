@@ -1,4 +1,7 @@
+import 'package:bookstore/Model/cardProduct.dart';
 import 'package:bookstore/Model/product.dart';
+import 'package:bookstore/Views/ProductManagerScreen.dart';
+import 'package:bookstore/Views/SearchScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -12,111 +15,119 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   Product pro =
       Product(id: "", name: "", quantity: "", image: "", price: "", mota: '');
-  List<Product> products = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  void _loadData() {
-    pro.loadProduct().then((value) {
-      setState(() {
-        products = pro.products;
-      });
-    });
-  }
-
+  bool drawer = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Trang chủ'),
-      ),
-      body: products.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: (products.length / 2).ceil(),
-              itemBuilder: (context, index) {
-                final int firstIndex = index * 2;
-                final int secondIndex = firstIndex + 1;
-                return Row(
-                  children: [
-                    Expanded(
-                      child: Card(
-                        child: _Card(products[firstIndex]),
+        appBar: AppBar(
+          title: const Text('Trang chủ'),
+          backgroundColor: Colors.blue,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => SearchPage()));
+                },
+                icon: Icon(Icons.search)),
+            IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart))
+          ],
+        ),
+        drawer: drawer
+            ? Drawer(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    DrawerHeader(
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        // image: DecorationImage(
+                        //   fit: BoxFit.cover,
+                        //   image: AssetImage(
+                        //       'assets/header_background.jpg'), // Add a background image if you want
+                        // ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    if (secondIndex < products.length)
-                      Expanded(
-                        child: Card(
-                          child: _Card(products[secondIndex]),
+                      child: Text(
+                        "Quản lý cửa hàng",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.shopping_cart, color: Colors.orange),
+                      title: Text(
+                        "Quản lý sản phẩm",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProductManager()));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.people, color: Colors.orange),
+                      title: Text(
+                        "Quản lý thành viên",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      onTap: () {
+                        // Handle the tap event
+                      },
+                    ),
+                    Divider(),
+                    ListTile(
+                      leading: Icon(Icons.settings, color: Colors.orange),
+                      title: Text(
+                        "Cài đặt",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      onTap: () {
+                        // Handle the tap event
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.help, color: Colors.orange),
+                      title: Text(
+                        "Trợ giúp",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      onTap: () {
+                        // Handle the tap event
+                      },
+                    ),
                   ],
-                );
-              },
-            ),
-    );
-  }
-
-  Widget _Card(Product product) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            alignment: Alignment.center,
-            width: double.infinity,
-            height: 150,
-            child: Image.network(
-              // "https://product.hstatic.net/1000237375/product/2_2d76f54ca66841ab82871ed32452b6cb_master.png"
-              product.image,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            product.name,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Price: \$${product.price}',
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Quantity: ${product.quantity}',
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton(
-                onPressed: () {},
-                child: Text('View'),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text('Buy Now'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+                ),
+              )
+            : null,
+        body: FutureBuilder(
+          future: pro.loadProduct(),
+          builder: (context, snapshot) {
+            return snapshot.hasData
+                ? Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 8.0,
+                        crossAxisSpacing: 8.0,
+                        childAspectRatio: 0.7,
+                      ),
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        List products = snapshot.data;
+                        return CardProduct(product: products[index]);
+                      },
+                    ),
+                  )
+                : const Center(child: CircularProgressIndicator());
+          },
+        ));
   }
 }

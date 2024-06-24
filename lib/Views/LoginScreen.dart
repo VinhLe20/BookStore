@@ -1,4 +1,4 @@
-import 'package:bookstore/Views/SIgnupScreen.dart';
+import 'package:bookstore/Views/SignupScreen.dart';
 import 'package:bookstore/Views/WelcomeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
