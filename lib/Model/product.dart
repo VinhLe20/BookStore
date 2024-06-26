@@ -1,4 +1,5 @@
-import 'package:firebase_database/firebase_database.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Product {
   String id;
@@ -15,37 +16,58 @@ class Product {
       required this.price,
       required this.mota});
   List<Product> products = [];
-  void ProductAdd(String name, String quantity, String price, String mota,
-      String image) async {
-    FirebaseDatabase database = FirebaseDatabase.instance;
-    String id = DateTime.now().millisecondsSinceEpoch.toString();
-    DatabaseReference ref = database.ref('product/$id');
-    await ref.set({
-      "id": DateTime.now().millisecondsSinceEpoch.toString(),
-      "name": name,
-      "quantity": quantity,
-      "price": price,
-      "mota": mota,
-      "image": image
-    });
+
+  Future loadProduct() async {
+    final uri = Uri.parse('http://192.168.1.7:8012/flutter/getDataProduct.php');
+    var response = await http.get(uri);
+    return json.decode(response.body);
   }
 
-  Future<void> loadProduct() async {
-    DatabaseReference ref = FirebaseDatabase.instance.ref('product');
-    DatabaseEvent event = await ref.once();
-    DataSnapshot snapshot = event.snapshot;
-    if (snapshot.value != null) {
-      Map<dynamic, dynamic> map = snapshot.value as Map<dynamic, dynamic>;
-      map.forEach((key, value) {
-        Product product = Product(
-            id: value['id'],
-            name: value['name'],
-            quantity: value['quantity'],
-            image: value['image'],
-            price: value['price'],
-            mota: value['mota']);
-        products.add(product);
-      });
+  Future productAdd(Product pro) async {
+    final uri = Uri.parse('http://192.168.1.7:8012/flutter/addProduct.php');
+    var request = http.MultipartRequest('POST', uri);
+    request.fields['ten'] = pro.name;
+    request.fields['soluong'] = pro.quantity;
+    request.fields['dongia'] = pro.price;
+    request.fields['mota'] = pro.mota;
+
+    if (pro.image.isNotEmpty) {
+      var pic = await http.MultipartFile.fromPath("image", pro.image);
+      request.files.add(pic);
+    }
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      print("Image uploaded");
+    } else {
+      print("Image not uploaded");
     }
   }
+
+  Future EditProduct(Product pro) async {
+    final uri = Uri.parse('http://192.168.1.7:8012/flutter/updateProduct.php');
+
+    var request = http.MultipartRequest('POST', uri);
+    request.fields['id'] = pro.id;
+    request.fields['ten'] = pro.name;
+    request.fields['soluong'] = pro.quantity;
+    request.fields['dongia'] = pro.price;
+    request.fields['mota'] = pro.mota;
+
+    if (pro.image.isNotEmpty) {
+      var pic = await http.MultipartFile.fromPath("image", pro.image);
+      request.files.add(pic);
+    }
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      print("Image uploaded");
+    } else {
+      print("Image not uploaded");
+    }
+  }
+
+  Future DeleteProduct(Product pro) async {}
 }

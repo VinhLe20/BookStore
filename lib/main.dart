@@ -1,5 +1,7 @@
+import 'package:bookstore/Views/HomeScreen.dart';
 import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Views/ProductAddScreen.dart';
+import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:bookstore/Views/SignupScreen.dart';
 import 'package:bookstore/Views/WelcomeScreen.dart';
 import 'package:bookstore/Views/index.dart';

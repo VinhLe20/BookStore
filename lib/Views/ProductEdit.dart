@@ -3,23 +3,22 @@ import 'package:bookstore/Model/product.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
-class ProductAdd extends StatefulWidget {
-  const ProductAdd({super.key});
-
+class ProductEdit extends StatefulWidget {
+  ProductEdit({super.key, required this.pro});
+  var pro;
   @override
-  State<ProductAdd> createState() => _ProductAddState();
+  State<ProductEdit> createState() => _ProductEditState();
 }
 
-class _ProductAddState extends State<ProductAdd> {
-  Product newproduct =
+class _ProductEditState extends State<ProductEdit> {
+  Product product =
       Product(id: "", name: "", quantity: "", image: "", price: "", mota: "");
   var tensp = TextEditingController();
   var soluongsp = TextEditingController();
   var dongiasp = TextEditingController();
   var motasp = TextEditingController();
+  bool chon = false;
   File? _image;
   final picker = ImagePicker();
 
@@ -32,25 +31,27 @@ class _ProductAddState extends State<ProductAdd> {
 
   @override
   Widget build(BuildContext context) {
+    tensp.text = widget.pro['ten'];
+    soluongsp.text = widget.pro['soluong'];
+    dongiasp.text = widget.pro['dongia'];
+    motasp.text = widget.pro['mota'];
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thêm sản phẩm mới'),
+        title: Text('Chỉnh sửa phẩm'),
         leading: IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => ProductManager()));
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
+            onPressed: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ProductManager()));
+            },
+            icon: Icon(Icons.arrow_back)),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             GestureDetector(
                 onTap: () async {
                   await choiceImage();
+                  chon = true;
                 },
                 child: Container(
                   width: 150,
@@ -67,11 +68,12 @@ class _ProductAddState extends State<ProductAdd> {
                       ),
                     ],
                   ),
-                  child: _image == null
-                      ? Center(
-                          child: Text('Thêm ảnh',
-                              style: TextStyle(color: Colors.grey[600])))
-                      : Image.file(_image!, fit: BoxFit.cover),
+                  child: !chon
+                      ? Image.network(
+                          "http://192.168.1.7:8012/flutter/uploads/${widget.pro['hinhanh']}")
+                      : _image == null
+                          ? null
+                          : Image.file(File(_image!.path), fit: BoxFit.cover),
                 )),
             Padding(
               padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
@@ -120,16 +122,16 @@ class _ProductAddState extends State<ProductAdd> {
             Center(
                 child: ElevatedButton(
               onPressed: () async {
-                Product add = Product(
-                    id: '',
+                Product edit = Product(
+                    id: widget.pro['id'],
                     name: tensp.text,
                     quantity: soluongsp.text,
                     image: _image?.path ?? '',
                     price: dongiasp.text,
                     mota: motasp.text);
-                await newproduct.productAdd(add);
+                await product.EditProduct(edit);
               },
-              child: Text('Thêm mới'),
+              child: Text('Cập nhật sản phẩm'),
               style: ElevatedButton.styleFrom(
                 textStyle: TextStyle(fontSize: 16),
               ),
