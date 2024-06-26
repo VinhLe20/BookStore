@@ -1,3 +1,4 @@
+import 'package:bookstore/Views/ProductDetail.dart';
 import 'package:flutter/material.dart';
 
 class CardProduct extends StatelessWidget {
@@ -17,12 +18,20 @@ class CardProduct extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Expanded(
-              child: Container(
-            alignment: Alignment.center,
-            width: double.infinity,
-            child: Image.network(
-              'http://192.168.1.9:8012/flutter/uploads/${product['hinhanh']}',
-              fit: BoxFit.cover,
+              child: GestureDetector(
+            onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ProductDetail(product: product)));
+            },
+            child: Container(
+              alignment: Alignment.center,
+              width: double.infinity,
+              child: Image.network(
+                'http://192.168.1.7:8012/flutter/uploads/${product['hinhanh']}',
+                fit: BoxFit.cover,
+              ),
             ),
           )),
           const SizedBox(height: 8),

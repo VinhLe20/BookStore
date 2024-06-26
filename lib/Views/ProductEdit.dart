@@ -48,33 +48,42 @@ class _ProductEditState extends State<ProductEdit> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            TextButton(
-                onPressed: () async {
+            GestureDetector(
+                onTap: () async {
                   await choiceImage();
-                  setState(() {
-                    chon = true;
-                  });
+                  chon = true;
                 },
-                child: Text('tai anh')),
-            Container(
-              width: 100,
-              height: 100,
-              child: !chon
-                  ? Image.network(
-                      "http://192.168.1.9:8012/flutter/uploads/${widget.pro['hinhanh']}")
-                  : _image == null
-                      ? null
-                      : Image.file(File(_image!.path), fit: BoxFit.cover),
-            ),
+                child: Container(
+                  width: 150,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: !chon
+                      ? Image.network(
+                          "http://192.168.1.7:8012/flutter/uploads/${widget.pro['hinhanh']}")
+                      : _image == null
+                          ? null
+                          : Image.file(File(_image!.path), fit: BoxFit.cover),
+                )),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
               child: TextField(
                 controller: tensp,
                 decoration: InputDecoration(
-                    labelText: 'Tên sản phẩm',
-                    labelStyle: TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                  labelText: 'Tên sản phẩm',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                ),
               ),
             ),
             Padding(
@@ -82,10 +91,10 @@ class _ProductEditState extends State<ProductEdit> {
               child: TextField(
                 controller: soluongsp,
                 decoration: InputDecoration(
-                    labelText: 'Số lượng sản phẩm',
-                    labelStyle: TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                  labelText: 'Số lượng sản phẩm',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                ),
               ),
             ),
             Padding(
@@ -93,10 +102,10 @@ class _ProductEditState extends State<ProductEdit> {
               child: TextField(
                 controller: dongiasp,
                 decoration: InputDecoration(
-                    labelText: 'Đơn giá sản phẩm',
-                    labelStyle: TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                  labelText: 'Đơn giá sản phẩm',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                ),
               ),
             ),
             Padding(
@@ -104,13 +113,29 @@ class _ProductEditState extends State<ProductEdit> {
               child: TextField(
                 controller: motasp,
                 decoration: InputDecoration(
-                    labelText: 'Mô tả sản phẩm',
-                    labelStyle: TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                  labelText: 'Mô tả sản phẩm',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                ),
               ),
             ),
-            TextButton(onPressed: () async {}, child: Text('Cập nhật sản phẩm'))
+            Center(
+                child: ElevatedButton(
+              onPressed: () async {
+                Product edit = Product(
+                    id: widget.pro['id'],
+                    name: tensp.text,
+                    quantity: soluongsp.text,
+                    image: _image?.path ?? '',
+                    price: dongiasp.text,
+                    mota: motasp.text);
+                await product.EditProduct(edit);
+              },
+              child: Text('Cập nhật sản phẩm'),
+              style: ElevatedButton.styleFrom(
+                textStyle: TextStyle(fontSize: 16),
+              ),
+            ))
           ],
         ),
       ),

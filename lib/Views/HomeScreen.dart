@@ -15,7 +15,25 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   Product pro =
       Product(id: "", name: "", quantity: "", image: "", price: "", mota: '');
-  bool drawer = false;
+  bool drawer = true;
+  List products = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() {
+    setState(() {
+      pro.loadProduct().then((value) {
+        setState(() {
+          products = value;
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,31 +121,46 @@ class _HomeState extends State<Home> {
                 ),
               )
             : null,
-        body: FutureBuilder(
-          future: pro.loadProduct(),
-          builder: (context, snapshot) {
-            return snapshot.hasData
-                ? Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 8.0,
-                        crossAxisSpacing: 8.0,
-                        childAspectRatio: 0.7,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Container(
+              //   margin: EdgeInsets.all(8.0),
+              //   height: 200.0,
+              //   decoration: BoxDecoration(
+              //     color: Colors.blue,
+              //     borderRadius: BorderRadius.circular(10.0),
+              //   ),
+              //   child: Center(
+              //     child: Text(
+              //       'Khuyến Mãi Lớn Hè 2024 - Giảm Giá Lên Đến 50%!',
+              //       style: TextStyle(color: Colors.white, fontSize: 20.0),
+              //       textAlign: TextAlign.center,
+              //     ),
+              //   ),
+              // ),
+              products.isEmpty
+                  ? Center(child: CircularProgressIndicator())
+                  : Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 8.0,
+                          crossAxisSpacing: 8.0,
+                          childAspectRatio: 0.7,
+                        ),
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          return CardProduct(product: products[index]);
+                        },
                       ),
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (context, index) {
-                        List products = snapshot.data;
-                        return CardProduct(product: products[index]);
-                      },
-                    ),
-                  )
-                : const Center(child: CircularProgressIndicator());
-          },
+                    )
+            ],
+          ),
         ));
   }
 }

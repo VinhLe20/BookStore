@@ -44,30 +44,43 @@ class _ProductAddState extends State<ProductAdd> {
         ),
       ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TextButton(
-              onPressed: () async {
-                await choiceImage();
-              },
-              child: Text('Tải ảnh'),
-            ),
-            Container(
-              width: 100,
-              height: 100,
-              child: _image == null
-                  ? null
-                  : Image.file(_image!, fit: BoxFit.cover),
-            ),
+            GestureDetector(
+                onTap: () async {
+                  await choiceImage();
+                },
+                child: Container(
+                  width: 150,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: _image == null
+                      ? Center(
+                          child: Text('Thêm ảnh',
+                              style: TextStyle(color: Colors.grey[600])))
+                      : Image.file(_image!, fit: BoxFit.cover),
+                )),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
               child: TextField(
                 controller: tensp,
                 decoration: InputDecoration(
                   labelText: 'Tên sản phẩm',
-                  labelStyle: TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
               ),
             ),
@@ -77,9 +90,8 @@ class _ProductAddState extends State<ProductAdd> {
                 controller: soluongsp,
                 decoration: InputDecoration(
                   labelText: 'Số lượng sản phẩm',
-                  labelStyle: TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
               ),
             ),
@@ -89,9 +101,8 @@ class _ProductAddState extends State<ProductAdd> {
                 controller: dongiasp,
                 decoration: InputDecoration(
                   labelText: 'Đơn giá sản phẩm',
-                  labelStyle: TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
               ),
             ),
@@ -101,13 +112,13 @@ class _ProductAddState extends State<ProductAdd> {
                 controller: motasp,
                 decoration: InputDecoration(
                   labelText: 'Mô tả sản phẩm',
-                  labelStyle: TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
               ),
             ),
-            TextButton(
+            Center(
+                child: ElevatedButton(
               onPressed: () async {
                 Product add = Product(
                     id: '',
@@ -119,7 +130,10 @@ class _ProductAddState extends State<ProductAdd> {
                 await newproduct.productAdd(add);
               },
               child: Text('Thêm mới'),
-            ),
+              style: ElevatedButton.styleFrom(
+                textStyle: TextStyle(fontSize: 16),
+              ),
+            ))
           ],
         ),
       ),

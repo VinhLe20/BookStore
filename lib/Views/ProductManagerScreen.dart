@@ -55,7 +55,7 @@ class _ProductManagerState extends State<ProductManager> {
                             width: 100,
                             height: 150,
                             child: Image.network(
-                              "http://192.168.1.9:8012/flutter/uploads/${products[index]['hinhanh']}",
+                              "http://192.168.1.7:8012/flutter/uploads/${products[index]['hinhanh']}",
                               fit: BoxFit.cover,
                             ),
                           ),
