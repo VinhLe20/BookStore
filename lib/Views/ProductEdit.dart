@@ -1,20 +1,20 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:bookstore/Model/product.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
-class ProductAdd extends StatefulWidget {
-  const ProductAdd({super.key});
-
+class ProductEdit extends StatefulWidget {
+  ProductEdit({super.key, required this.pro});
+  var pro;
   @override
-  State<ProductAdd> createState() => _ProductAddState();
+  State<ProductEdit> createState() => _ProductEditState();
 }
 
-class _ProductAddState extends State<ProductAdd> {
-  Product newproduct = Product(
+class _ProductEditState extends State<ProductEdit> {
+  Product product = Product(
       id: "",
       name: "",
       quantity: "",
@@ -36,6 +36,7 @@ class _ProductAddState extends State<ProductAdd> {
   void initState() {
     super.initState();
     _loadCategories();
+    selectedCategory = widget.pro['category_id'];
   }
 
   void _loadCategories() {
@@ -62,21 +63,24 @@ class _ProductAddState extends State<ProductAdd> {
 
   @override
   Widget build(BuildContext context) {
+    print(selectedCategory);
+    tensp.text = widget.pro['name'];
+    soluongsp.text = widget.pro['quantity'];
+    dongiasp.text = widget.pro['price'];
+    motasp.text = widget.pro['description'];
+    tacgia.text = widget.pro['author'];
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thêm sản phẩm mới'),
+        title: Text('Chỉnh sửa phẩm'),
         leading: IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => ProductManager()));
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
+            onPressed: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ProductManager()));
+            },
+            icon: Icon(Icons.arrow_back)),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             GestureDetector(
                 onTap: () async {
@@ -98,10 +102,9 @@ class _ProductAddState extends State<ProductAdd> {
                     ],
                   ),
                   child: _image == null
-                      ? Center(
-                          child: Text('Thêm ảnh',
-                              style: TextStyle(color: Colors.grey[600])))
-                      : Image.file(_image!, fit: BoxFit.cover),
+                      ? Image.network(
+                          "http://192.168.1.9:8012/flutter/uploads/${widget.pro['image']}")
+                      : Image.file(File(_image!.path), fit: BoxFit.cover),
                 )),
             Padding(
               padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
@@ -183,20 +186,19 @@ class _ProductAddState extends State<ProductAdd> {
             Center(
                 child: ElevatedButton(
               onPressed: () async {
-                Product add = Product(
-                    id: '',
+                Product edit = Product(
+                    id: widget.pro['id'],
                     name: tensp.text,
                     quantity: soluongsp.text,
-                    image: _image?.path ?? '',
+                    image: _image?.path ?? "",
                     price: dongiasp.text,
                     mota: motasp.text,
                     category: selectedCategory ?? '',
                     author: tacgia.text);
-
                 try {
-                  await newproduct.productAdd(add);
+                  await product.EditProduct(edit);
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Sản phẩm thêm mới thành công'),
+                    content: Text('Sản phẩm đã được cập nhật'),
                   ));
                   Navigator.pushReplacement(
                       context,
@@ -208,7 +210,7 @@ class _ProductAddState extends State<ProductAdd> {
                   ));
                 }
               },
-              child: Text('Thêm mới'),
+              child: Text('Cập nhật sản phẩm'),
               style: ElevatedButton.styleFrom(
                 textStyle: TextStyle(fontSize: 16),
               ),

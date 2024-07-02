@@ -1,9 +1,12 @@
+
 import 'package:bookstore/Views/ForgotPassword.dart';
 import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Profile.dart';
 import 'package:bookstore/Views/VerificationScreen.dart';
 import 'package:bookstore/WelcomeScreen.dart';
 import 'package:bookstore/auth_config.dart';
+import 'package:bookstore/Views/index.dart';
+
 import 'package:bookstore/firebase_options.dart';
 import 'package:email_auth/email_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
