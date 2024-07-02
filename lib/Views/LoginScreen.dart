@@ -1,75 +1,61 @@
-import 'package:bookstore/LoginScreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+
+import 'package:bookstore/Views/WelcomeScreen.dart';
+import 'package:bookstore/Views/index.dart';
+import 'package:http/http.dart' as http;
+import 'package:bookstore/Views/SignupScreen.dart';
+
 import 'package:flutter/material.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
-
+class Loginscreen extends StatefulWidget {
+  const Loginscreen({super.key});
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<Loginscreen> createState() => _LoginscreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
-  final _usercontroller = TextEditingController();
-  final _passwordcontroller = TextEditingController();
-  final _repasswordcontroller = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+class _LoginscreenState extends State<Loginscreen> {
   String _userError = '';
   String _passwordError = '';
-  String _repasswordError = '';
-  bool _isPasswordVisible1 = false;
-  bool _isPasswordVisible2 = false;
 
-//hàm đăng kí tạo tài khoản
-  void signup() async {
+  Future<http.Response> GetUser() async {
+    Uri uri = Uri.parse('http://192.168.1.12/getuser.php');
+    var response = await http.get(uri);
+    return response;
+  }
+
+//kiểm tra đăng nhập
+  Future<void> checkLogin() async {
     try {
-      final UserCredential? userCredential = await _auth
-          .createUserWithEmailAndPassword(
-        email: _usercontroller.text.trim(),
-        password: _passwordcontroller.text.trim(),
-      )
-          .then((value) {
-        FirebaseAuth.instance.currentUser
-            ?.updateDisplayName(_usercontroller.text);
-      }).onError((error, stackTrace) {
-        print("Error ${error.toString()}");
-      });
+      final response = await http.post(
+        Uri.parse('http://192.168.1.4/login.php'),
+        body: {
+          'email': _usercontroller.text,
+          'password': _passwordcontroller.text,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print(response.statusCode);
+        Map<String, dynamic> data = jsonDecode(response.body);
+        if (data['success'] == true) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => Index()),
+            (Route<dynamic> route) => false,
+          );
+          print('Login successful!');
+        } else {
+          print('Login failed: ${data['message']}');
+        }
+      } else {
+        print('Error: ${response.statusCode} - ${response.body}');
+      }
     } catch (e) {
-      // Xử lý lỗi
-      print(e.toString());
+      print('Error: $e');
     }
   }
-  //hàm kiểm tra password có trùng với password trước hay không
 
-  void validateRepassword() {
-    setState(() {
-      final repassword = _repasswordcontroller.text.trim();
-      if (repassword.isEmpty) {
-        _repasswordError = 'Mật khẩu không được bỏ trống';
-      } else if (repassword != _passwordcontroller.text.trim()) {
-        _repasswordError = 'Mật khẩu không khớp';
-      } else {
-        _repasswordError = '';
-      }
-    });
-  }
-
-  //hàm kiểm tra password
-  void validatePassword() {
-    setState(() {
-      final accountPassword = _passwordcontroller.text.trim();
-      if (accountPassword.isEmpty) {
-        _passwordError = 'Mật khẩu không được bỏ trống';
-      } else if (accountPassword.length < 8 ||
-          !accountPassword.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-        _passwordError = 'Mật khẩu tối đa 8 kí tự và chứa kí tự đặc biệt';
-      } else {
-        _passwordError = '';
-      }
-    });
-  }
-
-  //hàm kiểm tra email
+//hàm kiểm tra email
   void validateEmail() {
     setState(() {
       final email = _usercontroller.text.trim();
@@ -90,12 +76,30 @@ class _SignupScreenState extends State<SignupScreen> {
     return regex.hasMatch(email);
   }
 
+//hàm kiểm tra mật khẩu
+  void validatePassword() {
+    setState(() {
+      final accountPassword = _passwordcontroller.text.trim();
+      if (accountPassword.isEmpty) {
+        _passwordError = 'Mật khẩu không được bỏ trống';
+      } else if (accountPassword.length < 8 ||
+          !accountPassword.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+        _passwordError = 'Mật khẩu tối đa 8 kí tự và chứa kí tự đặc biệt';
+      } else {
+        _passwordError = '';
+      }
+    });
+  }
+
+  final _usercontroller = TextEditingController();
+  final _passwordcontroller = TextEditingController();
+  bool _isPasswordVisible = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(top: 30),
+          padding: const EdgeInsets.only(top: 50),
           child: Container(
             color: Colors.white,
             child: Center(
@@ -104,8 +108,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: [
                   Image.asset(
                     "assets/images/logo.jpeg",
-                    width: 200,
-                    height: 200,
+                    width: 250,
+                    height: 250,
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 16),
@@ -140,7 +144,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   TextFormField(
                     controller: _passwordcontroller,
                     onChanged: (_) => validatePassword(),
-                    obscureText: !_isPasswordVisible1,
+                    obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                         hintText: "Password",
                         border: OutlineInputBorder(
@@ -163,78 +167,44 @@ class _SignupScreenState extends State<SignupScreen> {
                         suffixIcon: GestureDetector(
                           onTap: () {
                             setState(() {
-                              _isPasswordVisible1 = !_isPasswordVisible1;
+                              _isPasswordVisible = !_isPasswordVisible;
                             });
                           },
                           child: Icon(
-                            _isPasswordVisible1
+                            _isPasswordVisible
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
                         )),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
-                  TextFormField(
-                    controller: _repasswordcontroller,
-                    onChanged: (_) => validateRepassword(),
-                    obscureText: !_isPasswordVisible2,
-                    decoration: InputDecoration(
-                        hintText: "RePassword",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                            width: 3.0,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 25, horizontal: 20),
-                        errorText: _repasswordError.isNotEmpty
-                            ? _repasswordError
-                            : null,
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _isPasswordVisible2 = !_isPasswordVisible2;
-                            });
-                          },
-                          child: Icon(
-                            _isPasswordVisible2
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                        )),
+                  Padding(
+                    padding: EdgeInsets.only(left: 250),
+                    child: InkWell(
+                      child: const Text(
+                        'Quên mật khẩu',
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.red,
+                            fontSize: 18,
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onTap: () {},
+                    ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
 
                   ElevatedButton(
                     onPressed: () async {
                       validateEmail();
                       validatePassword();
-                      validateRepassword();
-                      if (_userError.isEmpty &&
-                          _passwordError.isEmpty &&
-                          _repasswordError.isEmpty) {
-                        signup();
-                        print("đăng ký thành công với email là :" +
-                            _usercontroller.text);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Loginscreen()));
-                      } else {
-                        print("Đăng ký thất bại");
-                      }
+                      checkLogin();
+                      ;
                     },
                     style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red.shade500,
@@ -267,7 +237,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                     child: const Text(
-                      'Create an account',
+                      'Login As Guest',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -282,13 +252,13 @@ class _SignupScreenState extends State<SignupScreen> {
                     children: [
                       const Center(
                         child: Text(
-                          "Already have an account? ",
+                          "Don't have an account yet? ",
                           style: TextStyle(fontSize: 15),
                         ),
                       ),
                       InkWell(
                         child: const Text(
-                          "Log in here",
+                          "Sign up here",
                           style: TextStyle(
                               color: Colors.black87,
                               fontWeight: FontWeight.bold,
@@ -298,7 +268,10 @@ class _SignupScreenState extends State<SignupScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Loginscreen()));
+                                  builder: (context) => SignupScreen(
+                                        email: _usercontroller.text,
+                                        password: _passwordcontroller.text,
+                                      )));
                         },
                       )
                     ],

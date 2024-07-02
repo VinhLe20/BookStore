@@ -1,0 +1,147 @@
+import 'package:bookstore/Views/LoginScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class VerificationScreen extends StatefulWidget {
+  final String email;
+  final String password;
+  const VerificationScreen(
+      {super.key, required this.email, required this.password});
+
+  @override
+  _VerificationScreenState createState() => _VerificationScreenState();
+}
+
+class _VerificationScreenState extends State<VerificationScreen> {
+  bool isEmailVerified = false;
+  Future<void> checkregister() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.4/register.php'),
+        body: {
+          'email': widget.email,
+          'password': widget.password,
+        },
+      );
+    } catch (e) {
+      print('Đăng ký thất bại: $e');
+    }
+  }
+
+//hàm kiểm tra email đã được xác minh
+  void verifyEmailAndLogin(BuildContext context) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await user.reload();
+        user = FirebaseAuth.instance.currentUser;
+        if (user!.emailVerified) {
+          setState(() {
+            isEmailVerified = true;
+            checkregister();
+          });
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Email chưa xác minh'),
+                content:
+                    const Text('Vui lòng xác minh email trước khi tiếp tục.'),
+                actions: [
+                  TextButton(
+                    child: const Text('Ok'),
+                    onPressed: () {
+                      // Thực hiện hành động gửi lại email xác minh
+                      Navigator.pop(context); // Đóng hộp thoại
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } else {
+        print('User is not logged in');
+      }
+    } catch (e) {
+      print('Error verifying email: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isEmailVerified) {
+      return Loginscreen();
+    } else {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                "assets/images/logo.jpeg",
+                width: 250,
+                height: 250,
+                fit: BoxFit.contain,
+              ),
+              const Text(
+                'Xác minh email',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 16),
+              const Text(
+                'Vui lòng xác minh email của bạn trước khi tiếp tục.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 32),
+              SizedBox(height: 16),
+              ElevatedButton(
+                child: Text('Đã xác minh',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade500,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: const BorderSide(
+                                color: Colors.black, width: 1)),
+                        minimumSize: Size(double.infinity, 70))
+                    .copyWith(
+                  backgroundColor: WidgetStateColor.resolveWith(
+                    (Set<WidgetState> states) {
+                      if (states.contains(WidgetState.pressed)) {
+                        return Colors.white; // Màu nền button khi được nhấn
+                      }
+                      return Colors
+                          .red.shade500; // Sử dụng màu nền mặc định (red.500)
+                    },
+                  ),
+                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                    (Set<WidgetState> states) {
+                      if (states.contains(WidgetState.pressed)) {
+                        return null; // Màu chữ button khi được nhấn
+                      }
+                      return Colors.white; // Sử dụng màu chữ mặc định (white)
+                    },
+                  ),
+                ),
+                onPressed: () {
+                  verifyEmailAndLogin(context);
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+}

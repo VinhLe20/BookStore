@@ -1,44 +1,35 @@
-import 'dart:ffi';
-
-import 'package:bookstore/WelcomeScreen.dart';
+import 'package:bookstore/Model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class Profile extends StatefulWidget {
-  Profile({super.key, required this.email});
-  String email;
+  Profile({super.key});
+
   @override
   State<Profile> createState() => _ProfileState();
 }
 
-final databaseReference = FirebaseDatabase.instance.ref("BookStore");
-bool _showPassword = false;
-String _email = '';
-String pass = '';
-
 class _ProfileState extends State<Profile> {
+  User? user = FirebaseAuth.instance.currentUser;
+  String email = '';
+  User1 _user = User1(email: '', password: '');
+  String pass = '';
   @override
-  void load() async {
-    DatabaseReference ref = FirebaseDatabase.instance.ref('BookStore');
-    DatabaseEvent event = await ref.once();
-    DataSnapshot snapshot = event.snapshot;
-    Map map = snapshot.value as Map;
-    map.forEach((key, value) {
-      if (widget.email == value['email']) {
-        _email = value['email'];
-        pass = value['password'];
-        print(_email);
-      }
-    });
-  }
-
   void initState() {
     super.initState();
-    load();
+    print("emailllllllllllllllllll${user?.email}");
+    loadUser();
+  }
+
+  void loadUser() {
+    _user.load(user?.email).then((value) {
+      setState(() {
+        email = _user.email;
+        pass = _user.password;
+      });
+    });
   }
 
   Widget build(BuildContext context) {
@@ -71,7 +62,7 @@ class _ProfileState extends State<Profile> {
               ],
             ),
           ),
-          Text("email    $_email"),
+          Text("email    $email"),
           Text(pass)
           // Expanded(
           //   child: FirebaseAnimatedList(

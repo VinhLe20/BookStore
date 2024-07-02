@@ -1,61 +1,45 @@
-import 'package:bookstore/Profile.dart';
-import 'package:bookstore/SIgnupScreen.dart';
-import 'package:bookstore/WelcomeScreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class Loginscreen extends StatefulWidget {
-  const Loginscreen({super.key});
+import 'package:bookstore/Views/LoginScreen.dart';
+import 'package:bookstore/Views/VerificationScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class SignupScreen extends StatefulWidget {
+  final String email;
+  final String password;
+  const SignupScreen({super.key, required this.email, required this.password});
+
   @override
-  State<Loginscreen> createState() => _LoginscreenState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-final databaseReference = FirebaseDatabase.instance.ref("BookStore");
-
-class _LoginscreenState extends State<Loginscreen> {
+class _SignupScreenState extends State<SignupScreen> {
+  final _usercontroller = TextEditingController();
+  final _passwordcontroller = TextEditingController();
+  final _repasswordcontroller = TextEditingController();
   String _userError = '';
   String _passwordError = '';
-  Future<User?> loginUsingEmailPassword(
-      {required String email,
-      required String password,
-      required BuildContext context}) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-    try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      user = userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == "không tồn tại") {
-        print("Không tìm thấy user");
-      }
-    }
-    return user;
-  }
-
-//hàm kiểm tra email
-  void validateEmail() {
+  String _repasswordError = '';
+  bool _isPasswordVisible1 = false;
+  bool _isPasswordVisible2 = false;
+//kết nối sql
+  //hàm kiểm tra password có trùng với password trước hay không
+  void validateRepassword() {
     setState(() {
-      final email = _usercontroller.text.trim();
-      if (email.isEmpty) {
-        _userError = 'Email không được bỏ trống';
-      } else if (!_isValidEmail(email)) {
-        _userError = 'Email không hợp lệ';
+      final repassword = _repasswordcontroller.text.trim();
+      if (repassword.isEmpty) {
+        _repasswordError = 'Mật khẩu không được bỏ trống';
+      } else if (repassword != _passwordcontroller.text.trim()) {
+        _repasswordError = 'Mật khẩu không khớp';
       } else {
-        _userError = '';
+        _repasswordError = '';
       }
     });
   }
 
-  bool _isValidEmail(String email) {
-    // Biểu thức chính quy để kiểm tra định dạng email
-    const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
-    final regex = RegExp(pattern);
-    return regex.hasMatch(email);
-  }
-
-//hàm kiểm tra mật khẩu
+  //hàm kiểm tra password
   void validatePassword() {
     setState(() {
       final accountPassword = _passwordcontroller.text.trim();
@@ -70,15 +54,97 @@ class _LoginscreenState extends State<Loginscreen> {
     });
   }
 
-  final _usercontroller = TextEditingController();
-  final _passwordcontroller = TextEditingController();
-  bool _isPasswordVisible = false;
+  //hàm kiểm tra email
+  void validateEmail() {
+    setState(() {
+      final email = _usercontroller.text.trim();
+      if (email.isEmpty) {
+        _userError = 'Email không được bỏ trống';
+      } else if (!_isValidEmail(email)) {
+        _userError = 'Email không hợp lệ';
+      } else {
+        _userError = '';
+      }
+    });
+  }
+
+//gửi email từ firebase
+  void registerUser() async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _usercontroller.text,
+        password: _passwordcontroller.text,
+      );
+
+      await userCredential.user?.sendEmailVerification();
+
+      print('Đã gửi email ');
+      verifyEmailAndLogin(context);
+    } catch (e) {
+      print('Không gửi được email $e');
+    }
+  }
+
+  //hàm kiểm tra email khi ngdung nhấn vào link
+  void verifyEmailAndLogin(BuildContext context) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await user.reload();
+        user = FirebaseAuth.instance.currentUser;
+        {
+          // Hiển thị thông báo cho người dùng
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Email chưa xác minh'),
+                content: Text('Vui lòng xác minh email trước khi tiếp tục.'),
+                actions: [
+                  TextButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      // Thực hiện hành động gửi lại email xác minh
+                      if (user!.emailVerified) {
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VerificationScreen(
+                                    email: _usercontroller.text,
+                                    password: _passwordcontroller.text,
+                                  )),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } else {
+        print('User is not logged in');
+      }
+    } catch (e) {
+      print('Error verifying email: $e');
+    }
+  }
+
+  bool _isValidEmail(String email) {
+    // Biểu thức chính quy để kiểm tra định dạng email
+    const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+    final regex = RegExp(pattern);
+    return regex.hasMatch(email);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(top: 50),
+          padding: const EdgeInsets.only(top: 30),
           child: Container(
             color: Colors.white,
             child: Center(
@@ -87,8 +153,8 @@ class _LoginscreenState extends State<Loginscreen> {
                 children: [
                   Image.asset(
                     "assets/images/logo.jpeg",
-                    width: 250,
-                    height: 250,
+                    width: 200,
+                    height: 200,
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 16),
@@ -123,7 +189,7 @@ class _LoginscreenState extends State<Loginscreen> {
                   TextFormField(
                     controller: _passwordcontroller,
                     onChanged: (_) => validatePassword(),
-                    obscureText: !_isPasswordVisible,
+                    obscureText: !_isPasswordVisible1,
                     decoration: InputDecoration(
                         hintText: "Password",
                         border: OutlineInputBorder(
@@ -146,49 +212,73 @@ class _LoginscreenState extends State<Loginscreen> {
                         suffixIcon: GestureDetector(
                           onTap: () {
                             setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
+                              _isPasswordVisible1 = !_isPasswordVisible1;
                             });
                           },
                           child: Icon(
-                            _isPasswordVisible
+                            _isPasswordVisible1
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
                         )),
                   ),
                   const SizedBox(
-                    height: 40,
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: _repasswordcontroller,
+                    onChanged: (_) => validateRepassword(),
+                    obscureText: !_isPasswordVisible2,
+                    decoration: InputDecoration(
+                        hintText: "RePassword",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                            width: 3.0,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 25, horizontal: 20),
+                        errorText: _repasswordError.isNotEmpty
+                            ? _repasswordError
+                            : null,
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isPasswordVisible2 = !_isPasswordVisible2;
+                            });
+                          },
+                          child: Icon(
+                            _isPasswordVisible2
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                        )),
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
 
                   ElevatedButton(
                     onPressed: () async {
                       validateEmail();
                       validatePassword();
-                      var user = await loginUsingEmailPassword(
-                          email: _usercontroller.text,
-                          password: _passwordcontroller.text,
-                          context: context);
-                      print(user);
-
-                      if (user != null) {
-                        final id = DateTime.now().microsecond.toString();
-                        databaseReference.child(id).set({
-                          'email': _usercontroller.text.trim(),
-                          'password': _passwordcontroller.text.trim(),
-                          'id': id
-                        });
-                        print("Email là : " + _usercontroller.text);
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    Profile(email: _usercontroller.text)));
-                        //Gọi hàm đăng nhập thành công
+                      validateRepassword();
+                      if (_userError.isEmpty &&
+                          _passwordError.isEmpty &&
+                          _repasswordError.isEmpty) {
+                        registerUser();
+                        verifyEmailAndLogin(context);
                       } else {
-                        print("User or Password is not Correct !!");
-                        //Gọi hàm đăng nhập thất bại
+                        print("Đăng ký thất bại");
                       }
-                      ;
                     },
                     style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red.shade500,
@@ -221,7 +311,7 @@ class _LoginscreenState extends State<Loginscreen> {
                       ),
                     ),
                     child: const Text(
-                      'Login As Guest',
+                      'Create an account',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -236,13 +326,13 @@ class _LoginscreenState extends State<Loginscreen> {
                     children: [
                       const Center(
                         child: Text(
-                          "Don't have an account yet? ",
+                          "Already have an account? ",
                           style: TextStyle(fontSize: 15),
                         ),
                       ),
                       InkWell(
                         child: const Text(
-                          "Sign up here",
+                          "Log in here",
                           style: TextStyle(
                               color: Colors.black87,
                               fontWeight: FontWeight.bold,
@@ -252,7 +342,7 @@ class _LoginscreenState extends State<Loginscreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SignupScreen()));
+                                  builder: (context) => Loginscreen()));
                         },
                       )
                     ],
