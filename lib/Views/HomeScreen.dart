@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'package:bookstore/Model/cardProduct.dart';
 import 'package:bookstore/Model/product.dart';
+import 'package:bookstore/Views/CategoryManager.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
+import 'package:bookstore/Views/RateManager.dart';
 import 'package:bookstore/Views/SearchScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -13,29 +17,50 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Product pro =
-      Product(id: "", name: "", quantity: "", image: "", price: "", mota: '');
+  Product pro = Product(
+      id: "",
+      name: "",
+      quantity: "",
+      image: "",
+      price: "",
+      mota: '',
+      category: '',author: '');
   bool drawer = true;
   List products = [];
-
+  List productsell = [];
   @override
   void initState() {
     super.initState();
     _loadData();
+    _loadSellProduct();
   }
 
   void _loadData() {
-    setState(() {
-      pro.loadProduct().then((value) {
-        setState(() {
-          products = value;
-        });
+    pro.loadProduct().then((value) {
+      setState(() {
+        products = value;
       });
     });
   }
 
+  void _loadSellProduct() {
+    loadSellProduct().then((value) {
+      setState(() {
+        productsell = value;
+      });
+    });
+  }
+
+  Future loadSellProduct() async {
+    final uri =
+        Uri.parse('http://192.168.1.9:8012/flutter/getdataProductSell.php');
+    var response = await http.get(uri);
+    return json.decode(response.body);
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(productsell.length);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Trang chủ'),
@@ -96,6 +121,32 @@ class _HomeState extends State<Home> {
                         // Handle the tap event
                       },
                     ),
+                    ListTile(
+                      leading: Icon(Icons.category, color: Colors.orange),
+                      title: Text(
+                        "Quản lý thể loại",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CategoryManger()));
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.category, color: Colors.orange),
+                      title: Text(
+                        "Quản lý đánh giá nhận xét",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => RateManager()));
+                      },
+                    ),
                     Divider(),
                     ListTile(
                       leading: Icon(Icons.settings, color: Colors.orange),
@@ -124,21 +175,57 @@ class _HomeState extends State<Home> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              // Container(
-              //   margin: EdgeInsets.all(8.0),
-              //   height: 200.0,
-              //   decoration: BoxDecoration(
-              //     color: Colors.blue,
-              //     borderRadius: BorderRadius.circular(10.0),
-              //   ),
-              //   child: Center(
-              //     child: Text(
-              //       'Khuyến Mãi Lớn Hè 2024 - Giảm Giá Lên Đến 50%!',
-              //       style: TextStyle(color: Colors.white, fontSize: 20.0),
-              //       textAlign: TextAlign.center,
-              //     ),
-              //   ),
-              // ),
+              Container(
+                margin: EdgeInsets.all(8.0),
+                height: 200.0,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Center(
+                  child: Text(
+                    'Khuyến Mãi Lớn Hè 2024 - Giảm Giá Lên Đến 50%!',
+                    style: TextStyle(color: Colors.white, fontSize: 20.0),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text("Sản phẩm bán chạy nhất",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 250,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  itemCount: productsell.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: CardProduct(product: productsell[index]),
+                    );
+                  },
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text("Sản phẩm gợi ý",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
               products.isEmpty
                   ? Center(child: CircularProgressIndicator())
                   : Padding(

@@ -15,8 +15,15 @@ class ProductManager extends StatefulWidget {
 }
 
 class _ProductManagerState extends State<ProductManager> {
-  Product pro =
-      Product(id: "", name: "", quantity: "", image: "", price: "", mota: '');
+  Product pro = Product(
+      id: "",
+      name: "",
+      quantity: "",
+      image: "",
+      price: "",
+      mota: '',
+      category: "",
+      author: '');
 
   @override
   Widget build(BuildContext context) {
@@ -51,23 +58,23 @@ class _ProductManagerState extends State<ProductManager> {
                       return Row(
                         children: [
                           Container(
-                            padding: EdgeInsets.all(5.0),
+                            padding: EdgeInsets.all(10.0),
                             width: 100,
-                            height: 150,
+                            height: 170,
                             child: Image.network(
-                              "http://192.168.1.7:8012/flutter/uploads/${products[index]['hinhanh']}",
+                              "http://192.168.1.9:8012/flutter/uploads/${products[index]['image']}",
                               fit: BoxFit.cover,
                             ),
                           ),
                           Container(
                             padding: EdgeInsets.all(5.0),
-                            height: 150,
+                            height: 170,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                  products[index]['ten'],
+                                  "Tên sản phẩm: ${products[index]['name']}",
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
@@ -75,19 +82,25 @@ class _ProductManagerState extends State<ProductManager> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Thể loại',
+                                  'Tác giả: ${products[index]['author']}',
                                   style: const TextStyle(
                                     fontSize: 14,
                                   ),
                                 ),
                                 Text(
-                                  'Price: \$${products[index]["dongia"]}',
+                                  'Thể loại: ${products[index]['category_name']}',
                                   style: const TextStyle(
                                     fontSize: 14,
                                   ),
                                 ),
                                 Text(
-                                  'Quantity: ${products[index]["soluong"]}',
+                                  'Đơn giá: ${products[index]["price"]} đ',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(
+                                  'Số lượng: ${products[index]["quantity"]}',
                                   style: const TextStyle(
                                     fontSize: 14,
                                   ),
@@ -101,7 +114,7 @@ class _ProductManagerState extends State<ProductManager> {
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Text(
-                                        'Da ban',
+                                        'Đã bán ${products[index]['sold']}',
                                         style: const TextStyle(
                                           fontSize: 14,
                                         ),

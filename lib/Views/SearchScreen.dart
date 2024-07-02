@@ -12,8 +12,15 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   TextEditingController searchController = TextEditingController();
-  Product pro =
-      Product(id: "", name: "", quantity: "", image: "", price: "", mota: "");
+  Product pro = Product(
+      id: "",
+      name: "",
+      quantity: "",
+      image: "",
+      price: "",
+      mota: "",
+      category: "",
+      author: '`');
   List filteredProducts = [];
   List products = [];
 
@@ -43,7 +50,7 @@ class _SearchPageState extends State<SearchPage> {
       setState(() {
         filteredProducts = products
             .where((product) =>
-                product['ten'].toLowerCase().contains(query.toLowerCase()))
+                product['name'].toLowerCase().contains(query.toLowerCase()))
             .toList();
       });
     }
