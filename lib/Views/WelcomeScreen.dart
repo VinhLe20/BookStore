@@ -1,5 +1,9 @@
 import 'package:bookstore/Views/LoginScreen.dart';
+
+import 'package:bookstore/Profile.dart';
 import 'package:bookstore/Views/SignupScreen.dart';
+
+
 import 'package:flutter/material.dart';
 
 class Welcomescreen extends StatefulWidget {
@@ -55,7 +59,10 @@ class _WelcomescreenState extends State<Welcomescreen> {
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SignupScreen()));
+                            builder: (context) => SignupScreen(
+                                  email: '',
+                                  password: '',
+                                )));
                   },
                   style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red.shade500,

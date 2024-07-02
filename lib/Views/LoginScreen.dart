@@ -1,6 +1,14 @@
+
+import 'dart:convert';
+
+
 import 'package:bookstore/Views/SignupScreen.dart';
+
 import 'package:bookstore/Views/WelcomeScreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:bookstore/Views/index.dart';
+import 'package:http/http.dart' as http;
+import 'package:bookstore/Views/SignupScreen.dart';
+
 import 'package:flutter/material.dart';
 
 class Loginscreen extends StatefulWidget {
@@ -12,22 +20,43 @@ class Loginscreen extends StatefulWidget {
 class _LoginscreenState extends State<Loginscreen> {
   String _userError = '';
   String _passwordError = '';
-  Future<User?> loginUsingEmailPassword(
-      {required String email,
-      required String password,
-      required BuildContext context}) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
+
+  Future<http.Response> GetUser() async {
+    Uri uri = Uri.parse('http://192.168.1.12/getuser.php');
+    var response = await http.get(uri);
+    return response;
+  }
+
+//kiểm tra đăng nhập
+  Future<void> checkLogin() async {
     try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      user = userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == "không tồn tại") {
-        print("Không tìm thấy user");
+      final response = await http.post(
+        Uri.parse('http://192.168.1.4/login.php'),
+        body: {
+          'email': _usercontroller.text,
+          'password': _passwordcontroller.text,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print(response.statusCode);
+        Map<String, dynamic> data = jsonDecode(response.body);
+        if (data['success'] == true) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => Index()),
+            (Route<dynamic> route) => false,
+          );
+          print('Login successful!');
+        } else {
+          print('Login failed: ${data['message']}');
+        }
+      } else {
+        print('Error: ${response.statusCode} - ${response.body}');
       }
+    } catch (e) {
+      print('Error: $e');
     }
-    return user;
   }
 
 //hàm kiểm tra email
@@ -153,30 +182,32 @@ class _LoginscreenState extends State<Loginscreen> {
                         )),
                   ),
                   const SizedBox(
-                    height: 40,
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 250),
+                    child: InkWell(
+                      child: const Text(
+                        'Quên mật khẩu',
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.red,
+                            fontSize: 18,
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onTap: () {},
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
                   ),
 
                   ElevatedButton(
                     onPressed: () async {
                       validateEmail();
                       validatePassword();
-                      var user = await loginUsingEmailPassword(
-                          email: _usercontroller.text,
-                          password: _passwordcontroller.text,
-                          context: context);
-                      print(user);
-
-                      if (user != null) {
-                        print("Email là : " + _usercontroller.text);
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Welcomescreen()));
-                        //Gọi hàm đăng nhập thành công
-                      } else {
-                        print("User or Password is not Correct !!");
-                        //Gọi hàm đăng nhập thất bại
-                      }
+                      checkLogin();
                       ;
                     },
                     style: ElevatedButton.styleFrom(
@@ -241,7 +272,10 @@ class _LoginscreenState extends State<Loginscreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SignupScreen()));
+                                  builder: (context) => SignupScreen(
+                                        email: _usercontroller.text,
+                                        password: _passwordcontroller.text,
+                                      )));
                         },
                       )
                     ],

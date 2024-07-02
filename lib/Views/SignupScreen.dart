@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:bookstore/Views/LoginScreen.dart';
+import 'package:bookstore/Views/VerificationScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+  final String email;
+  final String password;
+  const SignupScreen({super.key, required this.email, required this.password});
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -13,34 +19,13 @@ class _SignupScreenState extends State<SignupScreen> {
   final _usercontroller = TextEditingController();
   final _passwordcontroller = TextEditingController();
   final _repasswordcontroller = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   String _userError = '';
   String _passwordError = '';
   String _repasswordError = '';
   bool _isPasswordVisible1 = false;
   bool _isPasswordVisible2 = false;
-
-//hàm đăng kí tạo tài khoản
-  void signup() async {
-    try {
-      final UserCredential? userCredential = await _auth
-          .createUserWithEmailAndPassword(
-        email: _usercontroller.text.trim(),
-        password: _passwordcontroller.text.trim(),
-      )
-          .then((value) {
-        FirebaseAuth.instance.currentUser
-            ?.updateDisplayName(_usercontroller.text);
-      }).onError((error, stackTrace) {
-        print("Error ${error.toString()}");
-      });
-    } catch (e) {
-      // Xử lý lỗi
-      print(e.toString());
-    }
-  }
+//kết nối sql
   //hàm kiểm tra password có trùng với password trước hay không
-
   void validateRepassword() {
     setState(() {
       final repassword = _repasswordcontroller.text.trim();
@@ -81,6 +66,70 @@ class _SignupScreenState extends State<SignupScreen> {
         _userError = '';
       }
     });
+  }
+
+//gửi email từ firebase
+  void registerUser() async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _usercontroller.text,
+        password: _passwordcontroller.text,
+      );
+
+      await userCredential.user?.sendEmailVerification();
+
+      print('Đã gửi email ');
+      verifyEmailAndLogin(context);
+    } catch (e) {
+      print('Không gửi được email $e');
+    }
+  }
+
+  //hàm kiểm tra email khi ngdung nhấn vào link
+  void verifyEmailAndLogin(BuildContext context) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await user.reload();
+        user = FirebaseAuth.instance.currentUser;
+        {
+          // Hiển thị thông báo cho người dùng
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Email chưa xác minh'),
+                content: Text('Vui lòng xác minh email trước khi tiếp tục.'),
+                actions: [
+                  TextButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      // Thực hiện hành động gửi lại email xác minh
+                      if (user!.emailVerified) {
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VerificationScreen(
+                                    email: _usercontroller.text,
+                                    password: _passwordcontroller.text,
+                                  )),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } else {
+        print('User is not logged in');
+      }
+    } catch (e) {
+      print('Error verifying email: $e');
+    }
   }
 
   bool _isValidEmail(String email) {
@@ -225,13 +274,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       if (_userError.isEmpty &&
                           _passwordError.isEmpty &&
                           _repasswordError.isEmpty) {
-                        signup();
-                        print("đăng ký thành công với email là :" +
-                            _usercontroller.text);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Loginscreen()));
+                        registerUser();
+                        verifyEmailAndLogin(context);
                       } else {
                         print("Đăng ký thất bại");
                       }
