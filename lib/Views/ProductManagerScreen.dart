@@ -36,14 +36,14 @@ class _ProductManagerState extends State<ProductManager> {
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Index()));
               },
-              icon: Icon(Icons.arrow_back)),
+              icon: const Icon(Icons.arrow_back)),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => ProductAdd()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const ProductAdd()));
           },
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
         body: FutureBuilder(
@@ -58,7 +58,7 @@ class _ProductManagerState extends State<ProductManager> {
                       return Row(
                         children: [
                           Container(
-                            padding: EdgeInsets.all(10.0),
+                            padding: const EdgeInsets.all(10.0),
                             width: 100,
                             height: 170,
                             child: Image.network(
@@ -67,7 +67,7 @@ class _ProductManagerState extends State<ProductManager> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.all(5.0),
+                            padding: const EdgeInsets.all(5.0),
                             height: 170,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,13 +132,60 @@ class _ProductManagerState extends State<ProductManager> {
                                                                 pro: products[
                                                                     index])));
                                               },
-                                              icon: Icon(Icons.edit)),
+                                              icon: const Icon(Icons.edit)),
                                           IconButton(
                                               onPressed: () {
-                                                pro.DeleteProduct(
-                                                    products[index]);
+                                                var result;
+                                                showDialog<void>(
+                                                  context: context,
+                                                  barrierDismissible:
+                                                      false, // user must tap button!
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                          'Xác nhận xóa'),
+                                                      content:
+                                                          const SingleChildScrollView(
+                                                        child: ListBody(
+                                                          children: <Widget>[
+                                                            Text(
+                                                                'Bạn có chắc chắn muốn xóa sản phẩm này không?'),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          child:
+                                                              const Text('Hủy'),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                        TextButton(
+                                                          child:
+                                                              const Text('Xóa'),
+                                                          onPressed: () {
+                                                            pro.DeleteProduct(
+                                                                products[
+                                                                    index]);
+                                                            result = true;
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                                if (result) {
+                                                  setState(() {});
+                                                }
                                               },
-                                              icon: Icon(Icons.delete)),
+                                              icon: const Icon(Icons.delete)),
                                         ],
                                       )),
                                     ],
@@ -151,7 +198,7 @@ class _ProductManagerState extends State<ProductManager> {
                       );
                     },
                   )
-                : CircularProgressIndicator();
+                : const CircularProgressIndicator();
           },
         ));
   }

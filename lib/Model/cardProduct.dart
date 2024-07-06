@@ -1,13 +1,14 @@
 import 'package:bookstore/Views/ProductDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CardProduct extends StatelessWidget {
   CardProduct({super.key, required this.product});
   var product;
   Future addCart(String oder_id, String product_id, String product_name,
       String quantity, String price) async {
-    final uri = Uri.parse('http://192.168.1.9:8012/flutter/addCart.php');
+    final uri = Uri.parse('http://192.168.1.22:8012/flutter/addCart.php');
     http.post(uri, body: {
       'oder_id': oder_id,
       'product_id': product_id,
@@ -15,6 +16,15 @@ class CardProduct extends StatelessWidget {
       'quantity': quantity,
       'price': price
     });
+    Fluttertoast.showToast(
+      msg: "Sản phẩm đã được thêm vào giỏ hàng!",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
   @override
@@ -42,7 +52,7 @@ class CardProduct extends StatelessWidget {
               alignment: Alignment.center,
               width: double.infinity,
               child: Image.network(
-                'http://192.168.1.9:8012/flutter/uploads/${product['image']}',
+                'http://192.168.1.22:8012/flutter/uploads/${product['image']}',
                 fit: BoxFit.cover,
               ),
             ),

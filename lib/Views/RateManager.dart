@@ -34,12 +34,11 @@ class _RateManagerState extends State<RateManager> {
               Navigator.pushReplacement(
                   context, MaterialPageRoute(builder: (context) => Index()));
             },
-            icon: Icon(Icons.arrow_back)),
+            icon: const Icon(Icons.arrow_back)),
       ),
       body: FutureBuilder(
         future: loadDataComment(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) print(snapshot.error);
           return snapshot.hasData
               ? ListView.builder(
                   itemCount: snapshot.data?.length,
@@ -51,6 +50,7 @@ class _RateManagerState extends State<RateManager> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text("Người dùng: ${comment?[index]['name']}"),
                               Text(
@@ -58,7 +58,11 @@ class _RateManagerState extends State<RateManager> {
                               Row(
                                 children: [
                                   Text("Đánh giá: ${comment?[index]['rate']}"),
-                                  Icon(Icons.star, size: 16)
+                                  const Icon(
+                                    Icons.star,
+                                    size: 16,
+                                    color: Colors.yellow,
+                                  )
                                 ],
                               ),
                               Text(
@@ -67,19 +71,55 @@ class _RateManagerState extends State<RateManager> {
                               ),
                             ],
                           ),
-                          Container(
-                            child: IconButton(
-                                onPressed: () {
-                                  deleteComment(comment?[index]['id']);
-                                },
-                                icon: Icon(Icons.delete)),
-                          ),
+                          IconButton(
+                              onPressed: () {
+                                bool result = false;
+                                showDialog<void>(
+                                  context: context,
+                                  barrierDismissible:
+                                      false, // user must tap button!
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Xác nhận xóa'),
+                                      content: const SingleChildScrollView(
+                                        child: ListBody(
+                                          children: <Widget>[
+                                            Text(
+                                                'Bạn có chắc chắn muốn xóa mục này không?'),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text('Hủy'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: const Text('Xóa'),
+                                          onPressed: () {
+                                            deleteComment(
+                                                comment?[index]['id']);
+                                            result = true;
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                if (result) {
+                                  setState(() {});
+                                }
+                              },
+                              icon: const Icon(Icons.delete)),
                         ],
                       ),
                     );
                   },
                 )
-              : CircularProgressIndicator();
+              : const CircularProgressIndicator();
         },
       ),
     );

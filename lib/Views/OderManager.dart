@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bookstore/Views/OrderDetail.dart';
 import 'package:bookstore/Views/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +15,7 @@ class OderManager extends StatefulWidget {
 class _OderManagerState extends State<OderManager> {
   Future loadOder() async {
     var result = await http
-        .get(Uri.parse('http://192.168.1.9:8012/flutter/deleteCategory.php'));
+        .get(Uri.parse('http://192.168.1.9:8012/flutter/getdataOder.php'));
     return json.decode(result.body);
   }
 
@@ -29,7 +30,7 @@ class _OderManagerState extends State<OderManager> {
               Navigator.pushReplacement(
                   context, MaterialPageRoute(builder: (context) => Index()));
             },
-            icon: Icon(Icons.arrow_back)),
+            icon: const Icon(Icons.arrow_back)),
       ),
       body: FutureBuilder(
         future: loadOder(),
@@ -44,20 +45,29 @@ class _OderManagerState extends State<OderManager> {
                     Column(
                       children: [
                         Text('Ma don hang ${oders[index]['id']}'),
-                        Text('Nguoi mua hang ${oders[index]['user_id']}'),
+                        Text('Nguoi mua hang ${oders[index]['name']}'),
                         Text('Tong tien ${oders[index]['total_price']}'),
                         Text('Trang thai ${oders[index]['status']}'),
-                        Text('Ngay mua hang ${oders[index]['time']}'),
+                        Text('Ngay ${oders[index]['time']}'),
                       ],
                     ),
-                    TextButton(onPressed: () {}, child: Text('Duyet don')),
-                    TextButton(onPressed: () {}, child: Text('Huy don')),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => OrderDetail(
+                                        order: oders[index],
+                                      )));
+                        },
+                        child: const Text('Xem thông tin đơn hàng')),
+                    TextButton(onPressed: () {}, child: const Text('Hủy đơn')),
                   ],
                 );
               },
             );
           }
-          return Text('Chua co don hang');
+          return const Text('Chưa có đơn hàng');
         },
       ),
     );

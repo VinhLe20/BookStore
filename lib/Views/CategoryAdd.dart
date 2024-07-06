@@ -1,6 +1,7 @@
 import 'package:bookstore/Views/CategoryManager.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CategoryAdd extends StatefulWidget {
   const CategoryAdd({super.key});
@@ -45,7 +46,26 @@ class _CategoryAddState extends State<CategoryAdd> {
             ),
             ElevatedButton(
               onPressed: () async {
-                addCategory(tentl.text);
+                try {
+                  await addCategory(tentl.text);
+                  Fluttertoast.showToast(
+                    msg: "Thêm mới thể loại thành công",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CategoryManger()));
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Có lỗi xảy ra: $e'),
+                  ));
+                }
               },
               child: Text('Thêm mới'),
               style: ElevatedButton.styleFrom(

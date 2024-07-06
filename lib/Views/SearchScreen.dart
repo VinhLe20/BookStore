@@ -31,12 +31,9 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _loadData() {
-    setState(() {
-      pro.loadProduct().then((value) {
-        setState(() {
-          products = value;
-          filteredProducts = products;
-        });
+    pro.loadProduct().then((value) {
+      setState(() {
+        products = value;
       });
     });
   }
@@ -44,7 +41,7 @@ class _SearchPageState extends State<SearchPage> {
   void _filterProducts(String query) {
     if (query.isEmpty) {
       setState(() {
-        filteredProducts = products;
+        filteredProducts = [];
       });
     } else {
       setState(() {
@@ -70,7 +67,7 @@ class _SearchPageState extends State<SearchPage> {
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Index()));
               },
-              icon: Icon(Icons.arrow_back)),
+              icon: const Icon(Icons.arrow_back)),
           title: TextField(
             controller: searchController,
             decoration: InputDecoration(
@@ -81,11 +78,11 @@ class _SearchPageState extends State<SearchPage> {
               ),
               fillColor: Colors.white.withOpacity(0.1),
               suffixIcon: IconButton(
-                icon: Icon(Icons.clear, color: Colors.white),
+                icon: const Icon(Icons.clear, color: Colors.white),
                 onPressed: _clearSearch,
               ),
             ),
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
             onChanged: (value) {
               _filterProducts(value);
             },
@@ -93,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
           backgroundColor: Colors.blue,
         ),
         body: filteredProducts.isEmpty
-            ? Center(child: Text('No products found'))
+            ? const Center(child: Text('Không tìm thấy sản phẩm này!'))
             : Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: GridView.builder(

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:bookstore/Model/cardProduct.dart';
 import 'package:bookstore/Model/product.dart';
 import 'package:bookstore/Views/CategoryManager.dart';
+import 'package:bookstore/Views/OderManager.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:bookstore/Views/RateManager.dart';
 import 'package:bookstore/Views/SearchScreen.dart';
@@ -24,7 +25,8 @@ class _HomeState extends State<Home> {
       image: "",
       price: "",
       mota: '',
-      category: '',author: '');
+      category: '',
+      author: '');
   bool drawer = true;
   List products = [];
   List productsell = [];
@@ -53,7 +55,7 @@ class _HomeState extends State<Home> {
 
   Future loadSellProduct() async {
     final uri =
-        Uri.parse('http://192.168.1.9:8012/flutter/getdataProductSell.php');
+        Uri.parse('http://192.168.1.22:8012/flutter/getdataProductSell.php');
     var response = await http.get(uri);
     return json.decode(response.body);
   }
@@ -68,11 +70,13 @@ class _HomeState extends State<Home> {
           actions: [
             IconButton(
                 onPressed: () {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => SearchPage()));
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SearchPage()));
                 },
-                icon: Icon(Icons.search)),
-            IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart))
+                icon: const Icon(Icons.search)),
+            IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart))
           ],
         ),
         drawer: drawer
@@ -80,7 +84,7 @@ class _HomeState extends State<Home> {
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: <Widget>[
-                    DrawerHeader(
+                    const DrawerHeader(
                       decoration: BoxDecoration(
                         color: Colors.orange,
                         // image: DecorationImage(
@@ -99,8 +103,9 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     ListTile(
-                      leading: Icon(Icons.shopping_cart, color: Colors.orange),
-                      title: Text(
+                      leading:
+                          const Icon(Icons.shopping_cart, color: Colors.orange),
+                      title: const Text(
                         "Quản lý sản phẩm",
                         style: TextStyle(fontSize: 18),
                       ),
@@ -108,22 +113,25 @@ class _HomeState extends State<Home> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ProductManager()));
+                                builder: (context) => const ProductManager()));
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.people, color: Colors.orange),
-                      title: Text(
-                        "Quản lý thành viên",
+                      leading: const Icon(Icons.people, color: Colors.orange),
+                      title: const Text(
+                        "Quản lý đơn hàng",
                         style: TextStyle(fontSize: 18),
                       ),
                       onTap: () {
-                        // Handle the tap event
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const OderManager()));
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.category, color: Colors.orange),
-                      title: Text(
+                      leading: const Icon(Icons.category, color: Colors.orange),
+                      title: const Text(
                         "Quản lý thể loại",
                         style: TextStyle(fontSize: 18),
                       ),
@@ -131,12 +139,12 @@ class _HomeState extends State<Home> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => CategoryManger()));
+                                builder: (context) => const CategoryManger()));
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.category, color: Colors.orange),
-                      title: Text(
+                      leading: const Icon(Icons.category, color: Colors.orange),
+                      title: const Text(
                         "Quản lý đánh giá nhận xét",
                         style: TextStyle(fontSize: 18),
                       ),
@@ -144,28 +152,7 @@ class _HomeState extends State<Home> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => RateManager()));
-                      },
-                    ),
-                    Divider(),
-                    ListTile(
-                      leading: Icon(Icons.settings, color: Colors.orange),
-                      title: Text(
-                        "Cài đặt",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {
-                        // Handle the tap event
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.help, color: Colors.orange),
-                      title: Text(
-                        "Trợ giúp",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {
-                        // Handle the tap event
+                                builder: (context) => const RateManager()));
                       },
                     ),
                   ],
@@ -176,13 +163,13 @@ class _HomeState extends State<Home> {
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.all(8.0),
+                margin: const EdgeInsets.all(8.0),
                 height: 200.0,
                 decoration: BoxDecoration(
                   color: Colors.blue,
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: Center(
+                child: const Center(
                   child: Text(
                     'Khuyến Mãi Lớn Hè 2024 - Giảm Giá Lên Đến 50%!',
                     style: TextStyle(color: Colors.white, fontSize: 20.0),
@@ -227,7 +214,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
               products.isEmpty
-                  ? Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: GridView.builder(
