@@ -1,24 +1,26 @@
 import 'package:bookstore/Views/LoginScreen.dart';
+import 'package:bookstore/Views/ResetPassword.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class VerificationScreen extends StatefulWidget {
+class Verificationresetpassword extends StatefulWidget {
   final String email;
   final String password;
-  const VerificationScreen(
+  const Verificationresetpassword(
       {super.key, required this.email, required this.password});
 
   @override
-  _VerificationScreenState createState() => _VerificationScreenState();
+  State<Verificationresetpassword> createState() =>
+      _VerificationresetpasswordState();
 }
 
-class _VerificationScreenState extends State<VerificationScreen> {
+class _VerificationresetpasswordState extends State<Verificationresetpassword> {
   bool isEmailVerified = false;
   Future<void> checkregister() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.10/register.php'),
+        Uri.parse('http://192.168.1.10/resetpassword.php'),
         body: {
           'email': widget.email,
           'password': widget.password,
@@ -54,7 +56,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
         if (user!.emailVerified) {
           setState(() {
             isEmailVerified = true;
-            checkregister();
           });
         } else {
           showDialog(
@@ -87,9 +88,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+   
+
     if (isEmailVerified) {
       deleteAccount();
-      return Loginscreen();
+      
+      return Resetpassword(
+        email: widget.email,
+      );
     } else {
       return Scaffold(
         body: Center(

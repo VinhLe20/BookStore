@@ -12,7 +12,7 @@ class CategoryAdd extends StatefulWidget {
 class _CategoryAddState extends State<CategoryAdd> {
   var tentl = TextEditingController();
   Future addCategory(String name) async {
-    http.post(Uri.parse('http://192.168.1.9:8012/flutter/addCategory.php'),
+    http.post(Uri.parse('http://192.168.1.10/addCategory.php'),
         body: {'name': name});
   }
 

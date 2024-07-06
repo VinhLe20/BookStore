@@ -48,7 +48,7 @@ class _ProductAddState extends State<ProductAdd> {
 
   Future loadCategories() async {
     final uri =
-        Uri.parse('http://192.168.1.9:8012/flutter/getdataCategory.php');
+        Uri.parse('http://192.168.1.10/getdataCategory.php');
     var response = await http.get(uri);
     return json.decode(response.body);
   }

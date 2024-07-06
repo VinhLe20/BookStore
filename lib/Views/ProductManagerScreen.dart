@@ -59,10 +59,10 @@ class _ProductManagerState extends State<ProductManager> {
                         children: [
                           Container(
                             padding: EdgeInsets.all(10.0),
-                            width: 100,
+                            width: 120,
                             height: 170,
                             child: Image.network(
-                              "http://192.168.1.9:8012/flutter/uploads/${products[index]['image']}",
+                              "http://192.168.1.10/uploads/${products[index]['image']}",
                               fit: BoxFit.cover,
                             ),
                           ),
