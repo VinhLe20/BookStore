@@ -1,7 +1,7 @@
-
 import 'dart:convert';
 
-
+import 'package:bookstore/Model/user.dart';
+import 'package:bookstore/Views/ForgotPassword.dart';
 import 'package:bookstore/Views/SignupScreen.dart';
 
 import 'package:bookstore/Views/WelcomeScreen.dart';
@@ -22,7 +22,7 @@ class _LoginscreenState extends State<Loginscreen> {
   String _passwordError = '';
 
   Future<http.Response> GetUser() async {
-    Uri uri = Uri.parse('http://192.168.1.12/getuser.php');
+    Uri uri = Uri.parse('http://192.168.1.10/getuser.php');
     var response = await http.get(uri);
     return response;
   }
@@ -31,7 +31,7 @@ class _LoginscreenState extends State<Loginscreen> {
   Future<void> checkLogin() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.4/login.php'),
+        Uri.parse('http://192.168.1.10/login.php'),
         body: {
           'email': _usercontroller.text,
           'password': _passwordcontroller.text,
@@ -95,11 +95,23 @@ class _LoginscreenState extends State<Loginscreen> {
     });
   }
 
+  Future<void> getUserID(String email) async {
+    try {
+      String id = await User.loadid(_usercontroller.text);
+      User.id = id;
+      print('id: ${User.id}');
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   final _usercontroller = TextEditingController();
   final _passwordcontroller = TextEditingController();
   bool _isPasswordVisible = false;
   @override
   Widget build(BuildContext context) {
+    getUserID(_usercontroller.text);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -196,7 +208,15 @@ class _LoginscreenState extends State<Loginscreen> {
                             color: Colors.red,
                             fontWeight: FontWeight.bold),
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Forgotpassword(
+                                      email: _usercontroller.text,
+                                      password: _passwordcontroller.text,
+                                    )));
+                      },
                     ),
                   ),
                   const SizedBox(
@@ -208,7 +228,6 @@ class _LoginscreenState extends State<Loginscreen> {
                       validateEmail();
                       validatePassword();
                       checkLogin();
-                      ;
                     },
                     style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red.shade500,

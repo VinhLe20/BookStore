@@ -1,5 +1,5 @@
 import 'package:bookstore/Views/HomeScreen.dart';
-import 'package:bookstore/Profile.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -21,7 +21,7 @@ class _IndexState extends State<Index> {
 
   @override
   Widget build(BuildContext context) {
-    List _widgetOptions = [Home(), Profile()];
+    List _widgetOptions = [Home()];
     return Scaffold(
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
