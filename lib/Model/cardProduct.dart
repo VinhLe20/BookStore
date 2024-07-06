@@ -10,13 +10,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 class CardProduct extends StatelessWidget {
   CardProduct({super.key, required this.product});
   var product;
-  Future addCart(String oder_id, String product_id, String product_name,
-      String quantity, String price) async {
-
+  Future addCart(String oder_id, String product_id, String quantity) async {
     final uri = Uri.parse('http://192.168.1.10/addCartDetail.php');
 
     http.post(uri, body: {
-      'oder_id': oder_id,
+      'cart_id': oder_id,
       'product_id': product_id,
       'quantity': quantity,
     });
@@ -28,11 +26,10 @@ class CardProduct extends StatelessWidget {
     final uri = Uri.parse('http://192.168.1.10/getCartDetail.php');
     var response = await http.get(uri);
     var data = json.decode(response.body);
-    var cart = data.where((item) => item['order_id'] == User.order_id).toList();
+    var cart = data.where((item) => item['cart_id'] == User.order_id).toList();
     var product =
         cart.where((item) => item['product_id'] == product_id).toList();
     return product.isNotEmpty;
-
   }
 
   @override
@@ -60,9 +57,7 @@ class CardProduct extends StatelessWidget {
               alignment: Alignment.center,
               width: double.infinity,
               child: Image.network(
-
                 'http://192.168.1.10/uploads/${product['image']}',
-
                 fit: BoxFit.cover,
               ),
             ),
@@ -106,8 +101,7 @@ class CardProduct extends StatelessWidget {
                 if (await loadCart(product['id'])) {
                   print("da co san pham");
                 } else {
-                  addCart('${User.order_id}', product['id'], product['name'],
-                      '1', product['price']);
+                  addCart('${User.order_id}', product['id'], '1');
                 }
               },
               child: const Text(

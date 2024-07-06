@@ -1,4 +1,6 @@
+import 'package:bookstore/Views/Category.dart';
 import 'package:bookstore/Views/HomeScreen.dart';
+import 'package:bookstore/Views/ProfileScreen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -21,7 +23,7 @@ class _IndexState extends State<Index> {
 
   @override
   Widget build(BuildContext context) {
-    List _widgetOptions = [Home()];
+    List _widgetOptions = [Home(), Category(), Profile()];
     return Scaffold(
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -33,8 +35,8 @@ class _IndexState extends State<Index> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
+            icon: Icon(Icons.category),
+            label: 'Category',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.school),

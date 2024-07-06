@@ -34,7 +34,6 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 
   Future<List> loadDataComment() async {
-
     final uri = Uri.parse('http://192.168.1.10/getdataComment.php');
     var response = await http.get(uri);
     var data = json.decode(response.body).toList();
@@ -72,17 +71,13 @@ class _ProductDetailState extends State<ProductDetail> {
     }
   }
 
-  Future addCart(String oder_id, String product_id, String product_name,
-      String quantity, String price) async {
-
+  Future addCart(String oder_id, String product_id, String quantity) async {
     final uri = Uri.parse('http://192.168.1.10/addCart.php');
 
     http.post(uri, body: {
-      'oder_id': oder_id,
+      'cart_id': oder_id,
       'product_id': product_id,
-      'product_name': product_name,
       'quantity': quantity,
-      'price': price
     });
     print('thêm');
   }
@@ -91,7 +86,7 @@ class _ProductDetailState extends State<ProductDetail> {
       String oder_id, String product_id, String quantity) async {
     final uri = Uri.parse('http://192.168.1.10/addCartDetail.php');
     http.post(uri, body: {
-      'oder_id': oder_id,
+      'cart_id': oder_id,
       'product_id': product_id,
       'quantity': quantity,
     });
@@ -102,7 +97,7 @@ class _ProductDetailState extends State<ProductDetail> {
     final uri = Uri.parse('http://192.168.1.10/getCartDetail.php');
     var response = await http.get(uri);
     var data = json.decode(response.body);
-    var cart = data.where((item) => item['order_id'] == User.order_id).toList();
+    var cart = data.where((item) => item['cart_id'] == User.order_id).toList();
     var product =
         cart.where((item) => item['product_id'] == product_id).toList();
     return product.isNotEmpty;
@@ -126,9 +121,7 @@ class _ProductDetailState extends State<ProductDetail> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.network(
-
               'http://192.168.1.10/uploads/${widget.product['image']}',
-
               width: double.infinity,
               height: 200,
               fit: BoxFit.contain,
@@ -158,7 +151,14 @@ class _ProductDetailState extends State<ProductDetail> {
                   Text(
                     'Tác giả: ${widget.product["author"]}',
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    'Thể loại: ${widget.product["category_name"]}',
+                    style: const TextStyle(
+                      fontSize: 18,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -326,8 +326,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   if (await loadCart(widget.product['id'])) {
                     print("da co san pham");
                   } else {
-                    addCart('${User.order_id}', widget.product['id'],
-                        widget.product['name'], '1', widget.product['price']);
+                    addCart('${User.order_id}', widget.product['id'], '1');
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -341,15 +340,17 @@ class _ProductDetailState extends State<ProductDetail> {
             const SizedBox(width: 16),
             Expanded(
               child: ElevatedButton(
-
                 onPressed: () async {
-                  Navigator.pushReplacement(
+                  int total = int.parse(widget.product['price']) * _quantity;
+                  Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              Payment(products: widget.product)));
+                          builder: (context) => Payment(
+                                quantity: _quantity.toString(),
+                                products: widget.product,
+                                total: total.toString(),
+                              )));
                 },
-
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   padding: const EdgeInsets.symmetric(vertical: 16.0),

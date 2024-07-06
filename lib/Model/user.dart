@@ -8,6 +8,7 @@ class User {
   late String password;
   static String id = '';
   static String order_id = '';
+  static String role = '';
 
   User({required this.email, required this.password});
 
@@ -20,6 +21,26 @@ class User {
         var user = data.where((item) => item['email'] == email).toList();
         if (user.isNotEmpty) {
           return user[0]['id'];
+        } else {
+          throw Exception('User not found');
+        }
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
+  static Future<String> loadrole(String email) async {
+    final uri = Uri.parse('http://192.168.1.10/getuser.php');
+    try {
+      var response = await http.get(uri);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body) as List;
+        var user = data.where((item) => item['email'] == email).toList();
+        if (user.isNotEmpty) {
+          return user[0]['role'];
         } else {
           throw Exception('User not found');
         }

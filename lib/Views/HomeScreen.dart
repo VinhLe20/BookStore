@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
       mota: '',
       category: '',
       author: '');
-  bool drawer = true;
+
   List products = [];
   List productsell = [];
   @override
@@ -58,7 +58,6 @@ class _HomeState extends State<Home> {
   }
 
   Future loadSellProduct() async {
-
     final uri = Uri.parse('http://192.168.1.10/getdataProductSell.php');
 
     var response = await http.get(uri);
@@ -120,7 +119,6 @@ class _HomeState extends State<Home> {
                       MaterialPageRoute(
                           builder: (context) => const SearchPage()));
                 },
-
                 icon: Icon(Icons.search)),
             IconButton(
                 onPressed: () {
@@ -128,119 +126,8 @@ class _HomeState extends State<Home> {
                       context, MaterialPageRoute(builder: (context) => Cart()));
                 },
                 icon: Icon(Icons.shopping_cart))
-
           ],
         ),
-        drawer: drawer
-            ? Drawer(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: <Widget>[
-                    const DrawerHeader(
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        // image: DecorationImage(
-                        //   fit: BoxFit.cover,
-                        //   image: AssetImage(
-                        //       'assets/header_background.jpg'), // Add a background image if you want
-                        // ),
-                      ),
-                      child: Text(
-                        "Quản lý cửa hàng",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-
-                      leading: Icon(Icons.shopping_cart, color: Colors.orange),
-
-                      title: const Text(
-                        "Quản lý sản phẩm",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ProductManager()));
-                      },
-                    ),
-                    ListTile(
-
-                      leading: Icon(Icons.people, color: Colors.orange),
-                      title: const Text(
-                        "Quản lý thành viên",
-
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const OderManager()));
-                      },
-                    ),
-                    ListTile(
-
-                      leading: Icon(Icons.category, color: Colors.orange),
-
-                      title: const Text(
-                        "Quản lý thể loại",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CategoryManger()));
-                      },
-                    ),
-                    ListTile(
-
-                      leading: Icon(Icons.category, color: Colors.orange),
-
-                      title: const Text(
-                        "Quản lý đánh giá nhận xét",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-
-                                builder: (context) => RateManager()));
-                      },
-                    ),
-                    Divider(),
-                    ListTile(
-                      leading: Icon(Icons.settings, color: Colors.orange),
-                      title: const Text(
-                        "Cài đặt",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {
-                        // Handle the tap event
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.help, color: Colors.orange),
-                      title: const Text(
-                        "Trợ giúp",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      onTap: () {
-                        // Handle the tap event
-
-                      },
-                    ),
-                  ],
-                ),
-              )
-            : null,
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -296,9 +183,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
               products.isEmpty
-
                   ? Text('${products.length}')
-
                   : Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: GridView.builder(
