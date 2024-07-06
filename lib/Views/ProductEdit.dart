@@ -49,8 +49,7 @@ class _ProductEditState extends State<ProductEdit> {
   }
 
   Future loadCategories() async {
-    final uri =
-        Uri.parse('http://192.168.1.9:8012/flutter/getdataCategory.php');
+    final uri = Uri.parse('http://192.168.1.10/getdataCategory.php');
     var response = await http.get(uri);
     return json.decode(response.body);
   }
@@ -105,7 +104,7 @@ class _ProductEditState extends State<ProductEdit> {
                   ),
                   child: _image == null
                       ? Image.network(
-                          "http://192.168.1.9:8012/flutter/uploads/${widget.pro['image']}")
+                          "http://192.168.1.4/uploads/${widget.pro['image']}")
                       : Image.file(File(_image!.path), fit: BoxFit.cover),
                 )),
             Padding(

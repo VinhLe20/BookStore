@@ -1,5 +1,5 @@
 import 'package:bookstore/Views/LoginScreen.dart';
-import 'package:bookstore/Profile.dart';
+
 import 'package:bookstore/Views/SignupScreen.dart';
 import 'package:flutter/material.dart';
 

@@ -15,14 +15,13 @@ class CategoryManger extends StatefulWidget {
 
 class _CategoryMangerState extends State<CategoryManger> {
   Future loadCategories() async {
-    final uri =
-        Uri.parse('http://192.168.1.9:8012/flutter/getdataCategory.php');
+    final uri = Uri.parse('http://192.168.1.10/getdataCategory.php');
     var response = await http.get(uri);
     return json.decode(response.body);
   }
 
   Future deleteCategories(String id) async {
-    final uri = Uri.parse('http://192.168.1.9:8012/flutter/deleteCategory.php');
+    final uri = Uri.parse('http://192.168.1.10/deleteCategory.php');
     http.post(uri, body: {'id': id});
   }
 

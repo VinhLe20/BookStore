@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:bookstore/Model/user.dart';
+import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Views/ProductDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -8,23 +12,27 @@ class CardProduct extends StatelessWidget {
   var product;
   Future addCart(String oder_id, String product_id, String product_name,
       String quantity, String price) async {
-    final uri = Uri.parse('http://192.168.1.22:8012/flutter/addCart.php');
+
+    final uri = Uri.parse('http://192.168.1.10/addCartDetail.php');
+
     http.post(uri, body: {
       'oder_id': oder_id,
       'product_id': product_id,
-      'product_name': product_name,
       'quantity': quantity,
-      'price': price
     });
-    Fluttertoast.showToast(
-      msg: "Sản phẩm đã được thêm vào giỏ hàng!",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.green,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
+
+    print('them ');
+  }
+
+  Future<bool> loadCart(String product_id) async {
+    final uri = Uri.parse('http://192.168.1.10/getCartDetail.php');
+    var response = await http.get(uri);
+    var data = json.decode(response.body);
+    var cart = data.where((item) => item['order_id'] == User.order_id).toList();
+    var product =
+        cart.where((item) => item['product_id'] == product_id).toList();
+    return product.isNotEmpty;
+
   }
 
   @override
@@ -52,7 +60,9 @@ class CardProduct extends StatelessWidget {
               alignment: Alignment.center,
               width: double.infinity,
               child: Image.network(
-                'http://192.168.1.22:8012/flutter/uploads/${product['image']}',
+
+                'http://192.168.1.10/uploads/${product['image']}',
+
                 fit: BoxFit.cover,
               ),
             ),
@@ -93,8 +103,12 @@ class CardProduct extends StatelessWidget {
           Center(
             child: TextButton(
               onPressed: () async {
-                addCart('1', product['id'], product['name'],
-                    product['quantity'], product['price']);
+                if (await loadCart(product['id'])) {
+                  print("da co san pham");
+                } else {
+                  addCart('${User.order_id}', product['id'], product['name'],
+                      '1', product['price']);
+                }
               },
               child: const Text(
                 'Thêm vào giỏ hàng',

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/index.dart';
 import 'package:bookstore/Views/payment.dart';
 import 'package:flutter/material.dart';
@@ -33,8 +34,8 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 
   Future<List> loadDataComment() async {
-    final uri =
-        Uri.parse('http://192.168.1.22:8012/flutter/getdataComment.php');
+
+    final uri = Uri.parse('http://192.168.1.10/getdataComment.php');
     var response = await http.get(uri);
     var data = json.decode(response.body).toList();
     var filteredData = data
@@ -73,7 +74,9 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Future addCart(String oder_id, String product_id, String product_name,
       String quantity, String price) async {
-    final uri = Uri.parse('http://192.168.1.22:8012/flutter/addCart.php');
+
+    final uri = Uri.parse('http://192.168.1.10/addCart.php');
+
     http.post(uri, body: {
       'oder_id': oder_id,
       'product_id': product_id,
@@ -81,6 +84,28 @@ class _ProductDetailState extends State<ProductDetail> {
       'quantity': quantity,
       'price': price
     });
+    print('thêm');
+  }
+
+  Future addCartDetail(
+      String oder_id, String product_id, String quantity) async {
+    final uri = Uri.parse('http://192.168.1.10/addCartDetail.php');
+    http.post(uri, body: {
+      'oder_id': oder_id,
+      'product_id': product_id,
+      'quantity': quantity,
+    });
+    print('them ');
+  }
+
+  Future<bool> loadCart(String product_id) async {
+    final uri = Uri.parse('http://192.168.1.10/getCartDetail.php');
+    var response = await http.get(uri);
+    var data = json.decode(response.body);
+    var cart = data.where((item) => item['order_id'] == User.order_id).toList();
+    var product =
+        cart.where((item) => item['product_id'] == product_id).toList();
+    return product.isNotEmpty;
   }
 
   @override
@@ -101,7 +126,9 @@ class _ProductDetailState extends State<ProductDetail> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.network(
-              'http://192.168.1.22:8012/flutter/uploads/${widget.product['image']}',
+
+              'http://192.168.1.10/uploads/${widget.product['image']}',
+
               width: double.infinity,
               height: 200,
               fit: BoxFit.contain,
@@ -295,7 +322,14 @@ class _ProductDetailState extends State<ProductDetail> {
           children: [
             Expanded(
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  if (await loadCart(widget.product['id'])) {
+                    print("da co san pham");
+                  } else {
+                    addCart('${User.order_id}', widget.product['id'],
+                        widget.product['name'], '1', widget.product['price']);
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -307,6 +341,7 @@ class _ProductDetailState extends State<ProductDetail> {
             const SizedBox(width: 16),
             Expanded(
               child: ElevatedButton(
+
                 onPressed: () async {
                   Navigator.pushReplacement(
                       context,
@@ -314,6 +349,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           builder: (context) =>
                               Payment(products: widget.product)));
                 },
+
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   padding: const EdgeInsets.symmetric(vertical: 16.0),

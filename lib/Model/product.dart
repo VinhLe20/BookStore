@@ -22,15 +22,18 @@ class Product {
   List<Product> products = [];
 
   Future loadProduct() async {
-    final uri =
-        Uri.parse('http://192.168.1.22:8012/flutter/getDataProduct.php');
+
+    final uri = Uri.parse('http://192.168.1.10/getDataProduct.php');
+
     var response = await http.get(uri);
     return json.decode(response.body);
   }
 
   Future productAdd(Product pro) async {
     print(pro.category);
-    final uri = Uri.parse('http://192.168.1.22:8012/flutter/addProduct.php');
+
+    final uri = Uri.parse('http://192.168.1.10/addProduct.php');
+
     var request = http.MultipartRequest('POST', uri);
     request.fields['ten'] = pro.name;
     request.fields['soluong'] = pro.quantity;
@@ -53,7 +56,9 @@ class Product {
   }
 
   Future EditProduct(Product pro) async {
-    final uri = Uri.parse('http://192.168.1.22:8012/flutter/updateProduct.php');
+
+    final uri = Uri.parse('http://192.168.1.10/updateProduct.php');
+
     var request = http.MultipartRequest('POST', uri);
     request.fields['id'] = pro.id;
     request.fields['ten'] = pro.name;
@@ -76,7 +81,9 @@ class Product {
   }
 
   Future DeleteProduct(Product pro) async {
-    final uri = Uri.parse('http://192.168.1.22:8012/flutter/deleteProduct.php');
+
+    final uri = Uri.parse('http://192.168.1.10/deleteProduct.php');
+
     http.post(uri, body: {'id': pro.id});
   }
 }
