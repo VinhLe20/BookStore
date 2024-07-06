@@ -1,77 +1,77 @@
 import 'dart:convert';
-
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/index.dart';
+import 'package:bookstore/Views/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Cart extends StatefulWidget {
-  const Cart({Key? key});
+  const Cart({Key? key}) : super(key: key);
 
   @override
   State<Cart> createState() => _CartState();
 }
 
 class _CartState extends State<Cart> {
+  List cart = [];
+  int total = 0;
+
   Future<List<dynamic>> loadCart() async {
     final uri = Uri.parse('http://192.168.1.10/getCartDetail.php');
     var response = await http.get(uri);
     var data = json.decode(response.body);
-    return data.where((item) => item['order_id'] == User.order_id).toList();
+    List filteredData =
+        data.where((item) => item['cart_id'] == User.order_id).toList();
+    calculateTotal(filteredData);
+    return filteredData;
   }
 
-  Future updatequantity(String productId, String quantity) async {
+  void calculateTotal(List products) {
+    int newTotal = 0;
+    for (var product in products) {
+      newTotal +=
+          int.parse(product['cart_quantity']) * int.parse(product['price']);
+    }
+    setState(() {
+      total = newTotal;
+    });
+  }
+
+  Future updateQuantity(String productId, String quantity) async {
     final uri = Uri.parse('http://192.168.1.10/updatequantity.php');
-    var response = await http.post(uri, body: {
+    await http.post(uri, body: {
       'id': User.order_id,
       'product_id': productId,
       'quantity': quantity
     });
+    loadCart();
   }
 
   void increaseQuantity(String productId, String quantity) {
-    quantity = (int.parse(quantity) + 1).toString();
-    updatequantity(productId, quantity);
-
-    setState(() {
-      loadCart();
-    });
+    String newQuantity = (int.parse(quantity) + 1).toString();
+    updateQuantity(productId, newQuantity);
   }
 
   void decreaseQuantity(String productId, String quantity) {
     int currentQuantity = int.parse(quantity);
     if (currentQuantity > 1) {
       String newQuantity = (currentQuantity - 1).toString();
-      updatequantity(productId, newQuantity);
-
-      setState(() {
-        loadCart();
-      });
+      updateQuantity(productId, newQuantity);
     }
   }
 
-  Future deleteproduct(String productid) async {
+  Future deleteProduct(String productId) async {
     final uri = Uri.parse('http://192.168.1.10/deleteproducts.php');
     final response = await http
-        .post(uri, body: {'product_id': productid, 'order_id': User.order_id});
+        .post(uri, body: {'product_id': productId, 'cart_id': User.order_id});
 
     if (response.statusCode == 200) {
-      // Xóa thành công
       print('Sản phẩm đã được xóa thành công');
-      setState(() {
-        loadCart();
-      });
+      loadCart();
     } else {
-      // Xóa thất bại
       print('Xóa sản phẩm không thành công');
     }
   }
-
-  void handlePayment() {
-    // Xử lý khi người dùng nhấn nút thanh toán
-    print("Thanh toán");
-  }
-  //tổng tiền
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +81,7 @@ class _CartState extends State<Cart> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(
+            Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (context) => Index()));
           },
         ),
@@ -90,128 +90,135 @@ class _CartState extends State<Cart> {
         future: loadCart(),
         builder: (context, snapshot) {
           if (snapshot.hasError) print(snapshot.error);
-          return snapshot.hasData
-              ? ListView.builder(
-                  itemCount: snapshot.data?.length,
-                  itemBuilder: (context, index) {
-                    List? products = snapshot.data;
-                    return Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(10.0),
-                          width: 120,
-                          height: 170,
-                          child: Image.network(
-                            "http://192.168.1.10/uploads/${products?[index]['image']}",
-                            fit: BoxFit.cover,
+          if (snapshot.hasData) {
+            List? products = snapshot.data;
+            cart = products!;
+
+            return ListView.builder(
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                return Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(10.0),
+                      width: 120,
+                      height: 170,
+                      child: Image.network(
+                        "http://192.168.1.10/uploads/${products[index]['image']}",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(5.0),
+                      height: 170,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Tên sản phẩm: ${products[index]['name']}",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(5.0),
-                          height: 170,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
+                          const SizedBox(height: 8),
+                          Text(
+                            'Tác giả: ${products[index]['author']}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          Row(
                             children: [
                               Text(
-                                "Tên sản phẩm: ${products?[index]['name']}",
+                                'Đơn giá: ${products[index]["price"]} đ',
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 14,
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Tác giả: ${products?[index]['author']}',
-                                style: const TextStyle(
+                              IconButton(
+                                onPressed: () {
+                                  deleteProduct(products[index]['product_id']);
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Text(
+                                'Số lượng: ',
+                                style: TextStyle(
                                   fontSize: 14,
                                 ),
                               ),
                               Row(
                                 children: [
+                                  IconButton(
+                                    icon: Icon(Icons.remove),
+                                    onPressed: () {
+                                      decreaseQuantity(
+                                          products[index]['product_id'],
+                                          products[index]["cart_quantity"]);
+                                    },
+                                  ),
                                   Text(
-                                    'Đơn giá: ${products?[index]["price"]} đ',
+                                    products[index]["cart_quantity"].toString(),
                                     style: const TextStyle(
                                       fontSize: 14,
                                     ),
                                   ),
                                   IconButton(
+                                    icon: Icon(Icons.add),
                                     onPressed: () {
-                                      deleteproduct(
-                                          products?[index]['product_id']);
-                                      print(products?[index]['product_id']);
-                                      print(User.order_id);
-                                      print("Delete button pressed");
+                                      increaseQuantity(
+                                          products[index]['product_id'],
+                                          products[index]["cart_quantity"]);
                                     },
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text(
-                                    'Số lượng: ',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.remove),
-                                        onPressed: () {
-                                          decreaseQuantity(
-                                              products?[index]['product_id'],
-                                              products?[index]
-                                                  ["cart_quantity"]);
-                                        },
-                                      ),
-                                      Text(
-                                        products![index]["cart_quantity"]
-                                            .toString(),
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      IconButton(
-                                          icon: Icon(Icons.add),
-                                          onPressed: () {
-                                            increaseQuantity(
-                                                products[index]['product_id'],
-                                                products[index]
-                                                    ["cart_quantity"]);
-                                          }),
-                                    ],
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                )
-              : CircularProgressIndicator();
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            return CircularProgressIndicator();
+          }
         },
       ),
       bottomNavigationBar: Container(
         padding: EdgeInsets.all(16),
         child: ElevatedButton(
-          onPressed: handlePayment,
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Payment(
+                          quantity: '',
+                          products: cart,
+                          total: total.toString(),
+                        )));
+          },
           style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.shade500,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: const BorderSide(color: Colors.black, width: 1)),
-                  minimumSize: Size(double.infinity, 70))
-              .copyWith(
+            backgroundColor: const Color.fromARGB(255, 144, 84, 80),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: const BorderSide(color: Colors.black, width: 1),
+            ),
+            minimumSize: Size(double.infinity, 70),
+          ).copyWith(
             backgroundColor: WidgetStateColor.resolveWith(
               (Set<WidgetState> states) {
                 if (states.contains(WidgetState.pressed)) {
@@ -230,7 +237,7 @@ class _CartState extends State<Cart> {
               },
             ),
           ),
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
@@ -241,12 +248,12 @@ class _CartState extends State<Cart> {
                 ),
               ),
               Text(
-                'Tổng tiền: đ',
+                'Tổng tiền: ${total} đ',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
-              )
+              ),
             ],
           ),
         ),

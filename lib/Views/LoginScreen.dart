@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bookstore/Model/user.dart';
+import 'package:bookstore/Views/Admin.dart';
 import 'package:bookstore/Views/ForgotPassword.dart';
 import 'package:bookstore/Views/SignupScreen.dart';
 
@@ -42,11 +43,19 @@ class _LoginscreenState extends State<Loginscreen> {
         print(response.statusCode);
         Map<String, dynamic> data = jsonDecode(response.body);
         if (data['success'] == true) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => Index()),
-            (Route<dynamic> route) => false,
-          );
+          print(User.role);
+          if (User.role == 'user') {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Index()),
+              (Route<dynamic> route) => false,
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Admin()),
+            );
+          }
           print('Login successful!');
         } else {
           print('Login failed: ${data['message']}');
@@ -98,8 +107,11 @@ class _LoginscreenState extends State<Loginscreen> {
   Future<void> getUserID(String email) async {
     try {
       String id = await User.loadid(_usercontroller.text);
+      String role = await User.loadrole(_usercontroller.text);
       User.id = id;
+      User.role = role;
       print('id: ${User.id}');
+      print(User.role);
     } catch (e) {
       print('Error: $e');
     }
