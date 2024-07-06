@@ -5,18 +5,22 @@ import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Views/ProductDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CardProduct extends StatelessWidget {
   CardProduct({super.key, required this.product});
   var product;
   Future addCart(String oder_id, String product_id, String product_name,
       String quantity, String price) async {
+
     final uri = Uri.parse('http://192.168.1.10/addCartDetail.php');
+
     http.post(uri, body: {
       'oder_id': oder_id,
       'product_id': product_id,
       'quantity': quantity,
     });
+
     print('them ');
   }
 
@@ -28,6 +32,7 @@ class CardProduct extends StatelessWidget {
     var product =
         cart.where((item) => item['product_id'] == product_id).toList();
     return product.isNotEmpty;
+
   }
 
   @override
@@ -55,7 +60,9 @@ class CardProduct extends StatelessWidget {
               alignment: Alignment.center,
               width: double.infinity,
               child: Image.network(
+
                 'http://192.168.1.10/uploads/${product['image']}',
+
                 fit: BoxFit.cover,
               ),
             ),

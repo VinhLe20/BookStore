@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bookstore/Model/product.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
@@ -62,7 +63,6 @@ class _ProductEditState extends State<ProductEdit> {
 
   @override
   Widget build(BuildContext context) {
-    print(selectedCategory);
     tensp.text = widget.pro['name'];
     soluongsp.text = widget.pro['quantity'];
     dongiasp.text = widget.pro['price'];
@@ -70,13 +70,15 @@ class _ProductEditState extends State<ProductEdit> {
     tacgia.text = widget.pro['author'];
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chỉnh sửa phẩm'),
+        title: const Text('Chỉnh sửa phẩm'),
         leading: IconButton(
             onPressed: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => ProductManager()));
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ProductManager()));
             },
-            icon: Icon(Icons.arrow_back)),
+            icon: const Icon(Icons.arrow_back)),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -96,7 +98,7 @@ class _ProductEditState extends State<ProductEdit> {
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 2,
                         blurRadius: 5,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
@@ -106,10 +108,10 @@ class _ProductEditState extends State<ProductEdit> {
                       : Image.file(File(_image!.path), fit: BoxFit.cover),
                 )),
             Padding(
-              padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+              padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
               child: TextField(
                 controller: tensp,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Tên sản phẩm',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -117,10 +119,10 @@ class _ProductEditState extends State<ProductEdit> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: TextField(
                 controller: tacgia,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Tác giả',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -128,9 +130,9 @@ class _ProductEditState extends State<ProductEdit> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: DropdownButtonFormField<String>(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Thể loại sản phẩm',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -150,10 +152,10 @@ class _ProductEditState extends State<ProductEdit> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: TextField(
                 controller: soluongsp,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Số lượng sản phẩm',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -161,10 +163,10 @@ class _ProductEditState extends State<ProductEdit> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: TextField(
                 controller: dongiasp,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Đơn giá sản phẩm',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -172,10 +174,10 @@ class _ProductEditState extends State<ProductEdit> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: TextField(
                 controller: motasp,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Mô tả sản phẩm',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -196,23 +198,29 @@ class _ProductEditState extends State<ProductEdit> {
                     author: tacgia.text);
                 try {
                   await product.EditProduct(edit);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Sản phẩm đã được cập nhật'),
-                  ));
+                  Fluttertoast.showToast(
+                    msg: "Sản phẩm đã được cập nhật",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ProductManager()));
+                          builder: (context) => const ProductManager()));
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Có lỗi xảy ra: $e'),
                   ));
                 }
               },
-              child: Text('Cập nhật sản phẩm'),
               style: ElevatedButton.styleFrom(
-                textStyle: TextStyle(fontSize: 16),
+                textStyle: const TextStyle(fontSize: 16),
               ),
+              child: const Text('Cập nhật sản phẩm'),
             ))
           ],
         ),

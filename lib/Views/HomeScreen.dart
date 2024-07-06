@@ -4,6 +4,7 @@ import 'package:bookstore/Model/product.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/Cart.dart';
 import 'package:bookstore/Views/CategoryManager.dart';
+import 'package:bookstore/Views/OderManager.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:bookstore/Views/RateManager.dart';
 import 'package:bookstore/Views/SearchScreen.dart';
@@ -57,7 +58,9 @@ class _HomeState extends State<Home> {
   }
 
   Future loadSellProduct() async {
+
     final uri = Uri.parse('http://192.168.1.10/getdataProductSell.php');
+
     var response = await http.get(uri);
     return json.decode(response.body);
   }
@@ -112,9 +115,12 @@ class _HomeState extends State<Home> {
           actions: [
             IconButton(
                 onPressed: () {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => SearchPage()));
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SearchPage()));
                 },
+
                 icon: Icon(Icons.search)),
             IconButton(
                 onPressed: () {
@@ -122,6 +128,7 @@ class _HomeState extends State<Home> {
                       context, MaterialPageRoute(builder: (context) => Cart()));
                 },
                 icon: Icon(Icons.shopping_cart))
+
           ],
         ),
         drawer: drawer
@@ -148,7 +155,9 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     ListTile(
+
                       leading: Icon(Icons.shopping_cart, color: Colors.orange),
+
                       title: const Text(
                         "Quản lý sản phẩm",
                         style: TextStyle(fontSize: 18),
@@ -157,21 +166,28 @@ class _HomeState extends State<Home> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ProductManager()));
+                                builder: (context) => const ProductManager()));
                       },
                     ),
                     ListTile(
+
                       leading: Icon(Icons.people, color: Colors.orange),
                       title: const Text(
                         "Quản lý thành viên",
+
                         style: TextStyle(fontSize: 18),
                       ),
                       onTap: () {
-                        // Handle the tap event
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const OderManager()));
                       },
                     ),
                     ListTile(
+
                       leading: Icon(Icons.category, color: Colors.orange),
+
                       title: const Text(
                         "Quản lý thể loại",
                         style: TextStyle(fontSize: 18),
@@ -180,11 +196,13 @@ class _HomeState extends State<Home> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => CategoryManger()));
+                                builder: (context) => const CategoryManger()));
                       },
                     ),
                     ListTile(
+
                       leading: Icon(Icons.category, color: Colors.orange),
+
                       title: const Text(
                         "Quản lý đánh giá nhận xét",
                         style: TextStyle(fontSize: 18),
@@ -193,6 +211,7 @@ class _HomeState extends State<Home> {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
+
                                 builder: (context) => RateManager()));
                       },
                     ),
@@ -215,6 +234,7 @@ class _HomeState extends State<Home> {
                       ),
                       onTap: () {
                         // Handle the tap event
+
                       },
                     ),
                   ],
@@ -225,7 +245,7 @@ class _HomeState extends State<Home> {
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.all(8.0),
+                margin: const EdgeInsets.all(8.0),
                 height: 200.0,
                 decoration: BoxDecoration(
                   color: Colors.blue,
@@ -276,7 +296,9 @@ class _HomeState extends State<Home> {
                 ),
               ),
               products.isEmpty
+
                   ? Text('${products.length}')
+
                   : Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: GridView.builder(

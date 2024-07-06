@@ -1,5 +1,6 @@
 import 'package:bookstore/Views/CategoryManager.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
 class CategoryEdit extends StatefulWidget {
@@ -46,7 +47,26 @@ class _CategoryEditState extends State<CategoryEdit> {
             ),
             ElevatedButton(
               onPressed: () async {
-                updateCategory(widget.theloai['id'], tentl.text);
+                try {
+                  await updateCategory(widget.theloai['id'], tentl.text);
+                  Fluttertoast.showToast(
+                    msg: "Thể loại đã được cập nhật",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CategoryManger()));
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Có lỗi xảy ra: $e'),
+                  ));
+                }
               },
               child: Text('Cập nhật thể loại'),
               style: ElevatedButton.styleFrom(

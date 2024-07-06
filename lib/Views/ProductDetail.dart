@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/index.dart';
+import 'package:bookstore/Views/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -33,6 +34,7 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 
   Future<List> loadDataComment() async {
+
     final uri = Uri.parse('http://192.168.1.10/getdataComment.php');
     var response = await http.get(uri);
     var data = json.decode(response.body).toList();
@@ -72,7 +74,9 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Future addCart(String oder_id, String product_id, String product_name,
       String quantity, String price) async {
+
     final uri = Uri.parse('http://192.168.1.10/addCart.php');
+
     http.post(uri, body: {
       'oder_id': oder_id,
       'product_id': product_id,
@@ -115,14 +119,16 @@ class _ProductDetailState extends State<ProductDetail> {
               Navigator.pushReplacement(
                   context, MaterialPageRoute(builder: (context) => Index()));
             },
-            icon: Icon(Icons.arrow_back)),
+            icon: const Icon(Icons.arrow_back)),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.network(
+
               'http://192.168.1.10/uploads/${widget.product['image']}',
+
               width: double.infinity,
               height: 200,
               fit: BoxFit.contain,
@@ -163,7 +169,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         "${loaddanhgia().toString()} ",
                         style: const TextStyle(fontSize: 16),
                       ),
-                      Icon(
+                      const Icon(
                         Icons.star,
                         color: Colors.amber,
                         size: 20.0,
@@ -177,9 +183,9 @@ class _ProductDetailState extends State<ProductDetail> {
                   const SizedBox(height: 5),
                   Row(
                     children: [
-                      Text(
+                      const Text(
                         "Số lượng",
-                        style: const TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(width: 15),
                       Container(
@@ -241,7 +247,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
@@ -251,7 +257,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     child: comment.length > 0
                         ? ListView.builder(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             itemCount: comment.length,
                             itemBuilder: (context, index) {
                               return Column(
@@ -263,7 +269,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                     children: [
                                       Text(
                                         comment[index]['name'],
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 17,
                                         ),
@@ -273,11 +279,11 @@ class _ProductDetailState extends State<ProductDetail> {
                                           children: [
                                             Text(
                                               comment[index]['rate'],
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 16,
                                               ),
                                             ),
-                                            Icon(
+                                            const Icon(
                                               Icons.star,
                                               color: Colors.amber,
                                               size: 20.0,
@@ -287,18 +293,18 @@ class _ProductDetailState extends State<ProductDetail> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 2),
+                                  const SizedBox(height: 2),
                                   Text(
                                     comment[index]['comment'],
-                                    style: TextStyle(fontSize: 15),
+                                    style: const TextStyle(fontSize: 15),
                                   ),
-                                  Divider(),
-                                  SizedBox(height: 4),
+                                  const Divider(),
+                                  const SizedBox(height: 4),
                                 ],
                               );
                             },
                           )
-                        : Row(
+                        : const Row(
                             children: [
                               Text("Chưa có đánh giá nhận xét"),
                             ],
@@ -335,7 +341,15 @@ class _ProductDetailState extends State<ProductDetail> {
             const SizedBox(width: 16),
             Expanded(
               child: ElevatedButton(
-                onPressed: () async {},
+
+                onPressed: () async {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              Payment(products: widget.product)));
+                },
+
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
