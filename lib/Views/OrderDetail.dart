@@ -13,7 +13,7 @@ class OrderDetail extends StatefulWidget {
 
 class _OrderDetailState extends State<OrderDetail> {
   Future loadOrder() async {
-    final uri = Uri.parse('http://192.168.1.10/getdataOrderDetail.php');
+    final uri = Uri.parse('http://192.168.1.8/getdataOrderDetail.php');
     var response = await http.get(uri);
     var data = json.decode(response.body).toList();
     var filteredData = data

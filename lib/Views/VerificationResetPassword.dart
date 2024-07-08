@@ -20,7 +20,7 @@ class _VerificationresetpasswordState extends State<Verificationresetpassword> {
   Future<void> checkregister() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.10/resetpassword.php'),
+        Uri.parse('http://192.168.1.8/resetpassword.php'),
         body: {
           'email': widget.email,
           'password': widget.password,
