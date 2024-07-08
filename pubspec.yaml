@@ -46,6 +46,7 @@ dependencies:
   
   pin_code_fields: ^8.0.1
   fluttertoast: ^8.2.6
+  syncfusion_flutter_charts: ^26.1.40
 
 
 dev_dependencies:
