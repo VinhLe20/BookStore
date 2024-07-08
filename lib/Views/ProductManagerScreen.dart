@@ -58,7 +58,6 @@ class _ProductManagerState extends State<ProductManager> {
                       return Row(
                         children: [
                           Container(
-
                             padding: EdgeInsets.all(10.0),
                             width: 120,
                             height: 170,

@@ -1,4 +1,5 @@
 import 'package:bookstore/Views/EditProfile.dart';
+
 import 'package:bookstore/Views/ForgotPassword.dart';
 import 'package:bookstore/Views/HomeScreen.dart';
 import 'package:bookstore/Views/LoginScreen.dart';
@@ -37,6 +38,8 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
+
         home: UserManager());
+
   }
 }
