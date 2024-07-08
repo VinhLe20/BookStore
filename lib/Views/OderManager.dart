@@ -23,7 +23,9 @@ class _OderManagerState extends State<OderManager>
 
   Future<List> loadOder() async {
     var result =
-        await http.get(Uri.parse('http://192.168.1.6:8012/getdataOder.php'));
+
+        await http.get(Uri.parse('http://192.168.1.8/getdataOder.php'));
+
     return json.decode(result.body);
   }
 

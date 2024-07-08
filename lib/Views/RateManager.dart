@@ -14,14 +14,18 @@ class RateManager extends StatefulWidget {
 
 class _RateManagerState extends State<RateManager> {
   Future<List> loadDataComment() async {
-    final uri = Uri.parse('http://192.168.1.6:8012/getdataComment.php');
+
+    final uri = Uri.parse('http://192.168.1.8/getdataComment.php');
+
     var response = await http.get(uri);
     return json.decode(response.body).toList();
   }
 
   Future deleteComment(String id) async {
-    final uri = Uri.parse('http://192.168.1.10/deleteComment.php');
-    await http.post(uri, body: {'id': id});
+
+    final uri = Uri.parse('http://192.168.1.8/deleteComment.php');
+    http.post(uri, body: {'id': id});
+
   }
 
   @override
