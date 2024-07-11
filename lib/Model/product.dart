@@ -23,7 +23,8 @@ class Product {
 
   Future loadProduct() async {
 
-    final uri = Uri.parse('http://192.168.1.13:8012/getDataProduct.php');
+    final uri = Uri.parse('http://192.168.1.12/getDataProduct.php');
+
 
     var response = await http.get(uri);
     return json.decode(response.body);
@@ -32,7 +33,9 @@ class Product {
   Future productAdd(Product pro) async {
     print(pro.category);
 
-    final uri = Uri.parse('http://192.168.1.13:8012/addProduct.php');
+
+    final uri = Uri.parse('http://192.168.1.12/addProduct.php');
+
 
     var request = http.MultipartRequest('POST', uri);
     request.fields['ten'] = pro.name;
@@ -57,7 +60,8 @@ class Product {
 
   Future EditProduct(Product pro) async {
 
-    final uri = Uri.parse('http://192.168.1.13:8012/updateProduct.php');
+    final uri = Uri.parse('http://192.168.1.12/updateProduct.php');
+
 
     var request = http.MultipartRequest('POST', uri);
     request.fields['id'] = pro.id;
@@ -80,10 +84,10 @@ class Product {
     }
   }
 
-  Future DeleteProduct(Product pro) async {
 
-    final uri = Uri.parse('http://192.168.1.13:8012/deleteProduct.php');
+  Future DeleteProduct(var id) async {
+    final uri = Uri.parse('http://192.168.1.12/deleteProduct.php');
 
-    http.post(uri, body: {'id': pro.id});
+    http.post(uri, body: {'id': id});
   }
 }

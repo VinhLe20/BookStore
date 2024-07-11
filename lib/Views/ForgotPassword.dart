@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Views/ResetPassword.dart';
 import 'package:bookstore/Views/VerificationResetPassword.dart';
 import 'package:bookstore/Views/VerificationScreen.dart';
@@ -102,6 +103,15 @@ class _ForgotpasswordState extends State<Forgotpassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+          leading: IconButton(
+          onPressed: () {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => Loginscreen()));
+          },
+          icon: Icon(Icons.arrow_back_sharp),
+        ),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -182,7 +192,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                   'Reset Password',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
-              ),
+              ),              
             ],
           ),
         ),

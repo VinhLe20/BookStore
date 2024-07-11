@@ -11,7 +11,9 @@ class CardProduct extends StatelessWidget {
   CardProduct({super.key, required this.product});
   var product;
   Future addCart(String oder_id, String product_id, String quantity) async {
-    final uri = Uri.parse('http://192.168.1.13:8012/addCartDetail.php');
+
+    final uri = Uri.parse('http://192.168.1.12/addCartDetail.php');
+
 
     http.post(uri, body: {
       'cart_id': oder_id,
@@ -23,7 +25,9 @@ class CardProduct extends StatelessWidget {
   }
 
   Future<bool> loadCart(String product_id) async {
-    final uri = Uri.parse('http://192.168.1.13:8012/getCartDetail.php');
+
+    final uri = Uri.parse('http://192.168.1.12/getCartDetail.php');
+
     var response = await http.get(uri);
     var data = json.decode(response.body);
     var cart = data.where((item) => item['cart_id'] == User.order_id).toList();
@@ -57,7 +61,9 @@ class CardProduct extends StatelessWidget {
               alignment: Alignment.center,
               width: double.infinity,
               child: Image.network(
-                'http://192.168.1.13:8012/uploads/${product['image']}',
+
+                'http://192.168.1.12/uploads/${product['image']}',
+
                 fit: BoxFit.cover,
               ),
             ),

@@ -23,7 +23,7 @@ class _ResetpasswordState extends State<Resetpassword> {
   Future<void> checkresetPassword() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.10/resetpassword.php'),
+        Uri.parse('http://192.168.1.12/resetpassword.php'),
         body: {'password': _passwordcontroller.text, 'email': widget.email},
       );
     } catch (e) {
@@ -65,6 +65,7 @@ class _ResetpasswordState extends State<Resetpassword> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Đặt lại mật khẩu mới'),
+      
       ),
       body: Container(
         padding: EdgeInsets.all(20),

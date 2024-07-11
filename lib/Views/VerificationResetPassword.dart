@@ -20,7 +20,9 @@ class _VerificationresetpasswordState extends State<Verificationresetpassword> {
   Future<void> checkregister() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.13/resetpassword.php'),
+
+        Uri.parse('http://192.168.1.12/resetpassword.php'),
+
         body: {
           'email': widget.email,
           'password': widget.password,
@@ -98,6 +100,15 @@ class _VerificationresetpasswordState extends State<Verificationresetpassword> {
       );
     } else {
       return Scaffold(
+        appBar: AppBar(
+            leading: IconButton(
+          onPressed: () {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => Loginscreen()));
+          },
+          icon: Icon(Icons.arrow_back_sharp),
+        ),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

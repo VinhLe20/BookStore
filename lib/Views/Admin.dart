@@ -1,59 +1,114 @@
+import 'package:bookstore/Views/LoginScreen.dart';
+import 'package:bookstore/Views/UserManager.dart';
+import 'package:flutter/material.dart';
 import 'package:bookstore/Views/CategoryManager.dart';
 import 'package:bookstore/Views/OderManager.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:bookstore/Views/RateManager.dart';
 import 'package:bookstore/Views/statistical.dart';
-import 'package:flutter/material.dart';
 
-class Admin extends StatefulWidget {
-  const Admin({super.key});
+class Admin extends StatelessWidget {
+  const Admin({Key? key}) : super(key: key);
 
-  @override
-  State<Admin> createState() => _AdminState();
-}
-
-class _AdminState extends State<Admin> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextButton(
-            onPressed: () {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Quản lý cửa hàng'),
+        
+      ),
+      body: ListView(
+        children: [
+          _buildListItem(
+            context,
+            'Quản lý sản phẩm',
+            Icons.shopping_bag,
+            () {
               Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProductManager(),
-                  ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductManager(),
+                ),
+              );
             },
-            child: Text('Quản lý sản phẩm')),
-        TextButton(
-            onPressed: () {
+          ),
+          _buildListItem(
+            context,
+            'Quản lý đơn hàng',
+            Icons.shopping_cart,
+            () {
               Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => OderManager(),
-                  ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OderManager(),
+                ),
+              );
             },
-            child: Text('Quản lý đơn hàng')),
-        TextButton(
-            onPressed: () {
+          ),
+          _buildListItem(
+            context,
+            'Quản lý đánh giá nhận xét',
+            Icons.star,
+            () {
               Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RateManager(),
-                  ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RateManager(),
+                ),
+              );
             },
-            child: Text('Quản lý đánh giá nhận xét')),
-        TextButton(
-            onPressed: () {
+          ),
+          _buildListItem(
+            context,
+            'Quản lý tài khoản',
+            Icons.person,
+            () {
               Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Statistical(),
-                  ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UserManager(),
+                ),
+              );
             },
-            child: Text('Thống kê báo cáo'))
-      ],
+          ),
+          _buildListItem(
+            context,
+            'Thống kê báo cáo',
+            Icons.analytics,
+            () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Statistical(),
+                ),
+              );
+            },
+          ),
+          _buildListItem(
+            context,
+            'Đăng xuất',
+            Icons.logout,
+            () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Loginscreen(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListItem(
+      BuildContext context, String title, IconData icon, VoidCallback onTap) {
+    return ListTile(
+      title: Text(title),
+      onTap: onTap,
+      leading: Icon(icon),
+      trailing: Icon(Icons.arrow_forward),
     );
   }
 }

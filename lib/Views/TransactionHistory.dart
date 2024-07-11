@@ -1,17 +1,23 @@
+import 'package:bookstore/Model/user.dart';
+import 'package:bookstore/Views/ProfileScreen.dart';
+import 'package:bookstore/Views/index.dart';
+import 'package:flutter/material.dart';
+
 import 'dart:convert';
 import 'package:bookstore/Views/Admin.dart';
 import 'package:bookstore/Views/OrderDetail.dart';
-import 'package:flutter/material.dart';
+import 'package:bookstore/Views/ReviewScreen.dart'; // Import ReviewScreen
+
 import 'package:http/http.dart' as http;
 
-class OderManager extends StatefulWidget {
-  const OderManager({super.key});
+class Transactionhistory extends StatefulWidget {
+  const Transactionhistory({super.key});
 
   @override
-  State<OderManager> createState() => _OderManagerState();
+  State<Transactionhistory> createState() => _TransactionhistoryState();
 }
 
-class _OderManagerState extends State<OderManager>
+class _TransactionhistoryState extends State<Transactionhistory>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -25,12 +31,25 @@ class _OderManagerState extends State<OderManager>
     var result =
         await http.get(Uri.parse('http://192.168.1.12/getdataOder.php'));
 
-    return json.decode(result.body);
+    var orders = json.decode(result.body);
+    return orders.where((order) => order['user_id'] == User.id).toList();
   }
 
   Future cancelorder(String id) async {
     final uri = Uri.parse('http://192.168.1.12/cancelOrder.php');
     await http.post(uri, body: {'id': id});
+  }
+
+  Future received(String id) async {
+    final uri = Uri.parse('http://192.168.1.12/received.php');
+    await http.post(uri, body: {'id': id});
+  }
+
+  Future<void> reviewOrder(var order) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ReviewScreen(order: order)),
+    );
   }
 
   Widget buildOrderList(List orders, String status) {
@@ -56,7 +75,9 @@ class _OderManagerState extends State<OderManager>
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 SizedBox(height: 5),
-                Text('Người mua hàng: ${filteredOrders[index]['email']}'),
+                User.role == 'user'
+                    ? Text('')
+                    : Text('Người mua hàng: ${filteredOrders[index]['email']}'),
                 SizedBox(height: 5),
                 Text('Tổng tiền: ${filteredOrders[index]['total_price']}đ'),
                 SizedBox(height: 5),
@@ -90,7 +111,42 @@ class _OderManagerState extends State<OderManager>
                                 backgroundColor: Colors.red),
                             child: const Text('Hủy đơn'),
                           )
-                        : Text(''),
+                        : filteredOrders[index]['order_status'] ==
+                                'Đang chờ giao hàng'
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  received(filteredOrders[index]['order_id']);
+                                  setState(() {});
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red),
+                                child: const Text('Đã nhận hàng'),
+                              )
+                            : filteredOrders[index]['order_status'] ==
+                                    'Đã giao thành công'
+                                ? Row(
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          print(filteredOrders[index]);
+                                          reviewOrder(filteredOrders[index]);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blue),
+                                        child: const Text('Nhận xét đánh giá'),
+                                      ),
+                                    ],
+                                  )
+                                : ElevatedButton(
+                                    onPressed: () {
+                                      cancelorder(
+                                          filteredOrders[index]['order_id']);
+                                      setState(() {});
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red),
+                                    child: const Text('Hủy đơn'),
+                                  ),
                   ],
                 ),
               ],
@@ -110,7 +166,9 @@ class _OderManagerState extends State<OderManager>
         leading: IconButton(
           onPressed: () {
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => Admin()));
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Index(selectedIndex: 2)));
           },
           icon: const Icon(Icons.arrow_back),
         ),

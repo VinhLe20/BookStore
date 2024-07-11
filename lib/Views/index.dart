@@ -1,19 +1,27 @@
-import 'package:bookstore/Views/Category.dart';
-import 'package:bookstore/Views/HomeScreen.dart';
-import 'package:bookstore/Views/ProfileScreen.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'Category.dart';
+import 'HomeScreen.dart';
+import 'ProfileScreen.dart';
+
 class Index extends StatefulWidget {
-  Index({super.key});
+  final int selectedIndex;
+
+  Index({Key? key, this.selectedIndex = 0}) : super(key: key);
 
   @override
-  State<Index> createState() => _IndexState();
+  _IndexState createState() => _IndexState();
 }
 
 class _IndexState extends State<Index> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex;
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -23,7 +31,12 @@ class _IndexState extends State<Index> {
 
   @override
   Widget build(BuildContext context) {
-    List _widgetOptions = [Home(), Category(), Profile()];
+    List<Widget> _widgetOptions = [
+      Home(),
+      Category(),
+      Profile(),
+    ];
+
     return Scaffold(
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),

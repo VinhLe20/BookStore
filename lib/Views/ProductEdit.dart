@@ -49,7 +49,9 @@ class _ProductEditState extends State<ProductEdit> {
   }
 
   Future loadCategories() async {
-    final uri = Uri.parse('http://192.168.1.13:8012/getdataCategory.php');
+
+    final uri = Uri.parse('http://192.168.1.12/getdataCategory.php');
+
     var response = await http.get(uri);
     return json.decode(response.body);
   }

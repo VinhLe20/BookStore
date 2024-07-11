@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bookstore/Model/product.dart';
+import 'package:bookstore/Views/Admin.dart';
 import 'package:bookstore/Views/ProductAddScreen.dart';
 import 'package:bookstore/Views/ProductEdit.dart';
 import 'package:bookstore/Views/index.dart';
@@ -34,7 +35,7 @@ class _ProductManagerState extends State<ProductManager> {
           leading: IconButton(
               onPressed: () {
                 Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Index()));
+                    context, MaterialPageRoute(builder: (context) => Admin()));
               },
               icon: const Icon(Icons.arrow_back)),
         ),
@@ -55,150 +56,113 @@ class _ProductManagerState extends State<ProductManager> {
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
                       List products = snapshot.data;
-                      return Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(10.0),
-                            width: 120,
-                            height: 170,
-                            child: Image.network(
-                              "http://192.168.1.13:8012:8012/uploads/${products[index]['image']}",
-                              fit: BoxFit.cover,
+
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(10.0),
+                              width: 120,
+                              height: 170,
+                              child: Image.network(
+                                "http://192.168.1.12/uploads/${products[index]['image']}",
+                                fit: BoxFit.cover,https://github.com/VinhLe20/BookStore/pull/12/conflict?name=lib%252FViews%252FProductManagerScreen.dart&ancestor_oid=8766f7f33de94f2190839aaf3a2771a23d1f7dd3&base_oid=f1b2fd063334a7191cc256ddbe75e497c7f1c383&head_oid=18d99bb03d9ced5b40b05e664eb8ac4e9d0d577e
+                              ),
+
                             ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(5.0),
-                            height: 170,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Tên sản phẩm: ${products[index]['name']}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Tác giả: ${products[index]['author']}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Text(
-                                  'Thể loại: ${products[index]['category_name']}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Text(
-                                  'Đơn giá: ${products[index]["price"]} đ',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Text(
-                                  'Số lượng: ${products[index]["quantity"]}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width - 130,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Text(
-                                        'Đã bán ${products[index]['sold']}',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                        ),
+                            Container(
+                              padding: const EdgeInsets.all(5.0),
+                              height: 170,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Tên sản phẩm: ${products[index]['name']}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
                                       ),
-                                      Container(
-                                          child: Row(
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Tác giả: ${products[index]['author']}',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Thể loại: ${products[index]['category_name']}',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Đơn giá: ${products[index]["price"]} đ',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Số lượng: ${products[index]["quantity"]}',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          130,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisSize: MainAxisSize.max,
                                         children: [
-                                          IconButton(
-                                              onPressed: () {
-                                                Navigator.pushReplacement(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ProductEdit(
-                                                                pro: products[
-                                                                    index])));
-                                              },
-                                              icon: const Icon(Icons.edit)),
-                                          IconButton(
-                                              onPressed: () {
-                                                var result;
-                                                showDialog<void>(
-                                                  context: context,
-                                                  barrierDismissible:
-                                                      false, // user must tap button!
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: const Text(
-                                                          'Xác nhận xóa'),
-                                                      content:
-                                                          const SingleChildScrollView(
-                                                        child: ListBody(
-                                                          children: <Widget>[
-                                                            Text(
-                                                                'Bạn có chắc chắn muốn xóa sản phẩm này không?'),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          child:
-                                                              const Text('Hủy'),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                        TextButton(
-                                                          child:
-                                                              const Text('Xóa'),
-                                                          onPressed: () {
-                                                            pro.DeleteProduct(
-                                                                products[
-                                                                    index]);
-                                                            result = true;
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                      ],
-                                                    );
+                                          Text(
+                                            'Đã bán ${products[index]['sold']}',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          Container(
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              IconButton(
+                                                  onPressed: () {
+                                                    Navigator.pushReplacement(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                ProductEdit(
+                                                                    pro: products[
+                                                                        index])));
                                                   },
-                                                );
-                                                if (result) {
-                                                  setState(() {});
-                                                }
-                                              },
-                                              icon: const Icon(Icons.delete)),
+                                                  icon: const Icon(Icons.edit)),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    pro.DeleteProduct(
+                                                        products[index]['id']);
+                                                  },
+                                                  icon:
+                                                      const Icon(Icons.delete)),
+                                            ],
+                                          )),
                                         ],
-                                      )),
-                                    ],
-                                  ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       );
                     },
                   )
-                : const CircularProgressIndicator();
+                : const Center(child: CircularProgressIndicator());
           },
         ));
   }

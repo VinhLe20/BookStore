@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:bookstore/Views/Admin.dart';
-import 'package:bookstore/Views/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,15 +12,34 @@ class RateManager extends StatefulWidget {
 }
 
 class _RateManagerState extends State<RateManager> {
-  Future<List> loadDataComment() async {
-    final uri = Uri.parse('http://192.168.1.6:8012/getdataComment.php');
+  Future<List<dynamic>> loadDataComment() async {
+    final uri = Uri.parse('http://192.168.1.12/getdataComment.php');
+
     var response = await http.get(uri);
-    return json.decode(response.body).toList();
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      // Logging the response to understand its structure
+      print(data);
+
+      // Check if the response is a list directly or contains an error
+      if (data is List) {
+        return data;
+      } else if (data is Map && data.containsKey('error')) {
+        throw Exception(data['error']);
+      } else {
+        throw Exception('Unexpected JSON structure');
+      }
+    } else {
+      throw Exception('Failed to load comments');
+    }
   }
 
-  Future deleteComment(String id) async {
-    final uri = Uri.parse('http://192.168.1.13:8012/deleteComment.php');
+
+  Future<void> deleteComment(String id) async {
+    final uri = Uri.parse('http://192.168.1.12/deleteComment.php');
+
     await http.post(uri, body: {'id': id});
+    setState(() {}); // Refresh the state after deleting a comment
   }
 
   @override
@@ -37,14 +55,22 @@ class _RateManagerState extends State<RateManager> {
             },
             icon: const Icon(Icons.arrow_back)),
       ),
-      body: FutureBuilder(
-          future: loadDataComment(),
-          builder: (context, snapshot) {
-            List? comments = snapshot.data;
+      body: FutureBuilder<List<dynamic>>(
+        future: loadDataComment(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            print(snapshot.error);
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No comments found.'));
+          } else {
+            List<dynamic> comments = snapshot.data!;
             return ListView.builder(
-              itemCount: comments?.length,
+              itemCount: comments.length,
               itemBuilder: (context, index) {
-                var comment = comments?[index];
+                var comment = comments[index];
                 return Card(
                   margin: const EdgeInsets.all(10),
                   child: Padding(
@@ -53,11 +79,11 @@ class _RateManagerState extends State<RateManager> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Người dùng: ${comment['email']}",
+                          "Người dùng: ${comment['user_name']}",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
-                        Text("Sản phẩm: ${comment['name']}"),
+                        Text("Sản phẩm: ${comment['product_name']}"),
                         SizedBox(height: 5),
                         Row(
                           children: [
@@ -77,41 +103,10 @@ class _RateManagerState extends State<RateManager> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: IconButton(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                barrierDismissible:
-                                    false, // user must tap button!
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Xác nhận xóa'),
-                                    content: const SingleChildScrollView(
-                                      child: ListBody(
-                                        children: <Widget>[
-                                          Text(
-                                              'Bạn có chắc chắn muốn xóa mục này không?'),
-                                        ],
-                                      ),
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: const Text('Hủy'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: const Text('Xóa'),
-                                        onPressed: () async {
-                                          await deleteComment(comment['id']);
-                                          Navigator.of(context).pop();
-                                          setState(() {});
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
+                            onPressed: () async {
+                              await deleteComment(comment['comment_id']);
+                              setState(
+                                  () {}); // Refresh the state after deleting a comment
                             },
                             icon: const Icon(Icons.delete, color: Colors.red),
                           ),
@@ -122,7 +117,9 @@ class _RateManagerState extends State<RateManager> {
                 );
               },
             );
-          }),
+          }
+        },
+      ),
     );
   }
 }
