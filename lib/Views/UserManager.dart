@@ -1,4 +1,5 @@
 import 'package:bookstore/Model/user.dart';
+import 'package:bookstore/Views/Admin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -11,7 +12,7 @@ class UserManager extends StatefulWidget {
 }
 
 Future<List<dynamic>> Getuser() async {
-  Uri uri = Uri.parse('http://192.168.1.8/getuser.php');
+  Uri uri = Uri.parse('http://192.168.1.12/getuser.php');
   final response = await http.get(uri);
 
   if (response.statusCode == 200) {
@@ -22,7 +23,7 @@ Future<List<dynamic>> Getuser() async {
 }
 
 Future<void> lockUserAccount(String userId) async {
-  Uri uri = Uri.parse('http://192.168.1.8/BlockUser.php');
+  Uri uri = Uri.parse('http://192.168.1.12/BlockUser.php');
   final response = await http.post(uri, body: {'id': userId});
   print(userId);
   if (response.statusCode != 200) {
@@ -35,8 +36,13 @@ class _UserManagerState extends State<UserManager> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Quản lý tài khoản"),
-      ),
+          title: const Text("Quản lý tài khoản"),
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Admin()));
+              },
+              icon: Icon(Icons.arrow_back_outlined))),
       body: FutureBuilder<List<dynamic>>(
         future: Getuser(),
         builder: (context, snapshot) {

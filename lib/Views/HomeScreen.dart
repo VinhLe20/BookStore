@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
   }
 
   Future loadSellProduct() async {
-    final uri = Uri.parse('http://192.168.1.8/getdataProductSell.php');
+    final uri = Uri.parse('http://192.168.1.12/getdataProductSell.php');
 
     var response = await http.get(uri);
     return json.decode(response.body);
@@ -92,7 +92,7 @@ class _HomeState extends State<Home> {
   Future<void> addCart() async {
     try {
       var response = await http.post(
-        Uri.parse('http://192.168.1.8/addCart.php'),
+        Uri.parse('http://192.168.1.12/addCart.php'),
         body: {'id': User.id},
       );
       if (response.statusCode == 200) {
@@ -133,16 +133,23 @@ class _HomeState extends State<Home> {
             children: [
               Container(
                 margin: const EdgeInsets.all(8.0),
-                height: 200.0,
+                height: 150.0,
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: const Center(
-                  child: Text(
-                    'Khuyến Mãi Lớn Hè 2024 - Giảm Giá Lên Đến 50%!',
-                    style: TextStyle(color: Colors.white, fontSize: 20.0),
-                    textAlign: TextAlign.center,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Center(
+                    child: Image.asset(
+                      "assets/images/anhbia.png",
+                      width: 600,
+                      height: 700,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ),

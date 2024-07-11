@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
+import 'package:bookstore/Views/Admin.dart';  // Make sure this import is correct based on your project structure
 
 class Statistical extends StatefulWidget {
   const Statistical({super.key});
@@ -55,6 +56,15 @@ class _StatisticalState extends State<Statistical> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Statistical Revenue'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Admin()),
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

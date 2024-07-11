@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/OderManager.dart';
+import 'package:bookstore/Views/TransactionHistory.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,9 +15,9 @@ class OrderDetail extends StatefulWidget {
 }
 
 class _OrderDetailState extends State<OrderDetail> {
+  List order = [];
   Future loadOrder() async {
-
-    final uri = Uri.parse('http://192.168.1.8/getdataOrderDetail.php');
+    final uri = Uri.parse('http://192.168.1.12/getdataOrderDetail.php');
 
     var response = await http.get(uri);
     var data = json.decode(response.body).toList();
@@ -26,8 +28,13 @@ class _OrderDetailState extends State<OrderDetail> {
   }
 
   Future approveorder(String id) async {
-    final uri = Uri.parse('http://192.168.1.6:8012/approveorder.php');
+    final uri = Uri.parse('http://192.168.1.12/approveorder.php');
     await http.post(uri, body: {'id': id});
+  }
+
+  Future updatequantiy(String id, String quantity) async {
+    final uri = Uri.parse('http://192.168.1.12/updatequantityproduct.php');
+    await http.post(uri, body: {'id': id, 'quantity': quantity});
   }
 
   Future cancelorder(String id) async {
@@ -43,8 +50,15 @@ class _OrderDetailState extends State<OrderDetail> {
         backgroundColor: Colors.blue,
         leading: IconButton(
             onPressed: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const OderManager()));
+              User.role == 'user'
+                  ? Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Transactionhistory()))
+                  : Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const OderManager()));
             },
             icon: const Icon(Icons.arrow_back)),
       ),
@@ -52,7 +66,7 @@ class _OrderDetailState extends State<OrderDetail> {
         future: loadOrder(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List order = snapshot.data;
+            order = snapshot.data;
             return ListView.builder(
               itemCount: order.length,
               itemBuilder: (context, index) {
@@ -106,17 +120,23 @@ class _OrderDetailState extends State<OrderDetail> {
         padding: const EdgeInsets.all(10.0),
         child: Row(
           children: [
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () {
-                  approveorder(widget.order['order_id']);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                ),
-                child: const Text('Duyệt đơn'),
-              ),
-            ),
+            User.role != 'user'
+                ? Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        for (var element in order) {
+                          updatequantiy(
+                              element['product_id'], element['order_quantity']);
+                        }
+                        approveorder(widget.order['order_id']);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      child: const Text('Duyệt đơn'),
+                    ),
+                  )
+                : Text(''),
             Expanded(
               child: ElevatedButton(
                 onPressed: () {

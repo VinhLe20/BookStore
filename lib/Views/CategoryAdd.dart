@@ -13,7 +13,7 @@ class CategoryAdd extends StatefulWidget {
 class _CategoryAddState extends State<CategoryAdd> {
   var tentl = TextEditingController();
   Future addCategory(String name) async {
-    http.post(Uri.parse('http://192.168.1.8/addCategory.php'),
+    http.post(Uri.parse('http://192.168.1.12/addCategory.php'),
         body: {'name': name});
   }
 
