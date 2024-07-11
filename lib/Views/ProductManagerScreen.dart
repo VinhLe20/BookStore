@@ -62,7 +62,7 @@ class _ProductManagerState extends State<ProductManager> {
                             width: 120,
                             height: 170,
                             child: Image.network(
-                              "http://192.168.1.10/uploads/${products[index]['image']}",
+                              "http://192.168.1.13:8012:8012/uploads/${products[index]['image']}",
                               fit: BoxFit.cover,
                             ),
                           ),

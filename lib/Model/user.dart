@@ -13,7 +13,7 @@ class User {
   User({required this.email, required this.password});
 
   static Future<String> loadid(String email) async {
-    final uri = Uri.parse('http://192.168.1.10/getuser.php');
+    final uri = Uri.parse('http://192.168.1.13:8012/getuser.php');
     try {
       var response = await http.get(uri);
       if (response.statusCode == 200) {
@@ -33,7 +33,7 @@ class User {
   }
 
   static Future<String> loadrole(String email) async {
-    final uri = Uri.parse('http://192.168.1.10/getuser.php');
+    final uri = Uri.parse('http://192.168.1.13:8012/getuser.php');
     try {
       var response = await http.get(uri);
       if (response.statusCode == 200) {
@@ -53,7 +53,7 @@ class User {
   }
 
   static Future<String> loadoderid(String id) async {
-    final uri = Uri.parse('http://192.168.1.10/getCart.php');
+    final uri = Uri.parse('http://192.168.1.13:8012/getCart.php');
     try {
       var response = await http.get(uri);
       if (response.statusCode == 200) {
@@ -73,7 +73,7 @@ class User {
   }
 
   static Future<bool> isUserIdInCart(String userId) async {
-    final uri = Uri.parse('http://192.168.1.10/getcart.php');
+    final uri = Uri.parse('http://192.168.1.13:8012/getcart.php');
     try {
       var response = await http.get(uri);
       if (response.statusCode == 200) {

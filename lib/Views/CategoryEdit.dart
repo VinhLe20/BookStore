@@ -13,7 +13,7 @@ class CategoryEdit extends StatefulWidget {
 class _CategoryEditState extends State<CategoryEdit> {
   var tentl = TextEditingController();
   Future updateCategory(String id, String name) async {
-    http.post(Uri.parse('http://192.168.1.10/updateCategory.php'),
+    http.post(Uri.parse('http://192.168.1.13:8012/updateCategory.php'),
         body: {'id': id, 'name': name});
   }
 

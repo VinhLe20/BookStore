@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
   }
 
   Future loadSellProduct() async {
-    final uri = Uri.parse('http://192.168.1.10/getdataProductSell.php');
+    final uri = Uri.parse('http://192.168.1.13:8012/getdataProductSell.php');
 
     var response = await http.get(uri);
     return json.decode(response.body);
@@ -92,7 +92,7 @@ class _HomeState extends State<Home> {
   Future<void> addCart() async {
     try {
       var response = await http.post(
-        Uri.parse('http://192.168.1.10/addCart.php'),
+        Uri.parse('http://192.168.1.13:8012/addCart.php'),
         body: {'id': User.id},
       );
       if (response.statusCode == 200) {
