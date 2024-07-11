@@ -18,7 +18,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   Future<void> checkregister() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.8/register.php'),
+        Uri.parse('http://192.168.1.12/register.php'),
         body: {
           'email': widget.email,
           'password': widget.password,
@@ -92,6 +92,15 @@ class _VerificationScreenState extends State<VerificationScreen> {
       return Loginscreen();
     } else {
       return Scaffold(
+        appBar: AppBar(
+            leading: IconButton(
+          onPressed: () {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => Loginscreen()));
+          },
+          icon: Icon(Icons.arrow_back_sharp),
+        ),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -32,7 +32,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<List<Map<String, dynamic>>> loadUser(String id) async {
-    final uri = Uri.parse('http://192.168.1.8/getuser.php');
+    final uri = Uri.parse('http://192.168.1.12/getuser.php');
     var response = await http.get(uri);
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
@@ -51,7 +51,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> updateUser(String id) async {
-    final uri = Uri.parse('http://192.168.1.8/EditProfile.php');
+    final uri = Uri.parse('http://192.168.1.12/EditProfile.php');
     var response = await http.post(
       uri,
       headers: {'Content-Type': 'application/json'},
@@ -74,7 +74,7 @@ class _EditProfileState extends State<EditProfile> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update user')),
+        const SnackBar(content: Text('Failed to update user')),
       );
     }
   }
@@ -94,15 +94,15 @@ class _EditProfileState extends State<EditProfile> {
           }
           List<Map<String, dynamic>> user = snapshot.data!;
           return ListView(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 25),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 25),
             children: [
-              Center(
+              const Center(
                 child: Text(
                   "Edit Profile",
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
                 ),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               Center(
                 child: Stack(
                   children: [
@@ -133,7 +133,7 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           color: Colors.green,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.edit,
                           color: Colors.white,
                         ),
@@ -142,7 +142,7 @@ class _EditProfileState extends State<EditProfile> {
                   ],
                 ),
               ),
-              SizedBox(height: 35),
+              const SizedBox(height: 35),
               buildTextField("Full Name", nameController),
               Padding(
                 padding: const EdgeInsets.only(bottom: 35.0),
@@ -150,7 +150,7 @@ class _EditProfileState extends State<EditProfile> {
                   controller: emailController,
                   onChanged: (_) => validateEmail(),
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(bottom: 3),
+                    contentPadding: const EdgeInsets.only(bottom: 3),
                     labelText: 'Email',
                     errorText: emailError.isNotEmpty ? emailError : null,
                     floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -161,7 +161,7 @@ class _EditProfileState extends State<EditProfile> {
                 padding: const EdgeInsets.only(bottom: 35.0),
                 child: TextField(
                   controller: phoneController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     contentPadding: EdgeInsets.only(bottom: 3),
                     labelText: 'Phone',
                     floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -170,7 +170,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               buildTextField("Location", addressController),
-              SizedBox(height: 35),
+              const SizedBox(height: 35),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -187,13 +187,13 @@ class _EditProfileState extends State<EditProfile> {
                       backgroundColor:
                           MaterialStateProperty.all(Colors.redAccent),
                       padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                       ),
                       textStyle: MaterialStateProperty.all(
-                        TextStyle(fontSize: 14, letterSpacing: 2.2),
+                        const TextStyle(fontSize: 14, letterSpacing: 2.2),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       "CANCEL",
                       style: TextStyle(color: Colors.white),
                     ),
@@ -209,13 +209,13 @@ class _EditProfileState extends State<EditProfile> {
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.green),
                       padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                       ),
                       textStyle: MaterialStateProperty.all(
-                        TextStyle(fontSize: 14, letterSpacing: 2.2),
+                        const TextStyle(fontSize: 14, letterSpacing: 2.2),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       "SAVE",
                       style: TextStyle(color: Colors.white),
                     ),
@@ -238,7 +238,7 @@ class _EditProfileState extends State<EditProfile> {
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.only(bottom: 3),
+          contentPadding: const EdgeInsets.only(bottom: 3),
           labelText: labelText,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: controller.text,
