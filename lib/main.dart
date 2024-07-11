@@ -8,6 +8,7 @@ import 'package:bookstore/Views/ProfileScreen.dart';
 import 'package:bookstore/Views/ResetPassword.dart';
 import 'package:bookstore/Views/UserManager.dart';
 import 'package:bookstore/Views/VerificationScreen.dart';
+import 'package:bookstore/Views/statistical.dart';
 import 'package:bookstore/WelcomeScreen.dart';
 import 'package:bookstore/auth_config.dart';
 import 'package:bookstore/Views/index.dart';
@@ -41,6 +42,8 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
+
         home: Welcomescreen());
+
   }
 }

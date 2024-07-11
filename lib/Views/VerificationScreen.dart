@@ -18,7 +18,9 @@ class _VerificationScreenState extends State<VerificationScreen> {
   Future<void> checkregister() async {
     try {
       final response = await http.post(
+
         Uri.parse('http://192.168.1.12/register.php'),
+
         body: {
           'email': widget.email,
           'password': widget.password,

@@ -1,59 +1,87 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
-import 'package:bookstore/Views/Admin.dart';  // Make sure this import is correct based on your project structure
+
+import 'package:http/http.dart' as http;
+import 'package:syncfusion_flutter_charts/charts.dart';
+
+
 
 class Statistical extends StatefulWidget {
-  const Statistical({super.key});
+  const Statistical({Key? key}) : super(key: key);
 
   @override
   State<Statistical> createState() => _StatisticalState();
 }
 
 class _StatisticalState extends State<Statistical> {
-  DateTime? _selectedDate;
-  List<_SalesData> _chartData = [];
+  late List<_SalesData> _chartData = [];
+  TextEditingController _yearController = TextEditingController();
+
+  @override
+  void dispose() {
+    _yearController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    _chartData = getChartData();
+    _loadAllOrderData();
   }
 
-  Future<void> _selectMonthYear(BuildContext context) async {
-    final DateTime now = DateTime.now();
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? now,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(now.year + 10),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Colors.blue,
-              onPrimary: Colors.white,
-              surface: Colors.blue,
-              onSurface: Colors.black,
-            ),
-            dialogBackgroundColor: Colors.white,
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-        _chartData =
-            getChartData(); // Update the chart data based on the selected date
-      });
+  Future<void> _loadAllOrderData() async {
+    try {
+      var response =
+          await http.get(Uri.parse('http://192.168.1.13:8012/getdataOder.php'));
+      if (response.statusCode == 200) {
+        List<dynamic> jsonData = json.decode(response.body);
+        setState(() {
+          _chartData = jsonData.map((order) {
+            double totalPrice = double.parse(order['total_price']);
+            DateTime createDateTime = DateTime.parse(order['create']);
+            String month = DateFormat.MMMM().format(createDateTime);
+            return _SalesData(month, totalPrice);
+          }).toList();
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> _loadOrderDataByYear(int year) async {
+    try {
+      var response =
+          await http.get(Uri.parse('http://192.168.1.13:8012/getdataOder.php'));
+      if (response.statusCode == 200) {
+        List<dynamic> jsonData = json.decode(response.body);
+        setState(() {
+          _chartData = jsonData
+              .where((order) =>
+                  DateTime.parse(order['create']).year == year &&
+                  order['pay'] == 'đã thanh toán')
+              .map((order) {
+            double totalPrice = double.parse(order['total_price']);
+            DateTime createDateTime = DateTime.parse(order['create']);
+            String month = DateFormat.MMMM().format(createDateTime);
+            return _SalesData(month, totalPrice);
+          }).toList();
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
         title: Text('Statistical Revenue'),
         leading: IconButton(
@@ -66,34 +94,46 @@ class _StatisticalState extends State<Statistical> {
           },
         ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            ElevatedButton(
-              onPressed: () => _selectMonthYear(context),
-              child: Text(
-                _selectedDate == null
-                    ? 'Select Month and Year'
-                    : DateFormat.yMMM().format(_selectedDate!),
+            TextField(
+              controller: _yearController,
+              decoration: InputDecoration(
+                labelText: 'Enter Year',
+                border: OutlineInputBorder(),
               ),
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                if (_yearController.text.isNotEmpty) {
+                  int year = int.parse(_yearController.text);
+                  _loadOrderDataByYear(year);
+                }
+              },
+              child: const Text('Load Data'),
+            ),
+            const SizedBox(height: 16),
             Expanded(
               child: SfCartesianChart(
                 primaryXAxis: CategoryAxis(),
                 title: ChartTitle(
-                    text:
-                        'Revenue for ${_selectedDate != null ? DateFormat.yMMM().format(_selectedDate!) : 'Selected Month'}'),
+                  text: 'Revenue by Month',
+                ),
                 legend: Legend(isVisible: true),
                 tooltipBehavior: TooltipBehavior(enable: true),
-                series: <CartesianSeries<_SalesData, String>>[
+                series: <CartesianSeries<dynamic, dynamic>>[
                   ColumnSeries<_SalesData, String>(
                     dataSource: _chartData,
-                    xValueMapper: (_SalesData sales, _) => sales.day.toString(),
+                    xValueMapper: (_SalesData sales, _) => sales.month,
                     yValueMapper: (_SalesData sales, _) => sales.revenue,
                     name: 'Revenue',
-                    dataLabelSettings: DataLabelSettings(isVisible: true),
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
                   )
                 ],
               ),
@@ -103,24 +143,11 @@ class _StatisticalState extends State<Statistical> {
       ),
     );
   }
-
-  List<_SalesData> getChartData() {
-    // Generate dummy data based on the selected date
-    // In a real-world scenario, you would fetch data from your backend or database
-    final DateTime now = DateTime.now();
-    final DateTime date = _selectedDate ?? now;
-    final int daysInMonth = DateTime(date.year, date.month + 1, 0).day;
-    final List<_SalesData> chartData = List.generate(
-      daysInMonth,
-      (index) => _SalesData(index + 1, (index + 1) * 100.0),
-    );
-    return chartData;
-  }
 }
 
 class _SalesData {
-  _SalesData(this.day, this.revenue);
+  _SalesData(this.month, this.revenue);
 
-  final int day;
+  final String month;
   final double revenue;
 }

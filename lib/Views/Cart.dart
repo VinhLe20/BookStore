@@ -17,7 +17,9 @@ class _CartState extends State<Cart> {
   int total = 0;
 
   Future<List<dynamic>> loadCart() async {
+
     final uri = Uri.parse('http://192.168.1.12/getCartDetail.php');
+
     var response = await http.get(uri);
     var data = json.decode(response.body);
     List filteredData =
@@ -38,7 +40,9 @@ class _CartState extends State<Cart> {
   }
 
   Future updateQuantity(String productId, String quantity) async {
+
     final uri = Uri.parse('http://192.168.1.12/updatequantity.php');
+
     await http.post(uri, body: {
       'id': User.order_id,
       'product_id': productId,
@@ -61,7 +65,9 @@ class _CartState extends State<Cart> {
   }
 
   Future deleteProduct(String productId) async {
+
     final uri = Uri.parse('http://192.168.1.12/deleteproducts.php');
+
     final response = await http
         .post(uri, body: {'product_id': productId, 'cart_id': User.order_id});
 
@@ -104,7 +110,9 @@ class _CartState extends State<Cart> {
                       width: 120,
                       height: 170,
                       child: Image.network(
+
                         "http://192.168.1.12/uploads/${products[index]['image']}",
+
                         fit: BoxFit.cover,
                       ),
                     ),

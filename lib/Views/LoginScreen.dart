@@ -23,7 +23,9 @@ class _LoginscreenState extends State<Loginscreen> {
   String _passwordError = '';
 
   Future<http.Response> GetUser() async {
+
     Uri uri = Uri.parse('http://192.168.1.12/getuser.php');
+
     var response = await http.get(uri);
     return response;
   }
@@ -32,7 +34,9 @@ class _LoginscreenState extends State<Loginscreen> {
   Future<void> checkLogin() async {
     try {
       final response = await http.post(
+
         Uri.parse('http://192.168.1.12/login.php'),
+
         body: {
           'email': _usercontroller.text,
           'password': _passwordcontroller.text,

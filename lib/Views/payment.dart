@@ -40,7 +40,9 @@ class _PaymentState extends State<Payment> {
     String formattedDate = '${now.year}-${now.month}-${now.day}';
     print(User.id);
     print(total);
+
     http.post(Uri.parse('http://192.168.1.12/addOrder.php'), body: {
+
       'id': id,
       'total': total,
       'user_id': User.id,
@@ -50,7 +52,9 @@ class _PaymentState extends State<Payment> {
 
   Future addOrderDetail(
       String productId, String orderId, String quantity) async {
+
     http.post(Uri.parse('http://192.168.1.12/addOrderDetail.php'), body: {
+
       'product_id': productId,
       'order_id': orderId,
       'quantity': quantity
@@ -58,7 +62,9 @@ class _PaymentState extends State<Payment> {
   }
 
   Future deleteProduct(String productId) async {
+
     final uri = Uri.parse('http://192.168.1.12/deleteproducts.php');
+
     final response = await http
         .post(uri, body: {'product_id': productId, 'cart_id': User.order_id});
 
@@ -125,7 +131,9 @@ class _PaymentState extends State<Payment> {
                                   height: 100,
                                   width: 100,
                                   child: Image.network(
+
                                       'http://192.168.1.12/uploads/${widget.products[index]['image']}'),
+
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(5.0),

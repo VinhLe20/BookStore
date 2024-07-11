@@ -22,7 +22,9 @@ class Product {
   List<Product> products = [];
 
   Future loadProduct() async {
+
     final uri = Uri.parse('http://192.168.1.12/getDataProduct.php');
+
 
     var response = await http.get(uri);
     return json.decode(response.body);
@@ -31,7 +33,9 @@ class Product {
   Future productAdd(Product pro) async {
     print(pro.category);
 
+
     final uri = Uri.parse('http://192.168.1.12/addProduct.php');
+
 
     var request = http.MultipartRequest('POST', uri);
     request.fields['ten'] = pro.name;
@@ -55,7 +59,9 @@ class Product {
   }
 
   Future EditProduct(Product pro) async {
+
     final uri = Uri.parse('http://192.168.1.12/updateProduct.php');
+
 
     var request = http.MultipartRequest('POST', uri);
     request.fields['id'] = pro.id;
@@ -77,6 +83,7 @@ class Product {
       print("Image not uploaded");
     }
   }
+
 
   Future DeleteProduct(var id) async {
     final uri = Uri.parse('http://192.168.1.12/deleteProduct.php');

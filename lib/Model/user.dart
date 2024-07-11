@@ -23,7 +23,9 @@ class User {
       required phone});
 
   static Future<String> loadid(String email) async {
+
     final uri = Uri.parse('http://192.168.1.12/getuser.php');
+
     try {
       var response = await http.get(uri);
       if (response.statusCode == 200) {
@@ -43,7 +45,9 @@ class User {
   }
 
   static Future<String> loadrole(String email) async {
+
     final uri = Uri.parse('http://192.168.1.12/getuser.php');
+
     try {
       var response = await http.get(uri);
       if (response.statusCode == 200) {
@@ -63,7 +67,9 @@ class User {
   }
 
   static Future<String> loadoderid(String id) async {
+
     final uri = Uri.parse('http://192.168.1.12/getCart.php');
+
     try {
       var response = await http.get(uri);
       if (response.statusCode == 200) {
@@ -83,7 +89,9 @@ class User {
   }
 
   static Future<bool> isUserIdInCart(String userId) async {
+
     final uri = Uri.parse('http://192.168.1.12/getcart.php');
+
     try {
       var response = await http.get(uri);
       if (response.statusCode == 200) {

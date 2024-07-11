@@ -34,8 +34,10 @@ class _RateManagerState extends State<RateManager> {
     }
   }
 
+
   Future<void> deleteComment(String id) async {
     final uri = Uri.parse('http://192.168.1.12/deleteComment.php');
+
     await http.post(uri, body: {'id': id});
     setState(() {}); // Refresh the state after deleting a comment
   }

@@ -56,6 +56,7 @@ class _ProductManagerState extends State<ProductManager> {
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
                       List products = snapshot.data;
+
                       return SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
@@ -66,8 +67,9 @@ class _ProductManagerState extends State<ProductManager> {
                               height: 170,
                               child: Image.network(
                                 "http://192.168.1.12/uploads/${products[index]['image']}",
-                                fit: BoxFit.cover,
+                                fit: BoxFit.cover,https://github.com/VinhLe20/BookStore/pull/12/conflict?name=lib%252FViews%252FProductManagerScreen.dart&ancestor_oid=8766f7f33de94f2190839aaf3a2771a23d1f7dd3&base_oid=f1b2fd063334a7191cc256ddbe75e497c7f1c383&head_oid=18d99bb03d9ced5b40b05e664eb8ac4e9d0d577e
                               ),
+
                             ),
                             Container(
                               padding: const EdgeInsets.all(5.0),
