@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/ProfileScreen.dart';
 import 'package:bookstore/Views/index.dart';
@@ -32,7 +33,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<List<Map<String, dynamic>>> loadUser(String id) async {
-    final uri = Uri.parse('http://192.168.1.12/getuser.php');
+    final uri = Uri.parse('${Host.host}/getuser.php');
     var response = await http.get(uri);
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
@@ -51,7 +52,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> updateUser(String id) async {
-    final uri = Uri.parse('http://192.168.1.12/EditProfile.php');
+    final uri = Uri.parse('${Host.host}/EditProfile.php');
     var response = await http.post(
       uri,
       headers: {'Content-Type': 'application/json'},
@@ -251,7 +252,7 @@ class _EditProfileState extends State<EditProfile> {
     QuickAlert.show(
       context: context,
       type: QuickAlertType.success,
-      text: 'Update Profile Successfully!',
+      text: 'Cập nhật thông tin thành công!',
       onConfirmBtnTap: () {
         Navigator.pushReplacement(
           context,
@@ -268,8 +269,8 @@ class _EditProfileState extends State<EditProfile> {
     QuickAlert.show(
       context: context,
       type: QuickAlertType.warning,
-      title: 'Warning!',
-      text: 'Update Profile Failed',
+      title: 'Lỗi!',
+      text: 'Cập nhật thông tin thất bại',
     );
   }
 

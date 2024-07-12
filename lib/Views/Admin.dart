@@ -14,14 +14,19 @@ class Admin extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quản lý cửa hàng'),
-        
+        backgroundColor: Colors.green.shade500,
+        title: Text(
+          'Quản lý cửa hàng',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
       ),
       body: ListView(
         children: [
           _buildListItem(
             context,
-            'Quản lý sản phẩm',
+            'Quản lý sách',
             Icons.shopping_bag,
             () {
               Navigator.pushReplacement(

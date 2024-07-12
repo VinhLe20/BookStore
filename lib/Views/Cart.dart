@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/index.dart';
 import 'package:bookstore/Views/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class Cart extends StatefulWidget {
   const Cart({Key? key}) : super(key: key);
@@ -13,12 +15,14 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
+  NumberFormat formatCurrency =
+      NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+
   List cart = [];
   int total = 0;
 
   Future<List<dynamic>> loadCart() async {
-
-    final uri = Uri.parse('http://192.168.1.12/getCartDetail.php');
+    final uri = Uri.parse('${Host.host}/getCartDetail.php');
 
     var response = await http.get(uri);
     var data = json.decode(response.body);
@@ -40,8 +44,7 @@ class _CartState extends State<Cart> {
   }
 
   Future updateQuantity(String productId, String quantity) async {
-
-    final uri = Uri.parse('http://192.168.1.12/updatequantity.php');
+    final uri = Uri.parse('${Host.host}/updatequantity.php');
 
     await http.post(uri, body: {
       'id': User.order_id,
@@ -65,17 +68,16 @@ class _CartState extends State<Cart> {
   }
 
   Future deleteProduct(String productId) async {
-
-    final uri = Uri.parse('http://192.168.1.12/deleteproducts.php');
+    final uri = Uri.parse('${Host.host}/deleteproducts.php');
 
     final response = await http
         .post(uri, body: {'product_id': productId, 'cart_id': User.order_id});
 
     if (response.statusCode == 200) {
-      print('Sản phẩm đã được xóa thành công');
+      print('sách đã được xóa thành công');
       loadCart();
     } else {
-      print('Xóa sản phẩm không thành công');
+      print('Xóa sách không thành công');
     }
   }
 
@@ -83,9 +85,18 @@ class _CartState extends State<Cart> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Giỏ hàng'),
+        title: Text(
+          'Giỏ hàng',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.green.shade500,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
           onPressed: () {
             Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (context) => Index()));
@@ -110,9 +121,7 @@ class _CartState extends State<Cart> {
                       width: 120,
                       height: 170,
                       child: Image.network(
-
-                        "http://192.168.1.12/uploads/${products[index]['image']}",
-
+                        "${Host.host}/uploads/${products[index]['image']}",
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -145,7 +154,8 @@ class _CartState extends State<Cart> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      'Đơn giá: ${products[index]["price"]} đ',
+                                      formatCurrency.format(double.parse(
+                                          products[index]["price"])),
                                       style: const TextStyle(
                                         fontSize: 14,
                                       ),
@@ -224,7 +234,7 @@ class _CartState extends State<Cart> {
                     builder: (context) => Payment(
                           quantity: '',
                           products: cart,
-                          total: total.toString(),
+                          total: total.toString(), // Ensure total is a string
                         )));
           },
           style: ElevatedButton.styleFrom(
@@ -258,7 +268,7 @@ class _CartState extends State<Cart> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Buy',
                 style: TextStyle(
                   fontSize: 16,
@@ -266,8 +276,8 @@ class _CartState extends State<Cart> {
                 ),
               ),
               Text(
-                'Tổng tiền: ${total} đ',
-                style: TextStyle(
+                'Tổng tiền: ${formatCurrency.format(total)}',
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/product.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:flutter/material.dart';
@@ -48,9 +49,7 @@ class _ProductAddState extends State<ProductAdd> {
   }
 
   Future loadCategories() async {
-    final uri =
-
-        Uri.parse('http://192.168.1.12/getdataCategory.php');
+    final uri = Uri.parse('${Host.host}/getdataCategory.php');
 
     var response = await http.get(uri);
     return json.decode(response.body);
@@ -67,7 +66,13 @@ class _ProductAddState extends State<ProductAdd> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Thêm sản phẩm mới'),
+        backgroundColor: Colors.green.shade500,
+        title: const Text(
+          'Thêm sách mới',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         leading: IconButton(
           onPressed: () {
             Navigator.pushReplacement(
@@ -75,7 +80,10 @@ class _ProductAddState extends State<ProductAdd> {
                 MaterialPageRoute(
                     builder: (context) => const ProductManager()));
           },
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -113,7 +121,7 @@ class _ProductAddState extends State<ProductAdd> {
               child: TextField(
                 controller: tensp,
                 decoration: const InputDecoration(
-                  labelText: 'Tên sản phẩm',
+                  labelText: 'Tên sách',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
@@ -134,7 +142,7 @@ class _ProductAddState extends State<ProductAdd> {
               padding: const EdgeInsets.all(10),
               child: DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
-                  labelText: 'Thể loại sản phẩm',
+                  labelText: 'Thể loại sách',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
@@ -157,7 +165,7 @@ class _ProductAddState extends State<ProductAdd> {
               child: TextField(
                 controller: soluongsp,
                 decoration: const InputDecoration(
-                  labelText: 'Số lượng sản phẩm',
+                  labelText: 'Số lượng sách',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
@@ -168,7 +176,7 @@ class _ProductAddState extends State<ProductAdd> {
               child: TextField(
                 controller: dongiasp,
                 decoration: const InputDecoration(
-                  labelText: 'Đơn giá sản phẩm',
+                  labelText: 'Đơn giá sách',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
@@ -179,7 +187,7 @@ class _ProductAddState extends State<ProductAdd> {
               child: TextField(
                 controller: motasp,
                 decoration: const InputDecoration(
-                  labelText: 'Mô tả sản phẩm',
+                  labelText: 'Mô tả sách',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
@@ -201,7 +209,7 @@ class _ProductAddState extends State<ProductAdd> {
                 try {
                   await newproduct.productAdd(add);
                   Fluttertoast.showToast(
-                    msg: "Thêm mới sản phẩm thành công",
+                    msg: "Thêm mới sách thành công",
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                     timeInSecForIosWeb: 1,

@@ -1,3 +1,4 @@
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,7 +21,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     String formattedDate = '${now.year}-${now.month}-${now.day}';
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
-        Uri.parse('http://192.168.1.12/submitReview.php'),
+        Uri.parse('${Host.host}/submitReview.php'),
         body: {
           'time': formattedDate,
           'product_id': product_id,
@@ -53,7 +54,21 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Đánh giá đơn hàng'),
+        backgroundColor: Colors.green.shade500,
+        title: Text(
+          'Đánh giá đơn hàng',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            )),
       ),
       body: SingleChildScrollView(
         child: Padding(

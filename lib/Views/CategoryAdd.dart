@@ -1,3 +1,4 @@
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/CategoryManager.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -13,23 +14,28 @@ class CategoryAdd extends StatefulWidget {
 class _CategoryAddState extends State<CategoryAdd> {
   var tentl = TextEditingController();
   Future addCategory(String name) async {
-
-    http.post(Uri.parse('http://192.168.1.12/addCategory.php'),
-
-        body: {'name': name});
+    http.post(Uri.parse('${Host.host}/addCategory.php'), body: {'name': name});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thêm thể loại mới'),
+        title: Text(
+          'Thêm thể loại mới',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         leading: IconButton(
           onPressed: () {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => CategoryManger()));
           },
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
         ),
       ),
       body: Center(

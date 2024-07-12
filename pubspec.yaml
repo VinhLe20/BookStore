@@ -52,6 +52,8 @@ dependencies:
   syncfusion_flutter_charts: ^26.1.40
   flutter_stripe: ^10.2.0
   stripe_checkout: ^1.0.2
+  intl: ^0.19.0
+  carousel_slider: ^4.2.1
 
 
 

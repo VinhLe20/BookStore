@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/EditProfile.dart';
+import 'package:bookstore/Views/Editpassword.dart';
 import 'package:bookstore/Views/TransactionHistory.dart';
-import 'package:bookstore/Views/WelcomeScreen.dart';
+import 'package:bookstore/WelcomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:bookstore/Model/user.dart';
@@ -17,7 +19,7 @@ class _ProfileState extends State<Profile> {
   late Future<List<Map<String, dynamic>>> futureUser;
 
   Future<List<Map<String, dynamic>>> loadUser(String id) async {
-    final uri = Uri.parse('http://192.168.1.12/getuser.php');
+    final uri = Uri.parse('${Host.host}/getuser.php');
     var response = await http.get(uri);
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
@@ -60,6 +62,18 @@ class _ProfileState extends State<Profile> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         const SizedBox(height: 40),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.lock_reset_sharp,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Editpassword()));
+                          },
+                        ),
                         IconButton(
                           icon: const Icon(Icons.logout),
                           onPressed: () {

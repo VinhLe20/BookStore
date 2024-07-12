@@ -67,7 +67,10 @@ class _SearchPageState extends State<SearchPage> {
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Index()));
               },
-              icon: const Icon(Icons.arrow_back)),
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              )),
           title: TextField(
             controller: searchController,
             decoration: InputDecoration(
@@ -78,7 +81,10 @@ class _SearchPageState extends State<SearchPage> {
               ),
               fillColor: Colors.white.withOpacity(0.1),
               suffixIcon: IconButton(
-                icon: const Icon(Icons.clear, color: Colors.white),
+                icon: const Icon(
+                  Icons.clear,
+                  color: Colors.white,
+                ),
                 onPressed: _clearSearch,
               ),
             ),
@@ -87,7 +93,7 @@ class _SearchPageState extends State<SearchPage> {
               _filterProducts(value);
             },
           ),
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.green.shade500,
         ),
         body: filteredProducts.isEmpty
             ? const Center(child: Text('Không tìm thấy sản phẩm này!'))

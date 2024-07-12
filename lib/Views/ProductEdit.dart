@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/product.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:flutter/material.dart';
@@ -49,8 +50,7 @@ class _ProductEditState extends State<ProductEdit> {
   }
 
   Future loadCategories() async {
-
-    final uri = Uri.parse('http://192.168.1.12/getdataCategory.php');
+    final uri = Uri.parse('${Host.host}/getdataCategory.php');
 
     var response = await http.get(uri);
     return json.decode(response.body);
@@ -72,7 +72,13 @@ class _ProductEditState extends State<ProductEdit> {
     tacgia.text = widget.pro['author'];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chỉnh sửa phẩm'),
+        backgroundColor: Colors.green.shade500,
+        title: const Text(
+          'Chỉnh sửa phẩm',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         leading: IconButton(
             onPressed: () {
               Navigator.pushReplacement(
@@ -80,11 +86,15 @@ class _ProductEditState extends State<ProductEdit> {
                   MaterialPageRoute(
                       builder: (context) => const ProductManager()));
             },
-            icon: const Icon(Icons.arrow_back)),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            )),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: 20),
             GestureDetector(
                 onTap: () async {
                   await choiceImage();
@@ -106,7 +116,7 @@ class _ProductEditState extends State<ProductEdit> {
                   ),
                   child: _image == null
                       ? Image.network(
-                          "http://192.168.1.4/uploads/${widget.pro['image']}")
+                          "${Host.host}/uploads/${widget.pro['image']}")
                       : Image.file(File(_image!.path), fit: BoxFit.cover),
                 )),
             Padding(
@@ -114,7 +124,7 @@ class _ProductEditState extends State<ProductEdit> {
               child: TextField(
                 controller: tensp,
                 decoration: const InputDecoration(
-                  labelText: 'Tên sản phẩm',
+                  labelText: 'Tên sách',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
@@ -135,7 +145,7 @@ class _ProductEditState extends State<ProductEdit> {
               padding: const EdgeInsets.all(10),
               child: DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
-                  labelText: 'Thể loại sản phẩm',
+                  labelText: 'Thể loại sách',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
@@ -158,7 +168,7 @@ class _ProductEditState extends State<ProductEdit> {
               child: TextField(
                 controller: soluongsp,
                 decoration: const InputDecoration(
-                  labelText: 'Số lượng sản phẩm',
+                  labelText: 'Số lượng sách',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
@@ -169,7 +179,7 @@ class _ProductEditState extends State<ProductEdit> {
               child: TextField(
                 controller: dongiasp,
                 decoration: const InputDecoration(
-                  labelText: 'Đơn giá sản phẩm',
+                  labelText: 'Đơn giá sách',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
@@ -180,7 +190,7 @@ class _ProductEditState extends State<ProductEdit> {
               child: TextField(
                 controller: motasp,
                 decoration: const InputDecoration(
-                  labelText: 'Mô tả sản phẩm',
+                  labelText: 'Mô tả sách',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
@@ -201,7 +211,7 @@ class _ProductEditState extends State<ProductEdit> {
                 try {
                   await product.EditProduct(edit);
                   Fluttertoast.showToast(
-                    msg: "Sản phẩm đã được cập nhật",
+                    msg: "Sách đã được cập nhật",
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                     timeInSecForIosWeb: 1,
@@ -222,7 +232,7 @@ class _ProductEditState extends State<ProductEdit> {
               style: ElevatedButton.styleFrom(
                 textStyle: const TextStyle(fontSize: 16),
               ),
-              child: const Text('Cập nhật sản phẩm'),
+              child: const Text('Cập nhật sách'),
             ))
           ],
         ),

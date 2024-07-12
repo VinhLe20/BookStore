@@ -1,22 +1,17 @@
-import 'dart:async';
-import 'package:bookstore/Views/LoginScreen.dart';
-import 'package:bookstore/Views/ResetPassword.dart';
+import 'package:bookstore/Views/VerificationEditPassword.dart';
 import 'package:bookstore/Views/VerificationResetPassword.dart';
-import 'package:bookstore/Views/VerificationScreen.dart';
+import 'package:bookstore/Views/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-class Forgotpassword extends StatefulWidget {
-  const Forgotpassword(
-      {super.key, required String email, required String password});
+class Editpassword extends StatefulWidget {
+  const Editpassword({super.key});
 
   @override
-  State<Forgotpassword> createState() => _ForgotpasswordState();
+  State<Editpassword> createState() => _EditpasswordState();
 }
 
-class _ForgotpasswordState extends State<Forgotpassword> {
+class _EditpasswordState extends State<Editpassword> {
   final TextEditingController _usercontroller = TextEditingController();
   String _userError = '';
 
@@ -83,10 +78,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Verificationresetpassword(
-                                    email: _usercontroller.text,
-                                    password: '',
-                                  )),
+                              builder: (context) => Verificationeditpassword(email: _usercontroller.text, password: '')),
                         );
                       }
                     },
@@ -134,7 +126,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const Loginscreen(),
+                        builder: (context) =>  Index(selectedIndex: 2,),
                       ),
                     );
                   },
@@ -148,7 +140,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Quên mật khẩu",
+                          "Cập nhật mật khẩu",
                           style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -186,7 +178,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                               onPressed: () {
                                 _usercontroller.clear();
                               },
-                              icon: const Icon(Icons.close_rounded),
+                              icon: const Icon(Icons.close_rounded,color: Colors.white,),
                             ),
                           ),
                         ),
@@ -211,7 +203,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                             }
                           },
                           child: const Text(
-                            'Xác nhận',
+                            'Cập nhật',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,

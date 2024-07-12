@@ -1,33 +1,33 @@
 import 'dart:convert';
-
+import 'dart:ffi';
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Views/ProductDetail.dart';
+import 'package:bookstore/Views/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class CardProduct extends StatelessWidget {
   CardProduct({super.key, required this.product});
   var product;
+
   Future addCart(String oder_id, String product_id, String quantity) async {
-
-    final uri = Uri.parse('http://192.168.1.12/addCartDetail.php');
-
-
+    final uri = Uri.parse('${Host.host}/addCartDetail.php');
     http.post(uri, body: {
       'cart_id': oder_id,
       'product_id': product_id,
       'quantity': quantity,
     });
-
     print('them ');
   }
 
   Future<bool> loadCart(String product_id) async {
-
-    final uri = Uri.parse('http://192.168.1.12/getCartDetail.php');
-
+    final uri = Uri.parse('${Host.host}/getCartDetail.php');
     var response = await http.get(uri);
     var data = json.decode(response.body);
     var cart = data.where((item) => item['cart_id'] == User.order_id).toList();
@@ -38,6 +38,30 @@ class CardProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void showSuccessDialog() {
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.success,
+      
+        widget: Center(child: Text('Thêm vào giỏ hàng thành công!',style: TextStyle(fontSize: 20),))
+      );
+    }
+
+    void showFailedDIalog() {
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.warning,
+        title: 'Warning!',
+       
+        
+        widget: Center(child: Text('Đã có trong giỏ hàng',style: TextStyle(fontSize: 20),))
+      );
+    }
+
+    // Định dạng tiền tệ cho Đồng Việt Nam
+    NumberFormat formatCurrency =
+        NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+
     return Container(
       width: 170,
       padding: const EdgeInsets.all(8.0),
@@ -61,9 +85,7 @@ class CardProduct extends StatelessWidget {
               alignment: Alignment.center,
               width: double.infinity,
               child: Image.network(
-
-                'http://192.168.1.12/uploads/${product['image']}',
-
+                '${Host.host}/uploads/${product['image']}',
                 fit: BoxFit.cover,
               ),
             ),
@@ -85,7 +107,7 @@ class CardProduct extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${product['price']} đ',
+                  formatCurrency.format(double.parse(product['price'])),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.red,
@@ -94,7 +116,7 @@ class CardProduct extends StatelessWidget {
                 ),
                 Text(
                   'Đã bán ${product['sold']}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                   ),
                 ),
@@ -106,8 +128,10 @@ class CardProduct extends StatelessWidget {
               onPressed: () async {
                 if (await loadCart(product['id'])) {
                   print("da co san pham");
+                  showFailedDIalog();
                 } else {
                   addCart('${User.order_id}', product['id'], '1');
+                  showSuccessDialog();
                 }
               },
               child: const Text(

@@ -9,15 +9,15 @@ import 'package:intl/intl.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-class OrderDetail extends StatefulWidget {
-  const OrderDetail({Key? key, required this.order}) : super(key: key);
+class OrderDetailUser extends StatefulWidget {
+  const OrderDetailUser({Key? key, required this.order}) : super(key: key);
   final Map<String, dynamic> order;
 
   @override
-  State<OrderDetail> createState() => _OrderDetailState();
+  State<OrderDetailUser> createState() => _OrderDetailUserState();
 }
 
-class _OrderDetailState extends State<OrderDetail> {
+class _OrderDetailUserState extends State<OrderDetailUser> {
   NumberFormat formatCurrency =
       NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
   List order = [];
@@ -67,17 +67,6 @@ class _OrderDetailState extends State<OrderDetail> {
     );
   }
 
-  void showSuccessDialog() {
-    QuickAlert.show(
-        context: context,
-        type: QuickAlertType.success,
-        widget: Center(
-            child: Text(
-          'Duyệt đơn hàng thành công!',
-          style: TextStyle(fontSize: 20),
-        )));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,8 +80,10 @@ class _OrderDetailState extends State<OrderDetail> {
         backgroundColor: Colors.green.shade500,
         leading: IconButton(
           onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const OderManager()));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const Transactionhistory()));
           },
           icon: const Icon(Icons.arrow_back),
           color: Colors.white,
@@ -159,31 +150,6 @@ class _OrderDetailState extends State<OrderDetail> {
         child: widget.order["order_status"] == "Đang chờ"
             ? Row(
                 children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showSuccessDialog();
-                        for (var element in order) {
-                          updateQuantity(
-                              element['product_id'], element['order_quantity']);
-                        }
-                        approveOrder(widget.order['order_id']);
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => OderManager()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade500,
-                      ),
-                      child: const Text(
-                        'Duyệt đơn',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
                   SizedBox(
                     width: 10,
                   ),

@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/index.dart';
 import 'package:bookstore/Views/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class ProductDetail extends StatefulWidget {
   var product;
@@ -16,6 +20,9 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  NumberFormat formatCurrency =
+      NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+
   List comment = [];
   int _quantity = 1;
 
@@ -34,8 +41,7 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 
   Future<List> loadDataComment() async {
-
-    final uri = Uri.parse('http://192.168.1.12/getdataComment.php');
+    final uri = Uri.parse('${Host.host}/getdataComment.php');
 
     var response = await http.get(uri);
     var data = json.decode(response.body).toList();
@@ -74,9 +80,7 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 
   Future addCart(String oder_id, String product_id, String quantity) async {
-
-    final uri = Uri.parse('http://192.168.1.12/addCart.php');
-
+    final uri = Uri.parse('${Host.host}/addCart.php');
 
     http.post(uri, body: {
       'cart_id': oder_id,
@@ -88,8 +92,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Future addCartDetail(
       String oder_id, String product_id, String quantity) async {
-
-    final uri = Uri.parse('http://192.168.1.12/addCartDetail.php');
+    final uri = Uri.parse('${Host.host}/addCartDetail.php');
 
     http.post(uri, body: {
       'cart_id': oder_id,
@@ -100,8 +103,7 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 
   Future<bool> loadCart(String product_id) async {
-
-    final uri = Uri.parse('http://192.168.1.12/getCartDetail.php');
+    final uri = Uri.parse('${Host.host}/getCartDetail.php');
 
     var response = await http.get(uri);
     var data = json.decode(response.body);
@@ -113,25 +115,54 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
+    void showSuccessDialog() {
+      QuickAlert.show(
+          context: context,
+          type: QuickAlertType.success,
+          widget: Center(
+              child: Text(
+            'Thêm vào giỏ hàng thành công!',
+            style: TextStyle(fontSize: 20),
+          )));
+    }
+
+    void showFailedDIalog() {
+      QuickAlert.show(
+          context: context,
+          type: QuickAlertType.warning,
+          title: 'Warning!',
+          widget: Center(
+              child: Text(
+            'Đã có trong giỏ hàng',
+            style: TextStyle(fontSize: 20),
+          )));
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chi tiết sản phẩm'),
-        backgroundColor: Colors.teal,
+        title: const Text(
+          'Chi tiết sách',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.green.shade500,
         leading: IconButton(
             onPressed: () {
               Navigator.pushReplacement(
                   context, MaterialPageRoute(builder: (context) => Index()));
             },
-            icon: const Icon(Icons.arrow_back)),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            )),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.network(
-
-              'http://192.168.1.12/uploads/${widget.product['image']}',
-
+              '${Host.host}/uploads/${widget.product['image']}',
               width: double.infinity,
               height: 200,
               fit: BoxFit.contain,
@@ -142,7 +173,8 @@ class _ProductDetailState extends State<ProductDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${widget.product['price']} đ',
+                    formatCurrency
+                        .format(double.parse(widget.product['price'])),
                     style: const TextStyle(
                       fontSize: 20,
                       color: Colors.red,
@@ -237,7 +269,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'Giới thiệu về sản phẩm',
+                    'Giới thiệu về sách',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -335,9 +367,11 @@ class _ProductDetailState extends State<ProductDetail> {
                 onPressed: () async {
                   if (await loadCart(widget.product['id'])) {
                     print("da co san pham");
+                    showFailedDIalog();
                   } else {
                     addCart(
                         '${User.order_id}', widget.product['id'], '$_quantity');
+                    showSuccessDialog();
                   }
                 },
                 style: ElevatedButton.styleFrom(

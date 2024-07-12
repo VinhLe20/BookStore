@@ -1,28 +1,35 @@
 import 'dart:convert';
 
-import 'package:bookstore/Model/stripe_service.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+
+import 'package:bookstore/Model/host.dart';
+import 'package:bookstore/Model/stripe_service.dart'; // Make sure to import your stripe_service.dart
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/TransactionHistory.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:http/http.dart' as http;
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class Payment extends StatefulWidget {
+  final dynamic products;
+  final String total;
+  final String quantity;
+
   Payment(
-      {super.key,
+      {Key? key,
       required this.products,
       required this.total,
-      required this.quantity});
-  final dynamic products;
-  String total;
-  String quantity;
+      required this.quantity})
+      : super(key: key);
+
   @override
   State<Payment> createState() => _PaymentState();
 }
 
 class _PaymentState extends State<Payment> {
+  NumberFormat formatCurrency =
+      NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
   Map<String, dynamic>? paymentIntent;
   String selectedShippingMethod = 'Bình thường';
   int shippingCost = 0;
@@ -32,48 +39,6 @@ class _PaymentState extends State<Payment> {
     {'method': 'Bình thường', 'cost': 0},
     {'method': 'Nhanh', 'cost': 20000},
   ];
-  Future addOrder(String total) async {
-    String id = DateTime.now().microsecondsSinceEpoch.toString();
-    print(id);
-    order = id;
-    DateTime now = DateTime.now();
-    String formattedDate = '${now.year}-${now.month}-${now.day}';
-    print(User.id);
-    print(total);
-
-    http.post(Uri.parse('http://192.168.1.12/addOrder.php'), body: {
-
-      'id': id,
-      'total': total,
-      'user_id': User.id,
-      'create': formattedDate
-    });
-  }
-
-  Future addOrderDetail(
-      String productId, String orderId, String quantity) async {
-
-    http.post(Uri.parse('http://192.168.1.12/addOrderDetail.php'), body: {
-
-      'product_id': productId,
-      'order_id': orderId,
-      'quantity': quantity
-    });
-  }
-
-  Future deleteProduct(String productId) async {
-
-    final uri = Uri.parse('http://192.168.1.12/deleteproducts.php');
-
-    final response = await http
-        .post(uri, body: {'product_id': productId, 'cart_id': User.order_id});
-
-    if (response.statusCode == 200) {
-      print('Sản phẩm đã được xóa thành công');
-    } else {
-      print('Xóa sản phẩm không thành công');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,13 +47,21 @@ class _PaymentState extends State<Payment> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Tổng quan đơn hàng'),
+        backgroundColor: Colors.green.shade500,
+        title: const Text(
+          'Tổng quan đơn hàng',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -98,22 +71,9 @@ class _PaymentState extends State<Payment> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
-                children: [
-                  Icon(Icons.location_on_outlined),
-                  SizedBox(width: 5),
-                  Text(
-                    'Lechivinh 0937569365',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 22.0, top: 5.0),
-                child: Text(
-                  'Đường Lê Văn Thuộc, khu phố hòa thuận 1, thị trấn Cần Giuộc, huyện Cần Giuộc, tỉnh Long An',
-                ),
-              ),
+              const SizedBox(height: 10.0),
+              const Text('Thông tin giao hàng'),
+              // Add your shipping address UI here
               const Divider(),
               const SizedBox(height: 10.0),
               const Text('Thông tin đơn hàng'),
@@ -131,9 +91,7 @@ class _PaymentState extends State<Payment> {
                                   height: 100,
                                   width: 100,
                                   child: Image.network(
-
-                                      'http://192.168.1.12/uploads/${widget.products[index]['image']}'),
-
+                                      '${Host.host}/uploads/${widget.products[index]['image']}'),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(5.0),
@@ -151,8 +109,10 @@ class _PaymentState extends State<Payment> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                                'Đơn giá ${widget.products[index]['price']} đ'),
+                                            Text(formatCurrency.format(
+                                                double.parse(
+                                                    widget.products[index]
+                                                        ['price']))),
                                           ],
                                         ),
                                       ),
@@ -174,48 +134,46 @@ class _PaymentState extends State<Payment> {
                     )
                   : SizedBox(
                       height: 100, // Adjust the height as needed
-                      child: SizedBox(
-                        height: 100,
-                        child: Row(
-                          children: [
-                            Container(
-                              height: 100,
-                              width: 100,
-                              child: Image.network(
-                                  "http://192.168.1.12/uploads/${widget.products['image']}"),
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 100,
+                            width: 100,
+                            child: Image.network(
+                                "${Host.host}/uploads/${widget.products['image']}"),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("${widget.products['name']}"),
+                                SizedBox(
+                                  width: 200, // Adjust width as needed
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(formatCurrency.format(double.parse(
+                                          widget.products['price']))),
+                                    ],
+                                  ),
+                                )
+                              ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("${widget.products['name']}"),
-                                  SizedBox(
-                                    width: 200, // Adjust width as needed
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                            'Đơn giá ${widget.products['price']} đ'),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )),
-              const Divider(),
+                          ),
+                        ],
+                      ),
+                    ),
+              const SizedBox(height: 10.0),
+
               Row(
                 children: [
                   const Text('Chọn phương thức vận chuyển'),
                   SizedBox(
-                    width: 20,
+                    width: 30,
                   ),
                   DropdownButton<String>(
                     value: selectedShippingMethod,
@@ -230,35 +188,42 @@ class _PaymentState extends State<Payment> {
                         shippingMethods.map<DropdownMenuItem<String>>((method) {
                       return DropdownMenuItem<String>(
                         value: method['method'],
-                        child:
-                            Text('${method['method']} - ${method['cost']} đ'),
+                        child: Text(
+                            '${method['method']} - ${formatCurrency.format(method['cost'])}'),
                       );
                     }).toList(),
                   ),
                 ],
               ),
-              const Divider(),
+              const SizedBox(height: 10.0),
               const Text('Tóm tắt đơn hàng'),
               Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Tổng sản phẩm'),
-                      Text("$totalProductCost đ")
+                      Text('Tổng sách'),
+                      Text(formatCurrency.format(totalProductCost)),
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Text('Vận chuyển'), Text('$shippingCost đ')],
+                    children: [
+                      Text('Vận chuyển'),
+                      Text(formatCurrency.format(shippingCost)),
+                    ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Text('Tổng đơn hàng'), Text('$totalCost đ')],
+                    children: [
+                      Text('Tổng đơn hàng'),
+                      Text(formatCurrency.format(totalCost)),
+                    ],
                   ),
                 ],
               ),
-              const Divider(),
+
+              const SizedBox(height: 10.0),
               const Text('Phương thức thanh toán'),
               Column(
                 children: [
@@ -272,16 +237,16 @@ class _PaymentState extends State<Payment> {
                       });
                     },
                   ),
-                  RadioListTile<String>(
-                    title: const Text('Ví điện tử Momo'),
-                    value: 'Ví điện tử Momo',
-                    groupValue: selectedPaymentMethod,
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedPaymentMethod = value!;
-                      });
-                    },
-                  ),
+                  // RadioListTile<String>(
+                  //   title: const Text('Ví điện tử Momo'),
+                  //   value: 'Ví điện tử Momo',
+                  //   groupValue: selectedPaymentMethod,
+                  //   onChanged: (String? value) {
+                  //     setState(() {
+                  //       selectedPaymentMethod = value!;
+                  //     });
+                  //   },
+                  // ),
                 ],
               ),
             ],
@@ -296,17 +261,22 @@ class _PaymentState extends State<Payment> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Tổng'),
-                Text('$totalCost đ'),
+                Text(
+                  'Tổng',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                Text('${formatCurrency.format(totalCost)} ',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               ],
             ),
+            const SizedBox(height: 10.0),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  // await makePayment();
-                  print('Selected Payment Method: $selectedPaymentMethod');
                   if (selectedPaymentMethod == 'Ví điện tử Momo') {
+                    // Handle Momo payment
                     var items = [
                       {
                         'productPrice': 4,
@@ -320,29 +290,39 @@ class _PaymentState extends State<Payment> {
                       }
                     ];
                     await StripeService.stripePaymentCheckout(
-                        items, 500, context, mounted, onSuccess: () {
-                      print('1');
-                    }, onCancel: () {
-                      print('2');
-                    }, onError: (e) {
-                      print('3');
-                    });
-                    // payonline();
+                      items,
+                      500,
+                      context,
+                      mounted,
+                      onSuccess: () {
+                        print('Payment success');
+                      },
+                      onCancel: () {
+                        print('Payment canceled');
+                      },
+                      onError: (e) {
+                        print('Payment error: $e');
+                      },
+                    );
                   } else {
-                    addOrder(totalCost.toString());
+                    // Handle COD or other payment methods
+                    await addOrder(totalCost.toString());
                     showLoadingDialog();
                     if (widget.products is List) {
                       for (var product in widget.products) {
-                        print("order id: $order");
-                        print("Product id :  ${product['product_id']}");
-                        print("quantity :  ${product['cart_quantity']}");
-                        addOrderDetail(product['product_id'], order,
-                            product['cart_quantity']);
+                        addOrderDetail(
+                          product['product_id'],
+                          order,
+                          product['cart_quantity'],
+                        );
                         deleteProduct(product['product_id']);
                       }
                     } else {
                       addOrderDetail(
-                          widget.products['id'], order, widget.quantity);
+                        widget.products['id'],
+                        order,
+                        widget.quantity,
+                      );
                     }
                   }
                 },
@@ -390,6 +370,66 @@ class _PaymentState extends State<Payment> {
     );
   }
 
+  Future<void> addOrder(String total) async {
+    String id = DateTime.now().microsecondsSinceEpoch.toString();
+    print(id);
+    order = id;
+    DateTime now = DateTime.now();
+    String formattedDate = '${now.year}-${now.month}-${now.day}';
+    print(User.id);
+    print(total);
+
+    var response = await http.post(
+      Uri.parse('${Host.host}/addOrder.php'),
+      body: {
+        'id': id,
+        'total': total,
+        'user_id': User.id,
+        'create': formattedDate,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Order added successfully');
+    } else {
+      print('Failed to add order');
+    }
+  }
+
+  Future<void> addOrderDetail(
+      String productId, String orderId, String quantity) async {
+    var response = await http.post(
+      Uri.parse('${Host.host}/addOrderDetail.php'),
+      body: {
+        'product_id': productId,
+        'order_id': orderId,
+        'quantity': quantity,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Order detail added successfully');
+    } else {
+      print('Failed to add order detail');
+    }
+  }
+
+  Future<void> deleteProduct(String productId) async {
+    var response = await http.post(
+      Uri.parse('${Host.host}/deleteproducts.php'),
+      body: {
+        'product_id': productId,
+        'cart_id': User.order_id,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Product deleted successfully');
+    } else {
+      print('Failed to delete product');
+    }
+  }
+
   void showLoadingDialog() {
     QuickAlert.show(
       context: context,
@@ -405,60 +445,5 @@ class _PaymentState extends State<Payment> {
         MaterialPageRoute(builder: (context) => Transactionhistory()),
       );
     });
-  }
-
-  Future<void> makePayment() async {
-    try {
-      paymentIntent = await createPaymentIntent('10000', 'USD');
-
-      var gpay = PaymentSheetGooglePay(
-          merchantCountryCode: "GB", currencyCode: "GBP", testEnv: true);
-      await Stripe.instance
-          .initPaymentSheet(
-              paymentSheetParameters: SetupPaymentSheetParameters(
-                  paymentIntentClientSecret: paymentIntent![
-                      'client_secret'], //Gotten from payment intent
-                  style: ThemeMode.light,
-                  merchantDisplayName: 'Abhi',
-                  googlePay: gpay))
-          .then((value) {});
-
-      //STEP 3: Display Payment sheet
-      displayPaymentSheet();
-    } catch (err) {
-      print(err);
-    }
-  }
-
-  displayPaymentSheet() async {
-    try {
-      await Stripe.instance.presentPaymentSheet().then((value) {
-        print("Payment Successfully");
-      });
-    } catch (e) {
-      print('Thất bại');
-    }
-  }
-
-  createPaymentIntent(String amount, String currency) async {
-    try {
-      Map<String, dynamic> body = {
-        'amount': amount,
-        'currency': currency,
-      };
-
-      var response = await http.post(
-        Uri.parse('https://buy.stripe.com/test_5kAcOMg9Y6J0a2c289'),
-        headers: {
-          'Authorization':
-              'sk_test_51PbE052Kp0Ros8xQ8sywuANHEYQDBCLcWWYRlYXXTIYRen2Gelw2xBaIWqgwEy1eFBYS9xKMJOSXmzjKY8runCnt00seF6162q',
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: body,
-      );
-      return json.decode(response.body);
-    } catch (err) {
-      throw Exception(err.toString());
-    }
   }
 }

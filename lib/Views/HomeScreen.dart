@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:bookstore/Model/cardProduct.dart';
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/product.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/Cart.dart';
 import 'package:bookstore/Views/CategoryManager.dart';
+import 'package:bookstore/Views/ImagesSlider.dart';
 import 'package:bookstore/Views/OderManager.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:bookstore/Views/RateManager.dart';
@@ -20,6 +22,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final List<String> imageAssetPaths = [
+    'assets/images/slider1.png',
+    'assets/images/slider2.png',
+    'assets/images/slider3.png',
+  ];
   Product pro = Product(
       id: "",
       name: "",
@@ -58,9 +65,7 @@ class _HomeState extends State<Home> {
   }
 
   Future loadSellProduct() async {
-
-    final uri = Uri.parse('http://192.168.1.12/getdataProductSell.php');
-
+    final uri = Uri.parse('${Host.host}/getdataProductSell.php');
 
     var response = await http.get(uri);
     return json.decode(response.body);
@@ -94,9 +99,7 @@ class _HomeState extends State<Home> {
   Future<void> addCart() async {
     try {
       var response = await http.post(
-
-        Uri.parse('http://192.168.1.12/addCart.php'),
-
+        Uri.parse('${Host.host}/addCart.php'),
         body: {'id': User.id},
       );
       if (response.statusCode == 200) {
@@ -113,8 +116,11 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Trang chủ'),
-          backgroundColor: Colors.blue,
+          title: const Text(
+            'Trang chủ',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green.shade500,
           actions: [
             IconButton(
                 onPressed: () {
@@ -123,45 +129,33 @@ class _HomeState extends State<Home> {
                       MaterialPageRoute(
                           builder: (context) => const SearchPage()));
                 },
-                icon: Icon(Icons.search)),
+                icon: Icon(
+                  Icons.search,
+                  color: Colors.white,
+                )),
             IconButton(
                 onPressed: () {
                   Navigator.pushReplacement(
                       context, MaterialPageRoute(builder: (context) => Cart()));
                 },
-                icon: Icon(Icons.shopping_cart))
+                icon: Icon(
+                  Icons.shopping_cart,
+                  color: Colors.white,
+                ))
           ],
         ),
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Container(
-                margin: const EdgeInsets.all(8.0),
-                height: 150.0,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Center(
-                    child: Image.asset(
-                      "assets/images/anhbia.png",
-                      width: 600,
-                      height: 700,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
+              SizedBox(
+                height: 10,
               ),
+              ImageSlider(imageAssetPaths: imageAssetPaths),
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    Text("Sản phẩm bán chạy nhất",
+                    Text("Sách bán chạy nhất",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -187,7 +181,7 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    Text("Sản phẩm gợi ý",
+                    Text("Sách gợi ý",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold)),
                   ],

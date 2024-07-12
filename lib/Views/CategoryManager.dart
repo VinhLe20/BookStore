@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/CategoryAdd.dart';
 import 'package:bookstore/Views/CategoryEdit.dart';
 import 'package:bookstore/Views/index.dart';
@@ -15,16 +16,14 @@ class CategoryManger extends StatefulWidget {
 
 class _CategoryMangerState extends State<CategoryManger> {
   Future loadCategories() async {
-
-    final uri = Uri.parse('http://192.168.1.12/getdataCategory.php');
+    final uri = Uri.parse('${Host.host}/getdataCategory.php');
 
     var response = await http.get(uri);
     return json.decode(response.body);
   }
 
   Future deleteCategories(String id) async {
-
-    final uri = Uri.parse('http://192.168.1.12/deleteCategory.php');
+    final uri = Uri.parse('${Host.host}/deleteCategory.php');
 
     http.post(uri, body: {'id': id});
   }
@@ -33,14 +32,22 @@ class _CategoryMangerState extends State<CategoryManger> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Quản lý thể loại'),
+          title: const Text(
+            'Quản lý thể loại',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
           backgroundColor: Colors.blue,
           leading: IconButton(
               onPressed: () {
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Index()));
               },
-              icon: const Icon(Icons.arrow_back)),
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              )),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {

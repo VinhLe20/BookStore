@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bookstore/Model/host.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,7 +25,7 @@ class User {
 
   static Future<String> loadid(String email) async {
 
-    final uri = Uri.parse('http://192.168.1.12/getuser.php');
+    final uri = Uri.parse('${Host.host}/getuser.php');
 
     try {
       var response = await http.get(uri);
@@ -46,7 +47,7 @@ class User {
 
   static Future<String> loadrole(String email) async {
 
-    final uri = Uri.parse('http://192.168.1.12/getuser.php');
+    final uri = Uri.parse('${Host.host}/getuser.php');
 
     try {
       var response = await http.get(uri);
@@ -68,7 +69,7 @@ class User {
 
   static Future<String> loadoderid(String id) async {
 
-    final uri = Uri.parse('http://192.168.1.12/getCart.php');
+    final uri = Uri.parse('${Host.host}/getCart.php');
 
     try {
       var response = await http.get(uri);
@@ -90,7 +91,7 @@ class User {
 
   static Future<bool> isUserIdInCart(String userId) async {
 
-    final uri = Uri.parse('http://192.168.1.12/getcart.php');
+    final uri = Uri.parse('${Host.host}/getcart.php');
 
     try {
       var response = await http.get(uri);

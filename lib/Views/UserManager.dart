@@ -1,3 +1,4 @@
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/Admin.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ class UserManager extends StatefulWidget {
 }
 
 Future<List<dynamic>> Getuser() async {
-  Uri uri = Uri.parse('http://192.168.1.12/getuser.php');
+  Uri uri = Uri.parse('${Host.host}/getuser.php');
   final response = await http.get(uri);
 
   if (response.statusCode == 200) {
@@ -23,7 +24,7 @@ Future<List<dynamic>> Getuser() async {
 }
 
 Future<void> lockUserAccount(String userId) async {
-  Uri uri = Uri.parse('http://192.168.1.12/BlockUser.php');
+  Uri uri = Uri.parse('${Host.host}/BlockUser.php');
   final response = await http.post(uri, body: {'id': userId});
   print(userId);
   if (response.statusCode != 200) {
@@ -36,6 +37,7 @@ class _UserManagerState extends State<UserManager> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green.shade500,
           title: const Text("Quản lý tài khoản"),
           leading: IconButton(
               onPressed: () {
