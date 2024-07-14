@@ -158,10 +158,12 @@ class _LoginscreenState extends State<Loginscreen> {
               children: [
                 Text(
                   'Đăng nhập',
+
                   style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
+
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -170,8 +172,10 @@ class _LoginscreenState extends State<Loginscreen> {
                   style: TextStyle(color: Colors.white), // Màu chữ trắng
                   decoration: InputDecoration(
                     hintText: "Email",
+
                     hintStyle:
                         TextStyle(color: Colors.white), // Màu gợi ý trắng
+
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: const BorderSide(
@@ -185,8 +189,10 @@ class _LoginscreenState extends State<Loginscreen> {
                         width: 3.0,
                       ),
                     ),
+
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 25, horizontal: 20),
+
                     errorText: _userError.isNotEmpty ? _userError : null,
                     errorStyle: TextStyle(color: Colors.white), // Màu lỗi trắng
                     suffixIcon: IconButton(
@@ -205,8 +211,10 @@ class _LoginscreenState extends State<Loginscreen> {
                   style: TextStyle(color: Colors.white), // Màu chữ trắng
                   decoration: InputDecoration(
                     hintText: "Password",
+
                     hintStyle:
                         TextStyle(color: Colors.white), // Màu gợi ý trắng
+
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: const BorderSide(
@@ -220,10 +228,12 @@ class _LoginscreenState extends State<Loginscreen> {
                         width: 3.0,
                       ),
                     ),
+
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 25, horizontal: 20),
                     errorText:
                         _passwordError.isNotEmpty ? _passwordError : null,
+
                     errorStyle: TextStyle(color: Colors.white), // Màu lỗi trắng
                     suffixIcon: GestureDetector(
                       onTap: () {
@@ -238,6 +248,7 @@ class _LoginscreenState extends State<Loginscreen> {
                         color: Colors.white, // Màu biểu tượng trắng
                       ),
                     ),
+
                   ),
                 ),
                 const SizedBox(
@@ -264,11 +275,13 @@ class _LoginscreenState extends State<Loginscreen> {
                                     password: _passwordcontroller.text,
                                   )));
                     },
+
                   ),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
+
 
                 ElevatedButton(
                   onPressed: () async {
@@ -313,6 +326,7 @@ class _LoginscreenState extends State<Loginscreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+
                 ),
                 const SizedBox(
                   height: 20,

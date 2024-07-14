@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:bookstore/Model/cardProduct.dart';
+
 import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/LoginScreen.dart';
@@ -23,7 +25,9 @@ class ProductDetail extends StatefulWidget {
 class _ProductDetailState extends State<ProductDetail> {
   NumberFormat formatCurrency =
       NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+
   List data = [];
+
   List comment = [];
   List categori = [];
   int _quantity = 1;
@@ -51,6 +55,7 @@ class _ProductDetailState extends State<ProductDetail> {
       });
     });
   }
+
 
   void _loadProduct() {
     loadAuthor(widget.product['author']).then(
@@ -135,6 +140,7 @@ class _ProductDetailState extends State<ProductDetail> {
     }
   }
 
+
   void _updateQuantity(String value) {
     int newQuantity = int.tryParse(value) ?? 1;
     if (newQuantity <= int.parse(widget.product['quantity'])) {
@@ -149,6 +155,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Future addCart(String oder_id, String product_id, String quantity) async {
     final uri = Uri.parse('${Host.host}/addCart.php');
+
     http.post(uri, body: {
       'user_id': User.id,
       'product_id': product_id,
@@ -186,11 +193,13 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
+
     List filteredData =
         data.where((item) => item['id'] != widget.product['id']).toList();
     if (data.length < 10) {
       data.addAll(categori);
     }
+
     void showSuccessDialog() {
       QuickAlert.show(
           context: context,
@@ -202,7 +211,9 @@ class _ProductDetailState extends State<ProductDetail> {
           )));
     }
 
+
     void showFailedDialog() {
+
       QuickAlert.show(
           context: context,
           type: QuickAlertType.warning,
@@ -453,6 +464,7 @@ class _ProductDetailState extends State<ProductDetail> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () async {
+
                   if (!User.guest) {
                     if (await loadCart(widget.product['id'])) {
                       print("da co san pham");
@@ -464,6 +476,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   } else {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => Loginscreen()));
+
                   }
                 },
                 style: ElevatedButton.styleFrom(

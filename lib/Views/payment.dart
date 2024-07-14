@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/Bill.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +10,12 @@ import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/stripe_service.dart';
 import 'package:bookstore/Views/TransactionHistory.dart'; // Import your transaction history page
 
+
 class Payment extends StatefulWidget {
   final dynamic products;
   final String total;
   final String quantity;
+
 
   Payment({
     Key? key,
@@ -28,6 +31,8 @@ class Payment extends StatefulWidget {
 class _PaymentState extends State<Payment> {
   NumberFormat formatCurrency =
       NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+
+
   String selectedShippingMethod = 'Bình thường';
   int shippingCost = 0;
   String selectedPaymentMethod = 'Thanh toán khi nhận hàng';
@@ -37,6 +42,7 @@ class _PaymentState extends State<Payment> {
     {'method': 'Bình thường', 'cost': 0},
     {'method': 'Nhanh', 'cost': 20000},
   ];
+
 
   @override
   void initState() {
@@ -48,6 +54,7 @@ class _PaymentState extends State<Payment> {
     var response = await http.get(uri);
     return json.decode(response.body).toList();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +80,7 @@ class _PaymentState extends State<Payment> {
           ),
         ),
       ),
+
       body: FutureBuilder(
         future: loadUser(),
         builder: (context, snapshot) {
@@ -176,12 +184,15 @@ class _PaymentState extends State<Payment> {
                         : SizedBox(
                             height: 100, // Adjust the height as needed
                             child: Row(
+
                               children: [
                                 Container(
                                   height: 100,
                                   width: 100,
                                   child: Image.network(
+
                                       "${Host.host}/uploads/${widget.products['image']}"),
+
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(5.0),
@@ -203,8 +214,10 @@ class _PaymentState extends State<Payment> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
+
                                             Text(
                                                 "Đơn giá ${formatCurrency.format(double.parse(widget.products['price']))}"),
+
                                           ],
                                         ),
                                       )
@@ -241,6 +254,7 @@ class _PaymentState extends State<Payment> {
                             );
                           }).toList(),
                         ),
+
                       ],
                     ),
                     const SizedBox(height: 10.0),
@@ -298,6 +312,7 @@ class _PaymentState extends State<Payment> {
                     ),
                   ],
                 ),
+
               ),
             );
           } else {
@@ -329,9 +344,11 @@ class _PaymentState extends State<Payment> {
                 onPressed: () async {
                   if (selectedPaymentMethod == 'Ví điện tử Momo') {
                     // Handle Momo payment
+
                     await StripeService.stripePaymentCheckout(
                       widget.products,
                       totalCost,
+
                       context,
                       mounted,
                       onSuccess: () {
@@ -345,7 +362,9 @@ class _PaymentState extends State<Payment> {
                       },
                     );
                   } else {
+
                     await addOrder(totalCost.toString());
+
                     if (widget.products is List) {
                       for (var product in widget.products) {
                         addOrderDetail(
@@ -397,13 +416,16 @@ class _PaymentState extends State<Payment> {
 
   Future<void> addOrder(String total) async {
     String id = DateTime.now().microsecondsSinceEpoch.toString();
+
     order = id;
+
     var response = await http.post(
       Uri.parse('${Host.host}/addOrder.php'),
       body: {
         'id': id,
         'total': total,
         'user_id': User.id,
+
       },
     );
 
@@ -446,5 +468,6 @@ class _PaymentState extends State<Payment> {
     } else {
       print('Failed to delete product');
     }
+
   }
 }

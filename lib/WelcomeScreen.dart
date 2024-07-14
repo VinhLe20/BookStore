@@ -78,6 +78,7 @@ class _WelcomescreenState extends State<Welcomescreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       side: const BorderSide(color: Colors.black, width: 1),
+
                     ),
                     minimumSize: const Size(double.infinity, 70),
                   ).copyWith(
@@ -135,6 +136,7 @@ class _WelcomescreenState extends State<Welcomescreen> {
                             .red.shade500; // Sử dụng màu nền mặc định (red.500)
                       },
                     ),
+
                     foregroundColor: MaterialStateProperty.resolveWith<Color?>(
                       (Set<MaterialState> states) {
                         if (states.contains(MaterialState.pressed)) {
@@ -145,7 +147,9 @@ class _WelcomescreenState extends State<Welcomescreen> {
                     ),
                   ),
                   child: const Text(
+
                     'Đăng nhập',
+
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -155,10 +159,12 @@ class _WelcomescreenState extends State<Welcomescreen> {
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
+
                     User.guest = true;
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => Index()),
+
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -191,7 +197,9 @@ class _WelcomescreenState extends State<Welcomescreen> {
                     ),
                   ),
                   child: const Text(
+
                     'Đăng nhập tài khoản khách',
+
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

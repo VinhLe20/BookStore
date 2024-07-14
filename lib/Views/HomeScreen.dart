@@ -7,6 +7,7 @@ import 'package:bookstore/Views/Cart.dart';
 import 'package:bookstore/Views/CategoryManager.dart';
 import 'package:bookstore/Views/ImagesSlider.dart';
 import 'package:bookstore/Views/LoginScreen.dart';
+
 import 'package:bookstore/Views/OderManager.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:bookstore/Views/RateManager.dart';
@@ -69,6 +70,7 @@ class _HomeState extends State<Home> {
     var response = await http.get(uri);
     return json.decode(response.body);
   }
+
 
   @override
   Widget build(BuildContext context) {

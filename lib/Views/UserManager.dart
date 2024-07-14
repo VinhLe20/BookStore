@@ -37,11 +37,13 @@ class _UserManagerState extends State<UserManager> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
           backgroundColor: Colors.green.shade500,
           title: const Text(
             "Quản lý tài khoản",
             style: TextStyle(color: Colors.white),
           ),
+
           leading: IconButton(
               onPressed: () {
                 Navigator.pushReplacement(

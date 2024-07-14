@@ -184,6 +184,7 @@ class _ProductAddState extends State<ProductAdd> {
             ),
             Padding(
               padding: const EdgeInsets.all(10),
+
               child: SizedBox(
                 width: double.infinity,
                 child: TextField(
@@ -196,6 +197,7 @@ class _ProductAddState extends State<ProductAdd> {
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
                   ),
+
                 ),
               ),
             ),
@@ -210,7 +212,9 @@ class _ProductAddState extends State<ProductAdd> {
                     price: dongiasp.text,
                     mota: motasp.text,
                     category: selectedCategory ?? '',
+
                     author: tacgia.text,
+
                   );
 
                   try {

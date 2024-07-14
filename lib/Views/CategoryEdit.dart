@@ -23,7 +23,9 @@ class _CategoryEditState extends State<CategoryEdit> {
     tentl.text = widget.theloai['name'];
     return Scaffold(
       appBar: AppBar(
+
         backgroundColor: Colors.green.shade500,
+
         title: Text(
           'Cập nhật thể loại',
           style: TextStyle(

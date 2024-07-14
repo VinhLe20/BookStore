@@ -6,8 +6,10 @@ import 'package:bookstore/Views/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
+
 
 class Cart extends StatefulWidget {
   const Cart({Key? key}) : super(key: key);
@@ -49,8 +51,10 @@ class _CartState extends State<Cart> {
   Future updateQuantity(String productId, String quantity) async {
     final uri = Uri.parse('${Host.host}/updatequantity.php');
 
+
     await http.post(uri,
         body: {'id': User.id, 'product_id': productId, 'quantity': quantity});
+
     loadCart();
   }
 
@@ -87,10 +91,12 @@ class _CartState extends State<Cart> {
     final response = await http.post(uri, body: {'user_id': User.id});
 
     if (response.statusCode == 200) {
+
       print('sách đã được xóa all thành công');
       loadCart();
     } else {
       print('Xóa sách all không thành công');
+
     }
   }
 
@@ -181,6 +187,7 @@ class _CartState extends State<Cart> {
           },
         ),
       ),
+
       body: Column(
         children: [
           Padding(
@@ -259,6 +266,7 @@ class _CartState extends State<Cart> {
                                   children: [
                                     Text(
                                       "${products[index]['name']}",
+
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
@@ -358,6 +366,7 @@ class _CartState extends State<Cart> {
         padding: EdgeInsets.all(16),
         child: ElevatedButton(
           onPressed: () {
+
             if (total != 0) {
               Navigator.push(
                   context,
@@ -368,6 +377,7 @@ class _CartState extends State<Cart> {
                             total: total.toString(),
                           )));
             }
+
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 144, 84, 80),
@@ -401,7 +411,9 @@ class _CartState extends State<Cart> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
+
                 'Đặt hàng',
+
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

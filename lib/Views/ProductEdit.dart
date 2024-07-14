@@ -187,6 +187,7 @@ class _ProductEditState extends State<ProductEdit> {
             ),
             Padding(
               padding: const EdgeInsets.all(10),
+
               child: SizedBox(
                 width: double.infinity,
                 child: TextField(
@@ -199,6 +200,7 @@ class _ProductEditState extends State<ProductEdit> {
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
                   ),
+
                 ),
               ),
             ),
@@ -213,7 +215,9 @@ class _ProductEditState extends State<ProductEdit> {
                     price: dongiasp.text,
                     mota: motasp.text,
                     category: selectedCategory ?? '',
+
                     author: tacgia.text,
+
                   );
 
                   try {
@@ -258,7 +262,9 @@ class _ProductEditState extends State<ProductEdit> {
                   style: TextStyle(color: Colors.white),
                 ),
               ),
+
             )
+
           ],
         ),
       ),

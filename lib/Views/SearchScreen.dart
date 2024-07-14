@@ -64,6 +64,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -84,13 +85,16 @@ class _SearchPageState extends State<SearchPage> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide.none,
+
             ),
             fillColor: Colors.white.withOpacity(0.1),
           ),
+
           style: const TextStyle(color: Colors.white),
           onSubmitted: (value) {
             _performSearch();
           },
+
         ),
         backgroundColor: Colors.green.shade500,
         actions: [

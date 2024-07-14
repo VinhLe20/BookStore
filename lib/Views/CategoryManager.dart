@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:bookstore/Model/host.dart';
+
 import 'package:bookstore/Views/Admin.dart';
+
 import 'package:bookstore/Views/CategoryAdd.dart';
 import 'package:bookstore/Views/CategoryEdit.dart';
 import 'package:bookstore/Views/index.dart';
@@ -39,7 +41,9 @@ class _CategoryMangerState extends State<CategoryManger> {
               color: Colors.white,
             ),
           ),
+
           backgroundColor: Colors.green.shade500,
+
           leading: IconButton(
               onPressed: () {
                 Navigator.pushReplacement(

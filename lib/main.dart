@@ -23,8 +23,8 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Stripe.publishableKey =
-      "pk_test_51PbE052Kp0Ros8xQ2BSShPPjbDMn79CR39LqhHD0QdmlDrgd9UcxZOpNLNBJqlonRHjXRPYZoUIIzu4zMsstRCcq00bSTrJCCX";
+  // Stripe.publishableKey =
+  //     "pk_test_51PbE052Kp0Ros8xQ2BSShPPjbDMn79CR39LqhHD0QdmlDrgd9UcxZOpNLNBJqlonRHjXRPYZoUIIzu4zMsstRCcq00bSTrJCCX";
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

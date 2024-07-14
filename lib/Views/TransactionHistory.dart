@@ -249,7 +249,9 @@ class _TransactionhistoryState extends State<Transactionhistory>
             ),
             Tab(
               child: Text(
+
                 'Đã giao thành công',
+
                 style: TextStyle(fontSize: 15, color: Colors.white),
                 overflow: TextOverflow.visible,
               ),

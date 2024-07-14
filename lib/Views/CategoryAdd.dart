@@ -21,7 +21,9 @@ class _CategoryAddState extends State<CategoryAdd> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         backgroundColor: Colors.green.shade500,
+
         title: Text(
           'Thêm thể loại mới',
           style: TextStyle(
