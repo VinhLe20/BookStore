@@ -10,6 +10,8 @@ class User {
   static String id = '';
 
   static String role = '';
+  static String sdt = '';
+  static String diachi = '';
   static bool guest = false;
   late String name;
 

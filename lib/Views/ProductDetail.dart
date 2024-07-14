@@ -157,18 +157,6 @@ class _ProductDetailState extends State<ProductDetail> {
     print('them ');
   }
 
-  Future addCartDetail(
-      String oder_id, String product_id, String quantity) async {
-    final uri = Uri.parse('${Host.host}/addCart.php');
-
-    http.post(uri, body: {
-      'user_id': User.id,
-      'product_id': product_id,
-      'quantity': quantity,
-    });
-    print('them ');
-  }
-
   Future<bool> loadCart(String product_id) async {
     final uri = Uri.parse('${Host.host}/getCartDetail.php');
 
@@ -198,6 +186,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
+    List filteredData =
+        data.where((item) => item['id'] != widget.product['id']).toList();
     if (data.length < 10) {
       data.addAll(categori);
     }
@@ -315,6 +305,13 @@ class _ProductDetailState extends State<ProductDetail> {
                         "Số lượng",
                         style: TextStyle(fontSize: 16),
                       ),
+                      IconButton(
+                        onPressed: _decrementQuantity,
+                        icon: const Icon(
+                          Icons.remove,
+                          size: 14,
+                        ),
+                      ),
                       const SizedBox(width: 15),
                       Container(
                         width: 80,
@@ -325,13 +322,6 @@ class _ProductDetailState extends State<ProductDetail> {
                             border: OutlineInputBorder(),
                           ),
                           onChanged: _updateQuantity,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: _decrementQuantity,
-                        icon: const Icon(
-                          Icons.remove,
-                          size: 14,
                         ),
                       ),
                       IconButton(
@@ -438,21 +428,18 @@ class _ProductDetailState extends State<ProductDetail> {
                   ),
                   SizedBox(height: 10),
                   SizedBox(
-                    height: 250,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: data[index]['id'] == widget.product['id']
-                              ? Text("")
-                              : CardProduct(product: data[index]),
-                        );
-                      },
-                    ),
-                  )
+                      height: 250,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        itemCount: filteredData.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: CardProduct(product: filteredData[index]),
+                          );
+                        },
+                      ))
                 ],
               ),
             ),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:flutter/material.dart';
@@ -15,16 +17,39 @@ class _ReviewScreenState extends State<ReviewScreen> {
   final _formKey = GlobalKey<FormState>();
   final _reviewController = TextEditingController();
   int _rating = 0;
-  var _selectedProduct;
+  List data = [];
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  void _loadData() {
+    loadOrder().then(
+      (value) {
+        setState(() {
+          data = value;
+        });
+      },
+    );
+  }
+
+  Future<List> loadOrder() async {
+    final uri = Uri.parse('${Host.host}/getdataOrderDetail.php');
+
+    var response = await http.get(uri);
+    var data = json.decode(response.body) as List;
+    var filteredData = data
+        .where((item) => item['order_id'] == widget.order['order_id'])
+        .toList();
+    return filteredData;
+  }
 
   Future<void> submitReview(String productId) async {
-    DateTime now = DateTime.now();
-    String formattedDate = '${now.year}-${now.month}-${now.day}';
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
         Uri.parse('${Host.host}/submitReview.php'),
         body: {
-          'time': formattedDate,
+          'time': '',
           'product_id': productId,
           'user_id': User.id,
           'review': _reviewController.text,
@@ -53,6 +78,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(data);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green.shade500,
@@ -80,36 +106,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (widget.order is List) ...[
-                  Text('Chọn sản phẩm để đánh giá:',
-                      style: TextStyle(fontSize: 16)),
-                  SizedBox(height: 8),
-                  DropdownButtonFormField(
-                    value: _selectedProduct,
-                    items: widget.order.map<DropdownMenuItem>((product) {
-                      return DropdownMenuItem(
-                        value: product,
-                        child: Text(product['product_name']),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedProduct = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Vui lòng chọn sản phẩm';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Chọn sản phẩm',
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                ],
                 Text('Đánh giá của bạn:', style: TextStyle(fontSize: 16)),
                 SizedBox(height: 8),
                 TextFormField(
@@ -148,13 +144,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      if (widget.order is List) {
-                        if (_selectedProduct != null) {
-                          submitReview(_selectedProduct['product_id']);
-                        }
-                      } else {
-                        submitReview(widget.order['product_id']);
-                      }
+                      submitReview(data[0]['product_id']);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red.shade500,

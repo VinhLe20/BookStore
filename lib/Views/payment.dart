@@ -37,21 +37,14 @@ class _PaymentState extends State<Payment> {
     {'method': 'Bình thường', 'cost': 0},
     {'method': 'Nhanh', 'cost': 20000},
   ];
+
+  @override
   void initState() {
     super.initState();
-    _loadData();
-  }
-
-  void _loadData() {
-    loadUser().then((value) {
-      setState(() {
-        user = value;
-      });
-    });
   }
 
   Future loadUser() async {
-    final uri = Uri.parse('${Host.host}/getUserbyID.php?id="${User.id}"');
+    final uri = Uri.parse('${Host.host}/getUserbyID.php?id=${User.id}');
     var response = await http.get(uri);
     return json.decode(response.body).toList();
   }
@@ -80,55 +73,115 @@ class _PaymentState extends State<Payment> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10.0),
-              const Text('Thông tin giao hàng'),
-              const SizedBox(height: 10.0),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.location_on),
-                      Text('${user[0]["name"]}',
-                          style: TextStyle(fontSize: 17)),
-                      SizedBox(width: 3),
-                      Text('${user[0]["phone"]}',
-                          style: TextStyle(fontSize: 17)),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Text('Địa chỉ: ${user[0]["address"]}',
-                        style: TextStyle(fontSize: 17)),
-                  )
-                ],
-              ),
-              const Divider(),
-              const SizedBox(height: 10.0),
-              const Text('Thông tin đơn hàng'),
-              widget.products is List
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        height: 200,
-                        child: ListView.builder(
-                          itemCount: widget.products.length,
-                          itemBuilder: (context, index) {
-                            return Row(
+      body: FutureBuilder(
+        future: loadUser(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Failed to load user data'));
+          } else if (snapshot.hasData) {
+            user = snapshot.data;
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10.0),
+                    const Text('Thông tin giao hàng'),
+                    const SizedBox(height: 10.0),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.location_on),
+                            Text('${user[0]["name"]}',
+                                style: TextStyle(fontSize: 17)),
+                            SizedBox(width: 3),
+                            Text('${user[0]["phone"]}',
+                                style: TextStyle(fontSize: 17)),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text('Địa chỉ: ${user[0]["address"]}',
+                              style: TextStyle(fontSize: 17)),
+                        )
+                      ],
+                    ),
+                    const Divider(),
+                    const SizedBox(height: 10.0),
+                    const Text('Thông tin đơn hàng'),
+                    widget.products is List
+                        ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              height: 200,
+                              child: ListView.builder(
+                                itemCount: widget.products.length,
+                                itemBuilder: (context, index) {
+                                  return Row(
+                                    children: [
+                                      Container(
+                                        height: 100,
+                                        width: 100,
+                                        child: Image.network(
+                                            '${Host.host}/uploads/${widget.products[index]['image']}'),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                "${widget.products[index]['name']}"),
+                                            SizedBox(
+                                              width: 200,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(formatCurrency.format(
+                                                      double.parse(
+                                                          widget.products[index]
+                                                              ['price']))),
+                                                ],
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text("Số lượng: "),
+                                                Text(
+                                                    "${widget.products[index]['cart_quantity']}"),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                          )
+                        : SizedBox(
+                            height: 100, // Adjust the height as needed
+                            child: Row(
                               children: [
                                 Container(
                                   height: 100,
                                   width: 100,
                                   child: Image.network(
-                                      '${Host.host}/uploads/${widget.products[index]['image']}'),
+                                      "${Host.host}/uploads/${widget.products['image']}"),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(5.0),
@@ -138,158 +191,119 @@ class _PaymentState extends State<Payment> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text("${widget.products[index]['name']}"),
+                                      Text("Sách ${widget.products['name']}"),
+                                      Text(
+                                          "Tác giả ${widget.products['author']}"),
+                                      Text(
+                                          "Thể loại ${widget.products['category_name']}"),
                                       SizedBox(
-                                        width: 200,
+                                        width: 200, // Adjust width as needed
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(formatCurrency.format(
-                                                double.parse(
-                                                    widget.products[index]
-                                                        ['price']))),
+                                            Text(
+                                                "Đơn giá ${formatCurrency.format(double.parse(widget.products['price']))}"),
                                           ],
                                         ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text("Số lượng: "),
-                                          Text(
-                                              "${widget.products[index]['cart_quantity']}"),
-                                        ],
-                                      ),
+                                      )
                                     ],
                                   ),
                                 ),
                               ],
-                            );
-                          },
-                        ),
-                      ),
-                    )
-                  : SizedBox(
-                      height: 100, // Adjust the height as needed
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 100,
-                            width: 100,
-                            child: Image.network(
-                                "${Host.host}/uploads/${widget.products['image']}"),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Sách ${widget.products['name']}"),
-                                Text("Tác giả ${widget.products['author']}"),
-                                Text(
-                                    "Thể loại ${widget.products['category_name']}"),
-                                SizedBox(
-                                  width: 200, // Adjust width as needed
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                          "Đơn giá ${formatCurrency.format(double.parse(widget.products['price']))}"),
-                                    ],
-                                  ),
-                                )
-                              ],
                             ),
                           ),
-                        ],
-                      ),
+                    const SizedBox(height: 10.0),
+                    Row(
+                      children: [
+                        const Text('Chọn phương thức vận chuyển'),
+                        SizedBox(
+                          width: 30,
+                        ),
+                        DropdownButton<String>(
+                          value: selectedShippingMethod,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedShippingMethod = newValue!;
+                              shippingCost = shippingMethods.firstWhere(
+                                  (method) =>
+                                      method['method'] ==
+                                      selectedShippingMethod)['cost'];
+                            });
+                          },
+                          items: shippingMethods
+                              .map<DropdownMenuItem<String>>((method) {
+                            return DropdownMenuItem<String>(
+                              value: method['method'],
+                              child: Text(
+                                  '${method['method']} - ${formatCurrency.format(method['cost'])}'),
+                            );
+                          }).toList(),
+                        ),
+                      ],
                     ),
-              const SizedBox(height: 10.0),
-              Row(
-                children: [
-                  const Text('Chọn phương thức vận chuyển'),
-                  SizedBox(
-                    width: 30,
-                  ),
-                  DropdownButton<String>(
-                    value: selectedShippingMethod,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedShippingMethod = newValue!;
-                        shippingCost = shippingMethods.firstWhere((method) =>
-                            method['method'] == selectedShippingMethod)['cost'];
-                      });
-                    },
-                    items:
-                        shippingMethods.map<DropdownMenuItem<String>>((method) {
-                      return DropdownMenuItem<String>(
-                        value: method['method'],
-                        child: Text(
-                            '${method['method']} - ${formatCurrency.format(method['cost'])}'),
-                      );
-                    }).toList(),
-                  ),
-                ],
+                    const SizedBox(height: 10.0),
+                    const Text('Tóm tắt đơn hàng'),
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Tổng sách'),
+                            Text(formatCurrency.format(totalProductCost)),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Vận chuyển'),
+                            Text(formatCurrency.format(shippingCost)),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Tổng đơn hàng'),
+                            Text(formatCurrency.format(totalCost)),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10.0),
+                    const Text('Phương thức thanh toán'),
+                    Column(
+                      children: [
+                        RadioListTile<String>(
+                          title: const Text('Thanh toán khi nhận hàng'),
+                          value: 'Thanh toán khi nhận hàng',
+                          groupValue: selectedPaymentMethod,
+                          onChanged: (String? value) {
+                            setState(() {
+                              selectedPaymentMethod = value!;
+                            });
+                          },
+                        ),
+                        RadioListTile<String>(
+                          title: const Text('Ví điện tử Momo'),
+                          value: 'Ví điện tử Momo',
+                          groupValue: selectedPaymentMethod,
+                          onChanged: (String? value) {
+                            setState(() {
+                              selectedPaymentMethod = value!;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 10.0),
-              const Text('Tóm tắt đơn hàng'),
-              Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Tổng sách'),
-                      Text(formatCurrency.format(totalProductCost)),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Vận chuyển'),
-                      Text(formatCurrency.format(shippingCost)),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Tổng đơn hàng'),
-                      Text(formatCurrency.format(totalCost)),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10.0),
-              const Text('Phương thức thanh toán'),
-              Column(
-                children: [
-                  RadioListTile<String>(
-                    title: const Text('Thanh toán khi nhận hàng'),
-                    value: 'Thanh toán khi nhận hàng',
-                    groupValue: selectedPaymentMethod,
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedPaymentMethod = value!;
-                      });
-                    },
-                  ),
-                  RadioListTile<String>(
-                    title: const Text('Ví điện tử Momo'),
-                    value: 'Ví điện tử Momo',
-                    groupValue: selectedPaymentMethod,
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedPaymentMethod = value!;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+            );
+          } else {
+            return Center(child: Text('No user data found'));
+          }
+        },
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
