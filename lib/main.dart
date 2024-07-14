@@ -6,6 +6,7 @@ import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Views/ProfileScreen.dart';
 
 import 'package:bookstore/Views/ResetPassword.dart';
+import 'package:bookstore/Views/UpdateUserinfo.dart';
 import 'package:bookstore/Views/UserManager.dart';
 import 'package:bookstore/Views/VerificationScreen.dart';
 import 'package:bookstore/Views/statistical.dart';

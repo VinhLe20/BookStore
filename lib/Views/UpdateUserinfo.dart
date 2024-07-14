@@ -1,31 +1,32 @@
 import 'dart:convert';
+
 import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
-import 'package:bookstore/Views/ProfileScreen.dart';
+import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Views/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
+class Updateuserinfo extends StatefulWidget {
+  const Updateuserinfo({super.key});
 
   @override
-  State<EditProfile> createState() => _EditProfileState();
+  State<Updateuserinfo> createState() => _UpdateuserinfoState();
 }
 
-class _EditProfileState extends State<EditProfile> {
+class _UpdateuserinfoState extends State<Updateuserinfo> {
   late Future<List<Map<String, dynamic>>> futureUser;
-  bool showPassword = false;
 
   // TextEditingController for each field
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-  String emailError = '';
+
+  String nameError = '';
   String phoneError = '';
+  String addressError = '';
 
   @override
   void initState() {
@@ -42,7 +43,6 @@ class _EditProfileState extends State<EditProfile> {
       if (user.isNotEmpty) {
         // Initialize the controllers with user data
         nameController.text = user[0]['name'];
-        emailController.text = user[0]['email'];
         phoneController.text = user[0]['phone'];
         addressController.text = user[0]['address'];
       }
@@ -53,14 +53,13 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> updateUser(String id) async {
-    final uri = Uri.parse('${Host.host}/EditProfile.php');
+    final uri = Uri.parse('${Host.host}/UpdateUserInfo.php');
     var response = await http.post(
       uri,
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'id': User.id,
         'name': nameController.text,
-        'email': emailController.text,
         'phone': phoneController.text,
         'address': addressController.text,
       }),
@@ -68,7 +67,7 @@ class _EditProfileState extends State<EditProfile> {
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       if (data['status'] == 'success') {
-        showSuccessDialog();
+
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'])),
@@ -107,7 +106,7 @@ class _EditProfileState extends State<EditProfile> {
             children: [
               const Center(
                 child: Text(
-                  "Edit Profile",
+                  "Cập nhật trang cá nhân",
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
                 ),
               ),
@@ -152,88 +151,45 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               const SizedBox(height: 35),
-              buildTextField("Full Name", nameController),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 35.0),
-                child: TextField(
-                  controller: emailController,
-                  onChanged: (_) => validateEmail(),
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.only(bottom: 3),
-                    labelText: 'Email',
-                    errorText: emailError.isNotEmpty ? emailError : null,
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 35.0),
-                child: TextField(
-                  controller: phoneController,
-                  onChanged: (_) => validatePhone(),
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.only(bottom: 3),
-                    labelText: 'Phone',
-                    errorText: phoneError.isNotEmpty ? phoneError : null,
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-              buildTextField("Location", addressController),
+              buildTextField("Họ tên", nameController, nameError, validateName),
+              buildTextField(
+                  "Số điện thoại", phoneController, phoneError, validatePhone,
+                  keyboardType: TextInputType.number),
+              buildTextField(
+                  "Địa chỉ", addressController, addressError, validateAddress),
               const SizedBox(height: 35),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    validateName();
+                    validatePhone();
+                    validateAddress();
+                    if (nameError.isEmpty &&
+                        phoneError.isEmpty &&
+                        addressError.isEmpty) {
+                      updateUser(User.id);
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Index(
-                                    selectedIndex: 2,
-                                  )));
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.redAccent),
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 15),
-                      ),
-                      textStyle: MaterialStateProperty.all(
-                        const TextStyle(fontSize: 14, letterSpacing: 2.2),
-                      ),
+                              builder: (context) => Loginscreen()));
+                    } else {
+                      showFailedDialog();
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.green),
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                     ),
-                    child: const Text(
-                      "CANCEL",
-                      style: TextStyle(color: Colors.white),
+                    textStyle: MaterialStateProperty.all(
+                      const TextStyle(fontSize: 14, letterSpacing: 2.2),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (emailError.isEmpty && phoneError.isEmpty)
-                        updateUser(User.id);
-                      else {
-                        showFailedDIalog();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.green),
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 15),
-                      ),
-                      textStyle: MaterialStateProperty.all(
-                        const TextStyle(fontSize: 14, letterSpacing: 2.2),
-                      ),
-                    ),
-                    child: const Text(
-                      "SAVE",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  child: const Text(
+                    "SAVE",
+                    style: TextStyle(color: Colors.white),
                   ),
-                ],
+                ),
               )
             ],
           );
@@ -245,17 +201,22 @@ class _EditProfileState extends State<EditProfile> {
   Widget buildTextField(
     String labelText,
     TextEditingController controller,
-  ) {
+    String errorText,
+    Function validateFunction, {
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 35.0),
       child: TextField(
         controller: controller,
+        onChanged: (_) => validateFunction(),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.only(bottom: 3),
           labelText: labelText,
+          errorText: errorText.isNotEmpty ? errorText : null,
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: controller.text,
         ),
+        keyboardType: keyboardType,
       ),
     );
   }
@@ -277,7 +238,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  void showFailedDIalog() {
+  void showFailedDialog() {
     QuickAlert.show(
       context: context,
       type: QuickAlertType.warning,
@@ -286,23 +247,17 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  void validateEmail() {
+  void validateName() {
     setState(() {
-      final email = emailController.text.trim();
-      if (email.isEmpty) {
-        emailError = 'Email không được bỏ trống';
-      } else if (!_isValidEmail(email)) {
-        emailError = 'Email không hợp lệ';
+      final name = nameController.text.trim();
+      if (name.isEmpty) {
+        nameError = 'Họ tên không được bỏ trống';
+      } else if (name.length > 32) {
+        nameError = 'Họ tên không được vượt quá 32 kí tự';
       } else {
-        emailError = '';
+        nameError = '';
       }
     });
-  }
-
-  bool _isValidEmail(String email) {
-    const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
-    final regex = RegExp(pattern);
-    return regex.hasMatch(email);
   }
 
   void validatePhone() {
@@ -314,6 +269,17 @@ class _EditProfileState extends State<EditProfile> {
         phoneError = 'Số điện thoại không hợp lệ';
       } else {
         phoneError = '';
+      }
+    });
+  }
+
+  void validateAddress() {
+    setState(() {
+      final address = addressController.text.trim();
+      if (address.isEmpty) {
+        addressError = 'Địa chỉ không được bỏ trống';
+      } else {
+        addressError = '';
       }
     });
   }

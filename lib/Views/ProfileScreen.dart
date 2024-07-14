@@ -33,8 +33,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    futureUser = loadUser(
-        User.id); // Assume User.id is a static or globally accessible ID
+    futureUser = loadUser(User.id); // Assume User.id is a static or globally accessible ID
   }
 
   @override
@@ -110,97 +109,106 @@ class _ProfileState extends State<Profile> {
                     itemProfile(
                         'Email', "${categories[index]['email']}", Icons.mail),
                     const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditProfile()));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red.shade500,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 32, vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side:
-                                const BorderSide(color: Colors.black, width: 1),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditProfile()));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red.shade500,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 32, vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: const BorderSide(
+                                      color: Colors.black, width: 1),
+                                ),
+                                minimumSize: const Size(double.infinity, 70),
+                              ).copyWith(
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.pressed)) {
+                                      return Colors.white;
+                                    }
+                                    return Colors.red.shade500;
+                                  },
+                                ),
+                                foregroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.pressed)) {
+                                      return Colors.red.shade500;
+                                    }
+                                    return Colors.white;
+                                  },
+                                ),
+                              ),
+                              child: const Text(
+                                'Chỉnh sửa thông tin',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                            ),
                           ),
-                          minimumSize: const Size(double.infinity, 70),
-                        ).copyWith(
-                          backgroundColor:
-                              MaterialStateProperty.resolveWith<Color>(
-                            (Set<MaterialState> states) {
-                              if (states.contains(MaterialState.pressed)) {
-                                return Colors.white;
-                              }
-                              return Colors.red.shade500;
-                            },
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            Transactionhistory()));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red.shade500,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 32, vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: const BorderSide(
+                                      color: Colors.black, width: 1),
+                                ),
+                                minimumSize: const Size(double.infinity, 70),
+                              ).copyWith(
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.pressed)) {
+                                      return Colors.white;
+                                    }
+                                    return Colors.red.shade500;
+                                  },
+                                ),
+                                foregroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.pressed)) {
+                                      return Colors.red.shade500;
+                                    }
+                                    return Colors.white;
+                                  },
+                                ),
+                              ),
+                              child: const Text(
+                                'Lịch sử giao dịch',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                            ),
                           ),
-                          foregroundColor:
-                              MaterialStateProperty.resolveWith<Color>(
-                            (Set<MaterialState> states) {
-                              if (states.contains(MaterialState.pressed)) {
-                                return Colors.red.shade500;
-                              }
-                              return Colors.white;
-                            },
-                          ),
-                        ),
-                        child: const Text(
-                          'Edit Profile',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Transactionhistory()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade500,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: const BorderSide(color: Colors.black, width: 1),
-                        ),
-                        minimumSize: const Size(double.infinity, 70),
-                      ).copyWith(
-                        backgroundColor:
-                            MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.pressed)) {
-                              return Colors.white;
-                            }
-                            return Colors.red.shade500;
-                          },
-                        ),
-                        foregroundColor:
-                            MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.pressed)) {
-                              return Colors.red.shade500;
-                            }
-                            return Colors.white;
-                          },
-                        ),
-                      ),
-                      child: const Text(
-                        'Lịch sử giao dịch',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
+                        ],
                       ),
                     ),
                   ],

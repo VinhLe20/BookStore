@@ -184,19 +184,27 @@ class _ProductAddState extends State<ProductAdd> {
             ),
             Padding(
               padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: motasp,
-                decoration: const InputDecoration(
-                  labelText: 'Mô tả sách',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
+
+              child: SizedBox(
+                width: double.infinity,
+                child: TextField(
+                  controller: motasp,
+                  minLines: 4,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    labelText: 'Mô tả sách',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+
                 ),
               ),
             ),
             Center(
-                child: ElevatedButton(
-              onPressed: () async {
-                Product add = Product(
+              child: ElevatedButton(
+                onPressed: () async {
+                  Product add = Product(
                     id: '',
                     name: tensp.text,
                     quantity: soluongsp.text,
@@ -204,34 +212,49 @@ class _ProductAddState extends State<ProductAdd> {
                     price: dongiasp.text,
                     mota: motasp.text,
                     category: selectedCategory ?? '',
-                    author: tacgia.text);
 
-                try {
-                  await newproduct.productAdd(add);
-                  Fluttertoast.showToast(
-                    msg: "Thêm mới sách thành công",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.green,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
+                    author: tacgia.text,
+
                   );
-                  Navigator.pushReplacement(
+
+                  try {
+                    await newproduct.productAdd(add);
+                    Fluttertoast.showToast(
+                      msg: "Thêm mới sách thành công",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ProductManager()));
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Có lỗi xảy ra: $e'),
-                  ));
-                }
-              },
-              child: const Text('Thêm mới'),
-              style: ElevatedButton.styleFrom(
-                textStyle: const TextStyle(fontSize: 16),
+                          builder: (context) => const ProductManager()),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Có lỗi xảy ra: $e'),
+                      ),
+                    );
+                  }
+                },
+                child: const Text(
+                  'Thêm mới',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade500,
+                  textStyle: const TextStyle(fontSize: 18),
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
-            ))
+            )
           ],
         ),
       ),

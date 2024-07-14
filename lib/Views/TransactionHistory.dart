@@ -113,6 +113,8 @@ class _TransactionhistoryState extends State<Transactionhistory>
                 Text(
                     'Trạng thái đơn hàng: ${filteredOrders[index]['order_status']}'),
                 SizedBox(height: 10),
+                Text('Ngày đặt hàng: ${filteredOrders[index]['create']}'),
+                SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -247,7 +249,9 @@ class _TransactionhistoryState extends State<Transactionhistory>
             ),
             Tab(
               child: Text(
-                'Đang chờ giao hàng',
+
+                'Đã giao thành công',
+
                 style: TextStyle(fontSize: 15, color: Colors.white),
                 overflow: TextOverflow.visible,
               ),

@@ -8,9 +8,11 @@ class User {
   late String email;
   late String password;
   static String id = '';
-  static String order_id = '';
-  static String role = '';
 
+  static String role = '';
+  static String sdt = '';
+  static String diachi = '';
+  static bool guest = false;
   late String name;
 
   late String phone;
@@ -24,6 +26,7 @@ class User {
       required phone});
 
   static Future<String> loadid(String email) async {
+
 
     final uri = Uri.parse('${Host.host}/getuser.php');
 
@@ -46,6 +49,7 @@ class User {
   }
 
   static Future<String> loadrole(String email) async {
+
 
     final uri = Uri.parse('${Host.host}/getuser.php');
 
@@ -107,5 +111,4 @@ class User {
       throw Exception('Failed to connect to the server: $e');
     }
   }
-
 }

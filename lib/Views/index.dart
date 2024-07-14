@@ -1,3 +1,5 @@
+import 'package:bookstore/Model/user.dart';
+import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -24,9 +26,16 @@ class _IndexState extends State<Index> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 2 && User.guest) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Loginscreen()),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -34,7 +43,7 @@ class _IndexState extends State<Index> {
     List<Widget> _widgetOptions = [
       Home(),
       Category(),
-      Profile(),
+      !User.guest ? Profile() : Loginscreen(),
     ];
 
     return Scaffold(

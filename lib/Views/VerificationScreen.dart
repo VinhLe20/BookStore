@@ -1,6 +1,9 @@
 import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Views/ResetPassword.dart';
+
+import 'package:bookstore/Views/UpdateUserinfo.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;

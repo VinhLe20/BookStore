@@ -69,10 +69,18 @@ class _StatisticalState extends State<Statistical> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thống kê doanh thu'),
+
+        title: Text(
+          'Thống kê doanh thu',
+          style: TextStyle(color: Colors.white),
+        ),
+
         backgroundColor: Colors.green.shade500,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
           onPressed: () {
             Navigator.pushReplacement(
               context,

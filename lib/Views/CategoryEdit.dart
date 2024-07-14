@@ -23,6 +23,9 @@ class _CategoryEditState extends State<CategoryEdit> {
     tentl.text = widget.theloai['name'];
     return Scaffold(
       appBar: AppBar(
+
+        backgroundColor: Colors.green.shade500,
+
         title: Text(
           'Cập nhật thể loại',
           style: TextStyle(
@@ -44,7 +47,7 @@ class _CategoryEditState extends State<CategoryEdit> {
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+              padding: EdgeInsets.fromLTRB(10, 40, 10, 10),
               child: TextField(
                 controller: tentl,
                 decoration: InputDecoration(
@@ -54,32 +57,42 @@ class _CategoryEditState extends State<CategoryEdit> {
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await updateCategory(widget.theloai['id'], tentl.text);
-                  Fluttertoast.showToast(
-                    msg: "Thể loại đã được cập nhật",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.green,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CategoryManger()));
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Có lỗi xảy ra: $e'),
-                  ));
-                }
-              },
-              child: Text('Cập nhật thể loại'),
-              style: ElevatedButton.styleFrom(
-                textStyle: TextStyle(fontSize: 16),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await updateCategory(widget.theloai['id'], tentl.text);
+                    Fluttertoast.showToast(
+                      msg: "Thể loại đã được cập nhật",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CategoryManger()));
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Có lỗi xảy ra: $e'),
+                    ));
+                  }
+                },
+                child: const Text(
+                  'Cập nhật',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade500,
+                  textStyle: const TextStyle(fontSize: 18),
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
             )
           ],

@@ -6,6 +6,8 @@ import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/Cart.dart';
 import 'package:bookstore/Views/CategoryManager.dart';
 import 'package:bookstore/Views/ImagesSlider.dart';
+import 'package:bookstore/Views/LoginScreen.dart';
+
 import 'package:bookstore/Views/OderManager.dart';
 import 'package:bookstore/Views/ProductManagerScreen.dart';
 import 'package:bookstore/Views/RateManager.dart';
@@ -44,8 +46,6 @@ class _HomeState extends State<Home> {
     super.initState();
     _loadData();
     _loadSellProduct();
-    checkUserInCart();
-    getOrderID();
   }
 
   void _loadData() {
@@ -71,46 +71,6 @@ class _HomeState extends State<Home> {
     return json.decode(response.body);
   }
 
-  Future<void> getOrderID() async {
-    try {
-      String id = await User.loadoderid(User.id);
-      User.order_id = id;
-      print('Order ID: ${User.order_id}');
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-  Future<void> checkUserInCart() async {
-    try {
-      bool userExistsInCart = await User.isUserIdInCart(User.id);
-      if (userExistsInCart) {
-        print('User ID ${User.id} is in the cart.');
-        await getOrderID();
-      } else {
-        print('User ID ${User.id} is not in the cart.');
-        await addCart();
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-  Future<void> addCart() async {
-    try {
-      var response = await http.post(
-        Uri.parse('${Host.host}/addCart.php'),
-        body: {'id': User.id},
-      );
-      if (response.statusCode == 200) {
-        print('Cart added successfully.');
-      } else {
-        print('Failed to add cart. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,8 +95,14 @@ class _HomeState extends State<Home> {
                 )),
             IconButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                      context, MaterialPageRoute(builder: (context) => Cart()));
+                  print(User.guest);
+                  !User.guest
+                      ? Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => Cart()))
+                      : Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Loginscreen()));
                 },
                 icon: Icon(
                   Icons.shopping_cart,

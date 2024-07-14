@@ -39,6 +39,19 @@ class Admin extends StatelessWidget {
           ),
           _buildListItem(
             context,
+            'Quản lý thể loại',
+            Icons.category,
+            () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CategoryManger(),
+                ),
+              );
+            },
+          ),
+          _buildListItem(
+            context,
             'Quản lý đơn hàng',
             Icons.shopping_cart,
             () {

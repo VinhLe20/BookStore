@@ -37,14 +37,22 @@ class _UserManagerState extends State<UserManager> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green.shade500,
-          title: const Text("Quản lý tài khoản"),
+
+          backgroundColor: Colors.green.shade500,
+          title: const Text(
+            "Quản lý tài khoản",
+            style: TextStyle(color: Colors.white),
+          ),
+
           leading: IconButton(
               onPressed: () {
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Admin()));
               },
-              icon: Icon(Icons.arrow_back_outlined))),
+              icon: Icon(
+                Icons.arrow_back_outlined,
+                color: Colors.white,
+              ))),
       body: FutureBuilder<List<dynamic>>(
         future: Getuser(),
         builder: (context, snapshot) {

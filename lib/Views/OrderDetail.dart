@@ -124,7 +124,9 @@ class _OrderDetailState extends State<OrderDetail> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Tên sách: ${order[index]['name']}",
+
+                                "Tên sách: ${order[index]['product_name']}",
+
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold),
                               ),

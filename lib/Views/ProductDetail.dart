@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:bookstore/Model/cardProduct.dart';
+
 import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
+import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Views/index.dart';
 import 'package:bookstore/Views/payment.dart';
 import 'package:flutter/material.dart';
@@ -23,13 +26,26 @@ class _ProductDetailState extends State<ProductDetail> {
   NumberFormat formatCurrency =
       NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
+  List data = [];
+
   List comment = [];
+  List categori = [];
   int _quantity = 1;
+  late TextEditingController _quantityController;
 
   @override
   void initState() {
     super.initState();
     _loadData();
+    _loadProduct();
+    _loadcategori();
+    _quantityController = TextEditingController(text: '$_quantity');
+  }
+
+  @override
+  void dispose() {
+    _quantityController.dispose();
+    super.dispose();
   }
 
   void _loadData() {
@@ -38,6 +54,27 @@ class _ProductDetailState extends State<ProductDetail> {
         comment = value;
       });
     });
+  }
+
+
+  void _loadProduct() {
+    loadAuthor(widget.product['author']).then(
+      (value) {
+        setState(() {
+          data = value;
+        });
+      },
+    );
+  }
+
+  void _loadcategori() {
+    loadcategory(widget.product['category_name']).then(
+      (value) {
+        setState(() {
+          categori = value;
+        });
+      },
+    );
   }
 
   Future<List> loadDataComment() async {
@@ -49,6 +86,24 @@ class _ProductDetailState extends State<ProductDetail> {
         .where((item) => item['product_id'] == widget.product['id'])
         .toList();
     return filteredData;
+  }
+
+  Future<List> loadAuthor(String author) async {
+    final uri =
+        Uri.parse('${Host.host}/getdataauthorProduct.php?author=$author');
+
+    var response = await http.get(uri);
+    print(response.body);
+    return json.decode(response.body);
+  }
+
+  Future<List> loadcategory(String categori) async {
+    final uri = Uri.parse(
+        '${Host.host}/getdatacategoriProduct.php?category_name=$categori');
+
+    var response = await http.get(uri);
+    print(response.body);
+    return json.decode(response.body);
   }
 
   String loaddanhgia() {
@@ -66,16 +121,35 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 
   void _incrementQuantity() {
-    setState(() {
-      _quantity++;
-    });
+    if (_quantity < int.parse(widget.product['quantity'])) {
+      setState(() {
+        _quantity++;
+        _quantityController.text = '$_quantity';
+      });
+    } else {
+      _showExceedStockDialog();
+    }
   }
 
   void _decrementQuantity() {
     if (_quantity > 1) {
       setState(() {
         _quantity--;
+        _quantityController.text = '$_quantity';
       });
+    }
+  }
+
+
+  void _updateQuantity(String value) {
+    int newQuantity = int.tryParse(value) ?? 1;
+    if (newQuantity <= int.parse(widget.product['quantity'])) {
+      setState(() {
+        _quantity = newQuantity;
+      });
+    } else {
+      _quantityController.text = widget.product['quantity'];
+      _showExceedStockDialog();
     }
   }
 
@@ -83,19 +157,7 @@ class _ProductDetailState extends State<ProductDetail> {
     final uri = Uri.parse('${Host.host}/addCart.php');
 
     http.post(uri, body: {
-      'cart_id': oder_id,
-      'product_id': product_id,
-      'quantity': quantity,
-    });
-    print('thêm');
-  }
-
-  Future addCartDetail(
-      String oder_id, String product_id, String quantity) async {
-    final uri = Uri.parse('${Host.host}/addCartDetail.php');
-
-    http.post(uri, body: {
-      'cart_id': oder_id,
+      'user_id': User.id,
       'product_id': product_id,
       'quantity': quantity,
     });
@@ -107,14 +169,37 @@ class _ProductDetailState extends State<ProductDetail> {
 
     var response = await http.get(uri);
     var data = json.decode(response.body);
-    var cart = data.where((item) => item['cart_id'] == User.order_id).toList();
+    var cart = data.where((item) => item['user_id'] == User.id).toList();
     var product =
         cart.where((item) => item['product_id'] == product_id).toList();
     return product.isNotEmpty;
   }
 
+  void _showExceedStockDialog() {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.error,
+      title: 'Lỗi',
+      widget: const Center(
+        child: Center(
+          child: Text(
+            'Số lượng vượt quá số lượng sản phẩm trong kho!',
+            style: TextStyle(fontSize: 20),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    List filteredData =
+        data.where((item) => item['id'] != widget.product['id']).toList();
+    if (data.length < 10) {
+      data.addAll(categori);
+    }
+
     void showSuccessDialog() {
       QuickAlert.show(
           context: context,
@@ -126,7 +211,9 @@ class _ProductDetailState extends State<ProductDetail> {
           )));
     }
 
-    void showFailedDIalog() {
+
+    void showFailedDialog() {
+
       QuickAlert.show(
           context: context,
           type: QuickAlertType.warning,
@@ -229,40 +316,30 @@ class _ProductDetailState extends State<ProductDetail> {
                         "Số lượng",
                         style: TextStyle(fontSize: 16),
                       ),
+                      IconButton(
+                        onPressed: _decrementQuantity,
+                        icon: const Icon(
+                          Icons.remove,
+                          size: 14,
+                        ),
+                      ),
                       const SizedBox(width: 15),
                       Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey[300]!,
-                            width: 1.0,
+                        width: 80,
+                        child: TextField(
+                          controller: _quantityController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
                           ),
+                          onChanged: _updateQuantity,
                         ),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: _decrementQuantity,
-                              icon: const Icon(
-                                Icons.remove,
-                                size: 14,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '$_quantity',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            IconButton(
-                              onPressed: _incrementQuantity,
-                              icon: const Icon(
-                                Icons.add,
-                                size: 14,
-                              ),
-                            ),
-                          ],
+                      ),
+                      IconButton(
+                        onPressed: _incrementQuantity,
+                        icon: const Icon(
+                          Icons.add,
+                          size: 14,
                         ),
                       ),
                     ],
@@ -352,6 +429,28 @@ class _ProductDetailState extends State<ProductDetail> {
                             ],
                           ),
                   ),
+                  SizedBox(height: 10),
+                  const Text(
+                    'Sách liên quan',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  SizedBox(
+                      height: 250,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        itemCount: filteredData.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: CardProduct(product: filteredData[index]),
+                          );
+                        },
+                      ))
                 ],
               ),
             ),
@@ -365,13 +464,19 @@ class _ProductDetailState extends State<ProductDetail> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () async {
-                  if (await loadCart(widget.product['id'])) {
-                    print("da co san pham");
-                    showFailedDIalog();
+
+                  if (!User.guest) {
+                    if (await loadCart(widget.product['id'])) {
+                      print("da co san pham");
+                      showFailedDialog();
+                    } else {
+                      addCart('${User.id}', widget.product['id'], '$_quantity');
+                      showSuccessDialog();
+                    }
                   } else {
-                    addCart(
-                        '${User.order_id}', widget.product['id'], '$_quantity');
-                    showSuccessDialog();
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Loginscreen()));
+
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -386,15 +491,20 @@ class _ProductDetailState extends State<ProductDetail> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () async {
-                  int total = int.parse(widget.product['price']) * _quantity;
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Payment(
-                                quantity: _quantity.toString(),
-                                products: widget.product,
-                                total: total.toString(),
-                              )));
+                  if (!User.guest) {
+                    int total = int.parse(widget.product['price']) * _quantity;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Payment(
+                                  quantity: _quantity.toString(),
+                                  products: widget.product,
+                                  total: total.toString(),
+                                )));
+                  } else {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Loginscreen()));
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,

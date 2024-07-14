@@ -37,19 +37,21 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   //hàm kiểm tra password
-  void validatePassword() {
-    setState(() {
-      final accountPassword = _passwordcontroller.text.trim();
-      if (accountPassword.isEmpty) {
-        _passwordError = 'Mật khẩu không được bỏ trống';
-      } else if (accountPassword.length < 8 ||
-          !accountPassword.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-        _passwordError = 'Mật khẩu tối đa 8 kí tự và chứa kí tự đặc biệt';
-      } else {
-        _passwordError = '';
-      }
-    });
-  }
+void validatePassword() {
+  setState(() {
+    final accountPassword = _passwordcontroller.text.trim();
+    if (accountPassword.isEmpty) {
+      _passwordError = 'Mật khẩu không được bỏ trống';
+    } else if (accountPassword.length < 8 || accountPassword.length > 32) {
+      _passwordError = 'Mật khẩu phải có độ dài từ 8 đến 32 ký tự';
+    } else if (!accountPassword.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      _passwordError = 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt';
+    } else {
+      _passwordError = '';
+    }
+  });
+}
+
 
   //hàm kiểm tra email
   void validateEmail() {

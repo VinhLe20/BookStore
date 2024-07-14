@@ -92,6 +92,10 @@ class _OderManagerState extends State<OderManager>
                 Text(
                     'Trạng thái đơn hàng: ${filteredOrders[index]['order_status']}'),
                 const SizedBox(height: 10),
+
+                Text('Ngày tạo đơn hàng: ${filteredOrders[index]['create']}'),
+                const SizedBox(height: 10),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

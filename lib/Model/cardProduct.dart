@@ -17,9 +17,11 @@ class CardProduct extends StatelessWidget {
   var product;
 
   Future addCart(String oder_id, String product_id, String quantity) async {
-    final uri = Uri.parse('${Host.host}/addCartDetail.php');
+
+    final uri = Uri.parse('${Host.host}/addCart.php');
+
     http.post(uri, body: {
-      'cart_id': oder_id,
+      'user_id': User.id,
       'product_id': product_id,
       'quantity': quantity,
     });
@@ -30,7 +32,7 @@ class CardProduct extends StatelessWidget {
     final uri = Uri.parse('${Host.host}/getCartDetail.php');
     var response = await http.get(uri);
     var data = json.decode(response.body);
-    var cart = data.where((item) => item['cart_id'] == User.order_id).toList();
+    var cart = data.where((item) => item['user_id'] == User.id).toList();
     var product =
         cart.where((item) => item['product_id'] == product_id).toList();
     return product.isNotEmpty;
@@ -40,22 +42,29 @@ class CardProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     void showSuccessDialog() {
       QuickAlert.show(
-        context: context,
-        type: QuickAlertType.success,
-      
-        widget: Center(child: Text('Thêm vào giỏ hàng thành công!',style: TextStyle(fontSize: 20),))
-      );
+
+          context: context,
+          type: QuickAlertType.success,
+          widget: Center(
+              child: Text(
+            'Thêm vào giỏ hàng thành công!',
+            style: TextStyle(fontSize: 20),
+          )));
+
     }
 
     void showFailedDIalog() {
       QuickAlert.show(
-        context: context,
-        type: QuickAlertType.warning,
-        title: 'Warning!',
-       
-        
-        widget: Center(child: Text('Đã có trong giỏ hàng',style: TextStyle(fontSize: 20),))
-      );
+
+          context: context,
+          type: QuickAlertType.warning,
+          title: 'Warning!',
+          widget: Center(
+              child: Text(
+            'Đã có trong giỏ hàng',
+            style: TextStyle(fontSize: 20),
+          )));
+
     }
 
     // Định dạng tiền tệ cho Đồng Việt Nam
@@ -126,12 +135,19 @@ class CardProduct extends StatelessWidget {
           Center(
             child: TextButton(
               onPressed: () async {
-                if (await loadCart(product['id'])) {
-                  print("da co san pham");
-                  showFailedDIalog();
+
+                if (!User.guest) {
+                  if (await loadCart(product['id'])) {
+                    print("da co san pham");
+                    showFailedDIalog();
+                  } else {
+                    addCart('${User.id}', product['id'], '1');
+                    showSuccessDialog();
+                  }
                 } else {
-                  addCart('${User.order_id}', product['id'], '1');
-                  showSuccessDialog();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Loginscreen()));
+
                 }
               },
               child: const Text(

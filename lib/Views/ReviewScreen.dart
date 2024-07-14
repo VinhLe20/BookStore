@@ -1,3 +1,7 @@
+
+import 'dart:convert';
+
+
 import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +9,8 @@ import 'package:http/http.dart' as http;
 
 class ReviewScreen extends StatefulWidget {
   ReviewScreen({Key? key, required this.order}) : super(key: key);
-  var order;
+  final dynamic order;
+
   @override
   _ReviewScreenState createState() => _ReviewScreenState();
 }
@@ -14,17 +19,40 @@ class _ReviewScreenState extends State<ReviewScreen> {
   final _formKey = GlobalKey<FormState>();
   final _reviewController = TextEditingController();
   int _rating = 0;
+  List data = [];
+  void initState() {
+    super.initState();
+    _loadData();
+  }
 
-  Future<void> submitReview(String product_id) async {
-    print(product_id);
-    DateTime now = DateTime.now();
-    String formattedDate = '${now.year}-${now.month}-${now.day}';
+  void _loadData() {
+    loadOrder().then(
+      (value) {
+        setState(() {
+          data = value;
+        });
+      },
+    );
+  }
+
+  Future<List> loadOrder() async {
+    final uri = Uri.parse('${Host.host}/getdataOrderDetail.php');
+
+    var response = await http.get(uri);
+    var data = json.decode(response.body) as List;
+    var filteredData = data
+        .where((item) => item['order_id'] == widget.order['order_id'])
+        .toList();
+    return filteredData;
+  }
+
+  Future<void> submitReview(String productId) async {
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
         Uri.parse('${Host.host}/submitReview.php'),
         body: {
-          'time': formattedDate,
-          'product_id': product_id,
+          'time': '',
+          'product_id': productId,
           'user_id': User.id,
           'review': _reviewController.text,
           'rating': _rating.toString(),
@@ -52,6 +80,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(data);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green.shade500,
@@ -62,13 +91,16 @@ class _ReviewScreenState extends State<ReviewScreen> {
           ),
         ),
         leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            )),
+
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+        ),
+
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -116,43 +148,18 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      if (widget.order is List) {
-                        for (var element in widget.order) {
-                          submitReview(element['product_id']);
-                        }
-                      } else {
-                        submitReview(widget.order['product_id']);
-                      }
+                      submitReview(data[0]['product_id']);
                     },
                     style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red.shade500,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 32, vertical: 16),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                side: const BorderSide(
-                                    color: Colors.black, width: 1)),
-                            minimumSize: Size(double.infinity, 70))
-                        .copyWith(
-                      backgroundColor: WidgetStateColor.resolveWith(
-                        (Set<WidgetState> states) {
-                          if (states.contains(WidgetState.pressed)) {
-                            return Colors.white; // Màu nền button khi được nhấn
-                          }
-                          return Colors.red
-                              .shade500; // Sử dụng màu nền mặc định (red.500)
-                        },
+                      backgroundColor: Colors.red.shade500,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: const BorderSide(color: Colors.black, width: 1),
                       ),
-                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (Set<WidgetState> states) {
-                          if (states.contains(WidgetState.pressed)) {
-                            return null; // Màu chữ button khi được nhấn
-                          }
-                          return Colors
-                              .white; // Sử dụng màu chữ mặc định (white)
-                        },
-                      ),
+                      minimumSize: Size(double.infinity, 70),
                     ),
                     child: const Text(
                       'Gửi đánh giá',
