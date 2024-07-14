@@ -14,20 +14,38 @@ class Admin extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quản lý cửa hàng'),
-        
+        backgroundColor: Colors.green.shade500,
+        title: Text(
+          'Quản lý cửa hàng',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
       ),
       body: ListView(
         children: [
           _buildListItem(
             context,
-            'Quản lý sản phẩm',
+            'Quản lý sách',
             Icons.shopping_bag,
             () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => ProductManager(),
+                ),
+              );
+            },
+          ),
+          _buildListItem(
+            context,
+            'Quản lý thể loại',
+            Icons.category,
+            () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CategoryManger(),
                 ),
               );
             },

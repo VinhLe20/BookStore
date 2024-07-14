@@ -1,3 +1,4 @@
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/CategoryManager.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -13,30 +14,36 @@ class CategoryAdd extends StatefulWidget {
 class _CategoryAddState extends State<CategoryAdd> {
   var tentl = TextEditingController();
   Future addCategory(String name) async {
-
-    http.post(Uri.parse('http://192.168.1.12/addCategory.php'),
-
-        body: {'name': name});
+    http.post(Uri.parse('${Host.host}/addCategory.php'), body: {'name': name});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thêm thể loại mới'),
+        backgroundColor: Colors.green.shade500,
+        title: Text(
+          'Thêm thể loại mới',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         leading: IconButton(
           onPressed: () {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => CategoryManger()));
           },
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
         ),
       ),
       body: Center(
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+              padding: EdgeInsets.fromLTRB(10, 40, 10, 10),
               child: TextField(
                 controller: tentl,
                 decoration: InputDecoration(
@@ -46,32 +53,42 @@ class _CategoryAddState extends State<CategoryAdd> {
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await addCategory(tentl.text);
-                  Fluttertoast.showToast(
-                    msg: "Thêm mới thể loại thành công",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.green,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CategoryManger()));
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Có lỗi xảy ra: $e'),
-                  ));
-                }
-              },
-              child: Text('Thêm mới'),
-              style: ElevatedButton.styleFrom(
-                textStyle: TextStyle(fontSize: 16),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await addCategory(tentl.text);
+                    Fluttertoast.showToast(
+                      msg: "Thêm mới thể loại thành công",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CategoryManger()));
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Có lỗi xảy ra: $e'),
+                    ));
+                  }
+                },
+                child: const Text(
+                  'Thêm mới',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade500,
+                  textStyle: const TextStyle(fontSize: 18),
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
             )
           ],

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/Cart.dart';
 import 'package:bookstore/Views/ProductCategory.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class Category extends StatefulWidget {
 
 class _CategoryState extends State<Category> {
   Future<List<dynamic>> loadCategories() async {
-    final uri = Uri.parse('http://192.168.1.13:8012/getdataCategory.php');
+    final uri = Uri.parse('${Host.host}/getdataCategory.php');
     var response = await http.get(uri);
     if (response.statusCode == 200) {
       return json.decode(response.body);
@@ -27,15 +28,23 @@ class _CategoryState extends State<Category> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Thể loại'),
-        backgroundColor: Colors.blue,
+        title: const Text(
+          'Thể loại',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.green.shade500,
         actions: [
           IconButton(
               onPressed: () {
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Cart()));
               },
-              icon: const Icon(Icons.shopping_cart))
+              icon: const Icon(
+                Icons.shopping_cart,
+                color: Colors.white,
+              ))
         ],
       ),
       body: FutureBuilder<List<dynamic>>(
@@ -64,8 +73,8 @@ class _CategoryState extends State<Category> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Productcategory(
-                                  category: data[index])));
+                              builder: (context) =>
+                                  Productcategory(category: data[index])));
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(

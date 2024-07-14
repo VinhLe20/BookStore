@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/Admin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class RateManager extends StatefulWidget {
   const RateManager({super.key});
@@ -13,7 +16,7 @@ class RateManager extends StatefulWidget {
 
 class _RateManagerState extends State<RateManager> {
   Future<List<dynamic>> loadDataComment() async {
-    final uri = Uri.parse('http://192.168.1.12/getdataComment.php');
+    final uri = Uri.parse('${Host.host}/getdataComment.php');
 
     var response = await http.get(uri);
     if (response.statusCode == 200) {
@@ -34,26 +37,50 @@ class _RateManagerState extends State<RateManager> {
     }
   }
 
-
   Future<void> deleteComment(String id) async {
-    final uri = Uri.parse('http://192.168.1.12/deleteComment.php');
-
+    final uri = Uri.parse('${Host.host}/deleteComment.php');
     await http.post(uri, body: {'id': id});
-    setState(() {}); // Refresh the state after deleting a comment
+  }
+
+  void confirmdelete(var xacnhan) {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.confirm,
+      text: 'Bạn có muốn xóa đánh giá này?',
+      confirmBtnText: 'Có',
+      cancelBtnText: 'Không',
+      confirmBtnColor: Colors.green,
+      onCancelBtnTap: () {
+        Navigator.pop(context);
+      },
+      onConfirmBtnTap: () async {
+        await deleteComment(xacnhan);
+        setState(() {});
+        Navigator.pop(context);
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quản lý đánh giá nhận xét'),
-        backgroundColor: Colors.blue,
+        title: const Text(
+          'Quản lý đánh giá nhận xét',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.green.shade500,
         leading: IconButton(
             onPressed: () {
               Navigator.pushReplacement(
                   context, MaterialPageRoute(builder: (context) => Admin()));
             },
-            icon: const Icon(Icons.arrow_back)),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            )),
       ),
       body: FutureBuilder<List<dynamic>>(
         future: loadDataComment(),
@@ -83,7 +110,7 @@ class _RateManagerState extends State<RateManager> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
-                        Text("Sản phẩm: ${comment['product_name']}"),
+                        Text("sách: ${comment['product_name']}"),
                         SizedBox(height: 5),
                         Row(
                           children: [
@@ -104,9 +131,7 @@ class _RateManagerState extends State<RateManager> {
                           alignment: Alignment.centerRight,
                           child: IconButton(
                             onPressed: () async {
-                              await deleteComment(comment['comment_id']);
-                              setState(
-                                  () {}); // Refresh the state after deleting a comment
+                              confirmdelete(comment['comment_id']);
                             },
                             icon: const Icon(Icons.delete, color: Colors.red),
                           ),

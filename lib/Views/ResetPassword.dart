@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:http/http.dart' as http;
 
@@ -23,7 +24,7 @@ class _ResetpasswordState extends State<Resetpassword> {
   Future<void> checkresetPassword() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.12/resetpassword.php'),
+        Uri.parse('${Host.host}/resetpassword.php'),
         body: {'password': _passwordcontroller.text, 'email': widget.email},
       );
     } catch (e) {
@@ -46,46 +47,78 @@ class _ResetpasswordState extends State<Resetpassword> {
   }
 
   //hàm kiểm tra password
-  void validatePassword() {
-    setState(() {
-      final accountPassword = _passwordcontroller.text.trim();
-      if (accountPassword.isEmpty) {
-        _passwordError = 'Mật khẩu không được bỏ trống';
-      } else if (accountPassword.length < 8 ||
-          !accountPassword.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-        _passwordError = 'Mật khẩu tối đa 8 kí tự và chứa kí tự đặc biệt';
-      } else {
-        _passwordError = '';
-      }
-    });
-  }
+void validatePassword() {
+  setState(() {
+    final accountPassword = _passwordcontroller.text.trim();
+    if (accountPassword.isEmpty) {
+      _passwordError = 'Mật khẩu không được bỏ trống';
+    } else if (accountPassword.length < 8 || accountPassword.length > 32) {
+      _passwordError = 'Mật khẩu phải có độ dài từ 8 đến 32 ký tự';
+    } else if (!accountPassword.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      _passwordError = 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt';
+    } else {
+      _passwordError = '';
+    }
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Đặt lại mật khẩu mới'),
-      
-      ),
-      body: Container(
-        padding: EdgeInsets.all(20),
-        child: SingleChildScrollView(
-          child: Column(
+     
+      body: Stack(
+          children: [
+            const Image(
+              fit: BoxFit.cover,
+              height: double.infinity,
+              width: double.infinity,
+              image: AssetImage('assets/images/welcome.png'),
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.transparent, Colors.black54],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
+            Column(
+              children: [
+                AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  leading: IconButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Loginscreen(),
+                        ),
+                      );
+                    },
+                    icon:
+                        const Icon(Icons.arrow_back_sharp, color: Colors.white),
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child:Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(
-                "assets/images/logo.jpeg",
-                width: 200,
-                height: 200,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(height: 16),
+          Text('Đặt lại mật khẩu mới',style: TextStyle(
+            fontSize: 30,color: Colors.white,fontWeight: FontWeight.bold
+          ),),
+               SizedBox(height: 40),
               TextFormField(
                 controller: _passwordcontroller,
                 onChanged: (_) => validatePassword(),
                 obscureText: !_isPasswordVisible1,
                 decoration: InputDecoration(
                     hintText: "Password",
+                           hintStyle: TextStyle(color: Colors.white),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: const BorderSide(
@@ -112,7 +145,7 @@ class _ResetpasswordState extends State<Resetpassword> {
                       child: Icon(
                         _isPasswordVisible1
                             ? Icons.visibility
-                            : Icons.visibility_off,
+                            : Icons.visibility_off,color: Colors.white
                       ),
                     )),
               ),
@@ -125,6 +158,7 @@ class _ResetpasswordState extends State<Resetpassword> {
                 obscureText: !_isPasswordVisible2,
                 decoration: InputDecoration(
                     hintText: "RePassword",
+                    hintStyle: TextStyle(color: Colors.white),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: const BorderSide(
@@ -151,7 +185,7 @@ class _ResetpasswordState extends State<Resetpassword> {
                       child: Icon(
                         _isPasswordVisible2
                             ? Icons.visibility
-                            : Icons.visibility_off,
+                            : Icons.visibility_off,color: Colors.white,
                       ),
                     )),
               ),
@@ -187,7 +221,7 @@ class _ResetpasswordState extends State<Resetpassword> {
                       },
                     );
                   } else {
-                    print("Cập nhật mật khẩu thất bạii");
+                    print("Cập nhật mật khẩu thất bại");
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -220,7 +254,7 @@ class _ResetpasswordState extends State<Resetpassword> {
                   ),
                 ),
                 child: const Text(
-                  'Reset Pasword',
+                  'Cập nhật mật khẩu',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -229,8 +263,13 @@ class _ResetpasswordState extends State<Resetpassword> {
               ),
             ],
           ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      ),
     );
   }
 }

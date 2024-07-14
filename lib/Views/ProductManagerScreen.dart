@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/product.dart';
 import 'package:bookstore/Views/Admin.dart';
 import 'package:bookstore/Views/ProductAddScreen.dart';
@@ -30,14 +31,22 @@ class _ProductManagerState extends State<ProductManager> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Quản lý sản phẩm'),
-          backgroundColor: Colors.blue,
+          title: const Text(
+            'Quản lý sách',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: Colors.green.shade500,
           leading: IconButton(
               onPressed: () {
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Admin()));
               },
-              icon: const Icon(Icons.arrow_back)),
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              )),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -62,15 +71,12 @@ class _ProductManagerState extends State<ProductManager> {
                         child: Row(
                           children: [
                             Container(
-                              padding: EdgeInsets.all(10.0),
-                              width: 120,
-                              height: 170,
-                              child: Image.network(
-                                "http://192.168.1.12/uploads/${products[index]['image']}",
-                                fit: BoxFit.cover,https://github.com/VinhLe20/BookStore/pull/12/conflict?name=lib%252FViews%252FProductManagerScreen.dart&ancestor_oid=8766f7f33de94f2190839aaf3a2771a23d1f7dd3&base_oid=f1b2fd063334a7191cc256ddbe75e497c7f1c383&head_oid=18d99bb03d9ced5b40b05e664eb8ac4e9d0d577e
-                              ),
-
-                            ),
+                                padding: EdgeInsets.all(10.0),
+                                width: 120,
+                                height: 170,
+                                child: Image.network(
+                                    "${Host.host}/uploads/${products[index]['image']}",
+                                    fit: BoxFit.cover)),
                             Container(
                               padding: const EdgeInsets.all(5.0),
                               height: 170,
@@ -80,7 +86,9 @@ class _ProductManagerState extends State<ProductManager> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Tên sản phẩm: ${products[index]['name']}",
+                                      "Tên sách: ${products[index]['name']}",
+                                      maxLines: 2,
+                                      overflow: TextOverflow.visible,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
@@ -127,8 +135,10 @@ class _ProductManagerState extends State<ProductManager> {
                                           ),
                                           Container(
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               IconButton(
                                                   onPressed: () {

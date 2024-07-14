@@ -1,24 +1,22 @@
 import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/LoginScreen.dart';
-import 'package:bookstore/Views/ResetPassword.dart';
-import 'package:bookstore/Views/VerificationEditPassword.dart';
 import 'package:bookstore/Views/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class Verificationresetpassword extends StatefulWidget {
+class Verificationeditpassword extends StatefulWidget {
   final String email;
   final String password;
-  const Verificationresetpassword(
+  const Verificationeditpassword(
       {super.key, required this.email, required this.password});
 
   @override
-  _VerificationresetpasswordState createState() =>
-      _VerificationresetpasswordState();
+  _VerificationeditpasswordState createState() =>
+      _VerificationeditpasswordState();
 }
 
-class _VerificationresetpasswordState extends State<Verificationresetpassword> {
+class _VerificationeditpasswordState extends State<Verificationeditpassword> {
   bool isEmailVerified = false;
   Future<void> checkregister() async {
     try {
@@ -94,7 +92,9 @@ class _VerificationresetpasswordState extends State<Verificationresetpassword> {
   Widget build(BuildContext context) {
     if (isEmailVerified) {
       deleteAccount();
-      return Resetpassword(email: widget.email);
+      return Index(
+        selectedIndex: 2,
+      );
     } else {
       return Scaffold(
         body: Stack(
@@ -124,7 +124,7 @@ class _VerificationresetpasswordState extends State<Verificationresetpassword> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Loginscreen(),
+                          builder: (context) =>  Index(selectedIndex: 2,),
                         ),
                       );
                     },

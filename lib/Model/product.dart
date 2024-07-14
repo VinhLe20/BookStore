@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bookstore/Model/host.dart';
 import 'package:http/http.dart' as http;
 
 class Product {
@@ -23,7 +24,7 @@ class Product {
 
   Future loadProduct() async {
 
-    final uri = Uri.parse('http://192.168.1.12/getDataProduct.php');
+    final uri = Uri.parse('${Host.host}/getDataProduct.php');
 
 
     var response = await http.get(uri);
@@ -34,7 +35,7 @@ class Product {
     print(pro.category);
 
 
-    final uri = Uri.parse('http://192.168.1.12/addProduct.php');
+    final uri = Uri.parse('${Host.host}/addProduct.php');
 
 
     var request = http.MultipartRequest('POST', uri);
@@ -60,7 +61,7 @@ class Product {
 
   Future EditProduct(Product pro) async {
 
-    final uri = Uri.parse('http://192.168.1.12/updateProduct.php');
+    final uri = Uri.parse('${Host.host}/updateProduct.php');
 
 
     var request = http.MultipartRequest('POST', uri);
@@ -86,7 +87,7 @@ class Product {
 
 
   Future DeleteProduct(var id) async {
-    final uri = Uri.parse('http://192.168.1.12/deleteProduct.php');
+    final uri = Uri.parse('${Host.host}/deleteProduct.php');
 
     http.post(uri, body: {'id': id});
   }

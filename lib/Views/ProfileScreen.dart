@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/EditProfile.dart';
+import 'package:bookstore/Views/Editpassword.dart';
 import 'package:bookstore/Views/TransactionHistory.dart';
-import 'package:bookstore/Views/WelcomeScreen.dart';
+import 'package:bookstore/WelcomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:bookstore/Model/user.dart';
@@ -17,7 +19,7 @@ class _ProfileState extends State<Profile> {
   late Future<List<Map<String, dynamic>>> futureUser;
 
   Future<List<Map<String, dynamic>>> loadUser(String id) async {
-    final uri = Uri.parse('http://192.168.1.12/getuser.php');
+    final uri = Uri.parse('${Host.host}/getuser.php');
     var response = await http.get(uri);
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
@@ -31,8 +33,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    futureUser = loadUser(
-        User.id); // Assume User.id is a static or globally accessible ID
+    futureUser = loadUser(User.id); // Assume User.id is a static or globally accessible ID
   }
 
   @override
@@ -60,6 +61,18 @@ class _ProfileState extends State<Profile> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         const SizedBox(height: 40),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.lock_reset_sharp,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Editpassword()));
+                          },
+                        ),
                         IconButton(
                           icon: const Icon(Icons.logout),
                           onPressed: () {
@@ -96,97 +109,106 @@ class _ProfileState extends State<Profile> {
                     itemProfile(
                         'Email', "${categories[index]['email']}", Icons.mail),
                     const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditProfile()));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red.shade500,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 32, vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side:
-                                const BorderSide(color: Colors.black, width: 1),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditProfile()));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red.shade500,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 32, vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: const BorderSide(
+                                      color: Colors.black, width: 1),
+                                ),
+                                minimumSize: const Size(double.infinity, 70),
+                              ).copyWith(
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.pressed)) {
+                                      return Colors.white;
+                                    }
+                                    return Colors.red.shade500;
+                                  },
+                                ),
+                                foregroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.pressed)) {
+                                      return Colors.red.shade500;
+                                    }
+                                    return Colors.white;
+                                  },
+                                ),
+                              ),
+                              child: const Text(
+                                'Chỉnh sửa thông tin',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                            ),
                           ),
-                          minimumSize: const Size(double.infinity, 70),
-                        ).copyWith(
-                          backgroundColor:
-                              MaterialStateProperty.resolveWith<Color>(
-                            (Set<MaterialState> states) {
-                              if (states.contains(MaterialState.pressed)) {
-                                return Colors.white;
-                              }
-                              return Colors.red.shade500;
-                            },
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            Transactionhistory()));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red.shade500,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 32, vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: const BorderSide(
+                                      color: Colors.black, width: 1),
+                                ),
+                                minimumSize: const Size(double.infinity, 70),
+                              ).copyWith(
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.pressed)) {
+                                      return Colors.white;
+                                    }
+                                    return Colors.red.shade500;
+                                  },
+                                ),
+                                foregroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.pressed)) {
+                                      return Colors.red.shade500;
+                                    }
+                                    return Colors.white;
+                                  },
+                                ),
+                              ),
+                              child: const Text(
+                                'Lịch sử giao dịch',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                            ),
                           ),
-                          foregroundColor:
-                              MaterialStateProperty.resolveWith<Color>(
-                            (Set<MaterialState> states) {
-                              if (states.contains(MaterialState.pressed)) {
-                                return Colors.red.shade500;
-                              }
-                              return Colors.white;
-                            },
-                          ),
-                        ),
-                        child: const Text(
-                          'Edit Profile',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Transactionhistory()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade500,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: const BorderSide(color: Colors.black, width: 1),
-                        ),
-                        minimumSize: const Size(double.infinity, 70),
-                      ).copyWith(
-                        backgroundColor:
-                            MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.pressed)) {
-                              return Colors.white;
-                            }
-                            return Colors.red.shade500;
-                          },
-                        ),
-                        foregroundColor:
-                            MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.pressed)) {
-                              return Colors.red.shade500;
-                            }
-                            return Colors.white;
-                          },
-                        ),
-                      ),
-                      child: const Text(
-                        'Lịch sử giao dịch',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
+                        ],
                       ),
                     ),
                   ],

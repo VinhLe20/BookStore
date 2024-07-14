@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Views/VerificationScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class SignupScreen extends StatefulWidget {
   final String email;
@@ -24,7 +21,7 @@ class _SignupScreenState extends State<SignupScreen> {
   String _repasswordError = '';
   bool _isPasswordVisible1 = false;
   bool _isPasswordVisible2 = false;
-//kết nối sql
+
   //hàm kiểm tra password có trùng với password trước hay không
   void validateRepassword() {
     setState(() {
@@ -40,19 +37,21 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   //hàm kiểm tra password
-  void validatePassword() {
-    setState(() {
-      final accountPassword = _passwordcontroller.text.trim();
-      if (accountPassword.isEmpty) {
-        _passwordError = 'Mật khẩu không được bỏ trống';
-      } else if (accountPassword.length < 8 ||
-          !accountPassword.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-        _passwordError = 'Mật khẩu tối đa 8 kí tự và chứa kí tự đặc biệt';
-      } else {
-        _passwordError = '';
-      }
-    });
-  }
+void validatePassword() {
+  setState(() {
+    final accountPassword = _passwordcontroller.text.trim();
+    if (accountPassword.isEmpty) {
+      _passwordError = 'Mật khẩu không được bỏ trống';
+    } else if (accountPassword.length < 8 || accountPassword.length > 32) {
+      _passwordError = 'Mật khẩu phải có độ dài từ 8 đến 32 ký tự';
+    } else if (!accountPassword.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      _passwordError = 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt';
+    } else {
+      _passwordError = '';
+    }
+  });
+}
+
 
   //hàm kiểm tra email
   void validateEmail() {
@@ -68,7 +67,7 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
-//gửi email từ firebase
+  //gửi email từ firebase
   void registerUser() async {
     try {
       UserCredential userCredential =
@@ -142,85 +141,113 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 30),
-          child: Container(
-            color: Colors.white,
-            child: Center(
+      body: Stack(
+        children: [
+          const Image(
+            fit: BoxFit.cover,
+            height: double.infinity,
+            width: double.infinity,
+            image: AssetImage('assets/images/welcome.png'),
+          ),
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.transparent, Colors.black54],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
+          Center(
+            child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    "assets/images/logo.jpeg",
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.contain,
+                  const Text(
+                    'Đăng ký tài khoản',
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 30),
                   TextFormField(
                     controller: _usercontroller,
                     onChanged: (_) => validateEmail(),
+                    style: TextStyle(color: Colors.white), // Màu chữ trắng
                     decoration: InputDecoration(
-                        hintText: "Email",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 3.0,
-                          ),
+                      hintText: "Email",
+                      hintStyle:
+                          TextStyle(color: Colors.white), // Màu gợi ý trắng
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: const BorderSide(
+                          color: Colors.red,
+                          width: 30.0,
                         ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                            width: 3.0,
-                          ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 3.0,
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 25, horizontal: 20),
-                        errorText: _userError.isNotEmpty ? _userError : null,
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              _usercontroller.clear();
-                            },
-                            icon: Icon(Icons.close_rounded))),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 25, horizontal: 20),
+                      errorText: _userError.isNotEmpty ? _userError : null,
+                      errorStyle:
+                          TextStyle(color: Colors.white), // Màu lỗi trắng
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          _usercontroller.clear();
+                        },
+                        icon: Icon(Icons.close_rounded, color: Colors.white),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: _passwordcontroller,
                     onChanged: (_) => validatePassword(),
                     obscureText: !_isPasswordVisible1,
+                    style: TextStyle(color: Colors.white), // Màu chữ trắng
                     decoration: InputDecoration(
-                        hintText: "Password",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
+                      hintText: "Password",
+                      hintStyle:
+                          TextStyle(color: Colors.white), // Màu gợi ý trắng
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: const BorderSide(
+                          color: Colors.grey,
+                          width: 1.0,
                         ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                            width: 3.0,
-                          ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 3.0,
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 25, horizontal: 20),
-                        errorText:
-                            _passwordError.isNotEmpty ? _passwordError : null,
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _isPasswordVisible1 = !_isPasswordVisible1;
-                            });
-                          },
-                          child: Icon(
-                            _isPasswordVisible1
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                        )),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 25, horizontal: 20),
+                      errorText:
+                          _passwordError.isNotEmpty ? _passwordError : null,
+                      errorStyle:
+                          TextStyle(color: Colors.white), // Màu lỗi trắng
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isPasswordVisible1 = !_isPasswordVisible1;
+                          });
+                        },
+                        child: Icon(
+                          _isPasswordVisible1
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.white, // Màu biểu tượng trắng
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     height: 20,
@@ -229,43 +256,48 @@ class _SignupScreenState extends State<SignupScreen> {
                     controller: _repasswordcontroller,
                     onChanged: (_) => validateRepassword(),
                     obscureText: !_isPasswordVisible2,
+                    style: TextStyle(color: Colors.white), // Màu chữ trắng
                     decoration: InputDecoration(
-                        hintText: "RePassword",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
+                      hintText: "RePassword",
+                      hintStyle:
+                          TextStyle(color: Colors.white), // Màu gợi ý trắng
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: const BorderSide(
+                          color: Colors.grey,
+                          width: 1.0,
                         ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                            width: 3.0,
-                          ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 3.0,
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 25, horizontal: 20),
-                        errorText: _repasswordError.isNotEmpty
-                            ? _repasswordError
-                            : null,
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _isPasswordVisible2 = !_isPasswordVisible2;
-                            });
-                          },
-                          child: Icon(
-                            _isPasswordVisible2
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                        )),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 25, horizontal: 20),
+                      errorText:
+                          _repasswordError.isNotEmpty ? _repasswordError : null,
+                      errorStyle:
+                          TextStyle(color: Colors.white), // Màu lỗi trắng
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isPasswordVisible2 = !_isPasswordVisible2;
+                          });
+                        },
+                        child: Icon(
+                          _isPasswordVisible2
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.white, // Màu biểu tượng trắng
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-
                   ElevatedButton(
                     onPressed: () async {
                       validateEmail();
@@ -311,7 +343,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                     child: const Text(
-                      'Create an account',
+                      'Đăng ký',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -326,17 +358,17 @@ class _SignupScreenState extends State<SignupScreen> {
                     children: [
                       const Center(
                         child: Text(
-                          "Already have an account? ",
-                          style: TextStyle(fontSize: 15),
+                          "Bạn đã có tài khoản? ",
+                          style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),
                       InkWell(
                         child: const Text(
-                          "Log in here",
+                          "Đăng nhập",
                           style: TextStyle(
-                              color: Colors.black87,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 15),
+                              fontSize: 18),
                         ),
                         onTap: () {
                           Navigator.push(
@@ -351,7 +383,7 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

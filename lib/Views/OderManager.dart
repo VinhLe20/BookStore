@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/Admin.dart';
 import 'package:bookstore/Views/OrderDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class OderManager extends StatefulWidget {
   const OderManager({super.key});
@@ -21,24 +25,45 @@ class _OderManagerState extends State<OderManager>
     _tabController = TabController(length: 3, vsync: this);
   }
 
-  Future<List> loadOder() async {
-    var result =
-        await http.get(Uri.parse('http://192.168.1.12/getdataOder.php'));
-
+  Future<List> loadOrder() async {
+    var result = await http.get(Uri.parse('${Host.host}/getdataOder.php'));
     return json.decode(result.body);
   }
 
-  Future cancelorder(String id) async {
-    final uri = Uri.parse('http://192.168.1.12/cancelOrder.php');
+  Future<void> cancelOrder(String id) async {
+    final uri = Uri.parse('${Host.host}/cancelOrder.php');
     await http.post(uri, body: {'id': id});
+    setState(() {}); // Update the UI after canceling the order
+  }
+
+  void confirmdelete(var xacnhan) {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.confirm,
+      text: 'Bạn có muốn hủy đơn này?',
+      confirmBtnText: 'Có',
+      cancelBtnText: 'Không',
+      confirmBtnColor: Colors.green,
+      onCancelBtnTap: () {
+        Navigator.pop(context);
+      },
+      onConfirmBtnTap: () async {
+        await cancelOrder(xacnhan);
+        setState(() {});
+        Navigator.pop(context);
+      },
+    );
   }
 
   Widget buildOrderList(List orders, String status) {
+    NumberFormat formatCurrency =
+        NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+
     List filteredOrders =
         orders.where((order) => order['order_status'] == status).toList();
 
     if (filteredOrders.isEmpty) {
-      return Center(child: Text('Không có đơn hàng'));
+      return const Center(child: Text('Không có đơn hàng'));
     }
 
     return ListView.builder(
@@ -53,18 +78,22 @@ class _OderManagerState extends State<OderManager>
               children: [
                 Text(
                   'Mã đơn hàng: ${filteredOrders[index]['order_id']}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Text('Người mua hàng: ${filteredOrders[index]['email']}'),
-                SizedBox(height: 5),
-                Text('Tổng tiền: ${filteredOrders[index]['total_price']}đ'),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
+                Text(
+                    'Tổng tiền: ${formatCurrency.format(double.parse(filteredOrders[index]['total_price']))}'),
+                const SizedBox(height: 5),
                 Text('Trạng thái thanh toán: ${filteredOrders[index]['pay']}'),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                     'Trạng thái đơn hàng: ${filteredOrders[index]['order_status']}'),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
+                Text('Ngày tạo đơn hàng: ${filteredOrders[index]['create']}'),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -80,17 +109,20 @@ class _OderManagerState extends State<OderManager>
                       },
                       child: const Text('Xem thông tin'),
                     ),
-                    filteredOrders[index]['order_status'] == 'Đang chờ'
-                        ? ElevatedButton(
-                            onPressed: () {
-                              cancelorder(filteredOrders[index]['order_id']);
-                              setState(() {});
-                            },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red),
-                            child: const Text('Hủy đơn'),
-                          )
-                        : Text(''),
+                    if (filteredOrders[index]['order_status'] == 'Đang chờ')
+                      ElevatedButton(
+                        onPressed: () {
+                          confirmdelete(filteredOrders[index]['order_id']);
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green.shade500),
+                        child: const Text(
+                          'Hủy đơn',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ],
@@ -105,36 +137,70 @@ class _OderManagerState extends State<OderManager>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quản lý đơn hàng'),
-        backgroundColor: Colors.blue,
+        title: const Text(
+          'Quản lý đơn hàng',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.green.shade500,
         leading: IconButton(
           onPressed: () {
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => Admin()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const Admin()));
           },
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
         ),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Đang chờ'),
-            Tab(text: 'Đang chờ giao hàng'),
-            Tab(text: 'Đã giao thành công'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(50),
+          child: TabBar(
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white,
+            controller: _tabController,
+            tabs: [
+              Tab(
+                child: Text(
+                  'Đang chờ',
+                  style:
+                      TextStyle(fontSize: 15), // Adjust the font size if needed
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+              Tab(
+                child: Text(
+                  'Đang chờ giao hàng',
+                  style:
+                      TextStyle(fontSize: 15), // Adjust the font size if needed
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+              Tab(
+                child: Text(
+                  'Đã giao thành công',
+                  style:
+                      TextStyle(fontSize: 15), // Adjust the font size if needed
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       body: FutureBuilder(
-        future: loadOder(),
+        future: loadOrder(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasData) {
-            List? orders = snapshot.data;
+            List orders = snapshot.data as List;
             return TabBarView(
               controller: _tabController,
               children: [
-                buildOrderList(orders!, 'Đang chờ'),
+                buildOrderList(orders, 'Đang chờ'),
                 buildOrderList(orders, 'Đang chờ giao hàng'),
                 buildOrderList(orders, 'Đã giao thành công'),
               ],

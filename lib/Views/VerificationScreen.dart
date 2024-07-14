@@ -1,4 +1,7 @@
+import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Views/LoginScreen.dart';
+import 'package:bookstore/Views/ResetPassword.dart';
+import 'package:bookstore/Views/UpdateUserinfo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -18,9 +21,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   Future<void> checkregister() async {
     try {
       final response = await http.post(
-
-        Uri.parse('http://192.168.1.12/register.php'),
-
+        Uri.parse('${Host.host}/register.php'),
         body: {
           'email': widget.email,
           'password': widget.password,
@@ -70,7 +71,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   TextButton(
                     child: const Text('Ok'),
                     onPressed: () {
-                      // Thực hiện hành động gửi lại email xác minh
+                      
                       Navigator.pop(context); // Đóng hộp thoại
                     },
                   ),
@@ -81,6 +82,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
         }
       } else {
         print('User is not logged in');
+    
       }
     } catch (e) {
       print('Error verifying email: $e');
@@ -94,79 +96,126 @@ class _VerificationScreenState extends State<VerificationScreen> {
       return Loginscreen();
     } else {
       return Scaffold(
-        appBar: AppBar(
-            leading: IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => Loginscreen()));
-          },
-          icon: Icon(Icons.arrow_back_sharp),
-        ),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                "assets/images/logo.jpeg",
-                width: 250,
-                height: 250,
-                fit: BoxFit.contain,
-              ),
-              const Text(
-                'Xác minh email',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+        body: Stack(
+          children: [
+            const Image(
+              fit: BoxFit.cover,
+              height: double.infinity,
+              width: double.infinity,
+              image: AssetImage('assets/images/welcome.png'),
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.transparent, Colors.black54],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
               ),
-              SizedBox(height: 16),
-              const Text(
-                'Vui lòng xác minh email của bạn trước khi tiếp tục.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 32),
-              SizedBox(height: 16),
-              ElevatedButton(
-                child: Text('Đã xác minh',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade500,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 16),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: const BorderSide(
-                                color: Colors.black, width: 1)),
-                        minimumSize: Size(double.infinity, 70))
-                    .copyWith(
-                  backgroundColor: WidgetStateColor.resolveWith(
-                    (Set<WidgetState> states) {
-                      if (states.contains(WidgetState.pressed)) {
-                        return Colors.white; // Màu nền button khi được nhấn
-                      }
-                      return Colors
-                          .red.shade500; // Sử dụng màu nền mặc định (red.500)
+            ),
+            Column(
+              children: [
+                AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  leading: IconButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Loginscreen(),
+                        ),
+                      );
                     },
-                  ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                    (Set<WidgetState> states) {
-                      if (states.contains(WidgetState.pressed)) {
-                        return null; // Màu chữ button khi được nhấn
-                      }
-                      return Colors.white; // Sử dụng màu chữ mặc định (white)
-                    },
+                    icon:
+                        const Icon(Icons.arrow_back_sharp, color: Colors.white),
                   ),
                 ),
-                onPressed: () {
-                  verifyEmailAndLogin(context);
-                },
-              ),
-            ],
-          ),
+                Expanded(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 40),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Xác minh email',
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Icon(Icons.mail_outline_outlined,
+                                  size: 40, color: Colors.white)
+                            ],
+                          ),
+                          SizedBox(height: 16),
+                          const Text(
+                            'Vui lòng xác minh email của bạn trước khi tiếp tục.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 32),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            child: Text('Đã xác minh',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20)),
+                            style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red.shade500,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 32, vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        side: const BorderSide(
+                                            color: Colors.black, width: 1)),
+                                    minimumSize: Size(double.infinity, 70))
+                                .copyWith(
+                              backgroundColor: WidgetStateColor.resolveWith(
+                                (Set<WidgetState> states) {
+                                  if (states.contains(WidgetState.pressed)) {
+                                    return Colors
+                                        .white; // Màu nền button khi được nhấn
+                                  }
+                                  return Colors.red
+                                      .shade500; // Sử dụng màu nền mặc định (red.500)
+                                },
+                              ),
+                              foregroundColor:
+                                  WidgetStateProperty.resolveWith<Color?>(
+                                (Set<WidgetState> states) {
+                                  if (states.contains(WidgetState.pressed)) {
+                                    return null; // Màu chữ button khi được nhấn
+                                  }
+                                  return Colors
+                                      .white; // Sử dụng màu chữ mặc định (white)
+                                },
+                              ),
+                            ),
+                            onPressed: () {
+                              verifyEmailAndLogin(context);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       );
     }
