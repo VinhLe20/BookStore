@@ -115,7 +115,7 @@ class _OrderDetailUserState extends State<OrderDetailUser> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Tên sách: ${order[index]['name']}",
+                                "Tên sách: ${order[index]['product_name']}",
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold),
                               ),
@@ -128,8 +128,7 @@ class _OrderDetailUserState extends State<OrderDetailUser> {
                               Text(
                                   "Đơn giá: ${formatCurrency.format(double.parse(order[index]['price']))}"),
                               const SizedBox(height: 5),
-                              Text(
-                                  "Số lượng: ${order[index]['order_quantity']}"),
+                              Text("Số lượng: ${order[index]['quantity']}"),
                             ],
                           ),
                         )

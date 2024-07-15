@@ -1,7 +1,4 @@
-
 import 'dart:convert';
-
-
 import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +17,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
   final _reviewController = TextEditingController();
   int _rating = 0;
   List data = [];
+  String? _selectedProductId;
+
+  @override
   void initState() {
     super.initState();
     _loadData();
@@ -30,6 +30,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
       (value) {
         setState(() {
           data = value;
+          _selectedProductId = data.isNotEmpty ? data[0]['product_id'] : null;
         });
       },
     );
@@ -46,13 +47,13 @@ class _ReviewScreenState extends State<ReviewScreen> {
     return filteredData;
   }
 
-  Future<void> submitReview(String productId) async {
-    if (_formKey.currentState!.validate()) {
+  Future<void> submitReview() async {
+    if (_formKey.currentState!.validate() && _selectedProductId != null) {
       final response = await http.post(
         Uri.parse('${Host.host}/submitReview.php'),
         body: {
           'time': '',
-          'product_id': productId,
+          'product_id': _selectedProductId!,
           'user_id': User.id,
           'review': _reviewController.text,
           'rating': _rating.toString(),
@@ -80,7 +81,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(data);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green.shade500,
@@ -91,7 +91,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
           ),
         ),
         leading: IconButton(
-
           onPressed: () {
             Navigator.pop(context);
           },
@@ -100,7 +99,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
             color: Colors.white,
           ),
         ),
-
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -110,6 +108,26 @@ class _ReviewScreenState extends State<ReviewScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text('Chọn sản phẩm để đánh giá:',
+                    style: TextStyle(fontSize: 16)),
+                SizedBox(height: 8),
+                if (data.isNotEmpty)
+                  DropdownButton<String>(
+                    isExpanded: true,
+                    value: _selectedProductId,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedProductId = newValue;
+                      });
+                    },
+                    items: data.map<DropdownMenuItem<String>>((item) {
+                      return DropdownMenuItem<String>(
+                        value: item['product_id'],
+                        child: Text(item['product_name']),
+                      );
+                    }).toList(),
+                  ),
+                SizedBox(height: 16),
                 Text('Đánh giá của bạn:', style: TextStyle(fontSize: 16)),
                 SizedBox(height: 8),
                 TextFormField(
@@ -147,9 +165,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 SizedBox(height: 16),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-                      submitReview(data[0]['product_id']);
-                    },
+                    onPressed: submitReview,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red.shade500,
                       foregroundColor: Colors.white,

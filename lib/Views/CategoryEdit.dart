@@ -23,9 +23,7 @@ class _CategoryEditState extends State<CategoryEdit> {
     tentl.text = widget.theloai['name'];
     return Scaffold(
       appBar: AppBar(
-
         backgroundColor: Colors.green.shade500,
-
         title: Text(
           'Cập nhật thể loại',
           style: TextStyle(
@@ -47,14 +45,20 @@ class _CategoryEditState extends State<CategoryEdit> {
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(10, 40, 10, 10),
-              child: TextField(
+              padding: const EdgeInsets.all(10),
+              child: TextFormField(
                 controller: tentl,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Tên thể loại',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Vui lòng nhập tên thể loại';
+                  }
+                  return null;
+                },
               ),
             ),
             Center(

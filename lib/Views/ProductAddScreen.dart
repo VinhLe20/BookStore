@@ -16,15 +16,17 @@ class ProductAdd extends StatefulWidget {
 }
 
 class _ProductAddState extends State<ProductAdd> {
+  final _formKey = GlobalKey<FormState>();
   Product newproduct = Product(
-      id: "",
-      name: "",
-      quantity: "",
-      image: "",
-      price: "",
-      mota: "",
-      category: "",
-      author: '');
+    id: "",
+    name: "",
+    quantity: "",
+    image: "",
+    price: "",
+    mota: "",
+    category: "",
+    author: '',
+  );
   var tensp = TextEditingController();
   var soluongsp = TextEditingController();
   var dongiasp = TextEditingController();
@@ -34,6 +36,7 @@ class _ProductAddState extends State<ProductAdd> {
   final picker = ImagePicker();
   String? selectedCategory;
   List categories = [];
+
   @override
   void initState() {
     super.initState();
@@ -50,7 +53,6 @@ class _ProductAddState extends State<ProductAdd> {
 
   Future loadCategories() async {
     final uri = Uri.parse('${Host.host}/getdataCategory.php');
-
     var response = await http.get(uri);
     return json.decode(response.body);
   }
@@ -88,10 +90,12 @@ class _ProductAddState extends State<ProductAdd> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            GestureDetector(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GestureDetector(
                 onTap: () async {
                   await choiceImage();
                 },
@@ -115,79 +119,110 @@ class _ProductAddState extends State<ProductAdd> {
                           child: Text('Thêm ảnh',
                               style: TextStyle(color: Colors.grey[600])))
                       : Image.file(_image!, fit: BoxFit.cover),
-                )),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
-              child: TextField(
-                controller: tensp,
-                decoration: const InputDecoration(
-                  labelText: 'Tên sách',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: tacgia,
-                decoration: const InputDecoration(
-                  labelText: 'Tác giả',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+                child: TextFormField(
+                  controller: tensp,
+                  decoration: const InputDecoration(
+                    labelText: 'Tên sách',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng nhập tên sách';
+                    }
+                    return null;
+                  },
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Thể loại sách',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                ),
-                value: selectedCategory,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedCategory = newValue;
-                  });
-                },
-                items: categories.map<DropdownMenuItem<String>>((var category) {
-                  return DropdownMenuItem(
-                    value: category['id'].toString(),
-                    child: Text(category['name']),
-                  );
-                }).toList(),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: soluongsp,
-                decoration: const InputDecoration(
-                  labelText: 'Số lượng sách',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: TextFormField(
+                  controller: tacgia,
+                  decoration: const InputDecoration(
+                    labelText: 'Tác giả',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng nhập tên tác giả';
+                    }
+                    return null;
+                  },
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: dongiasp,
-                decoration: const InputDecoration(
-                  labelText: 'Đơn giá sách',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    labelText: 'Thể loại sách',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                  ),
+                  value: selectedCategory,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedCategory = newValue;
+                    });
+                  },
+                  items:
+                      categories.map<DropdownMenuItem<String>>((var category) {
+                    return DropdownMenuItem(
+                      value: category['id'].toString(),
+                      child: Text(category['name']),
+                    );
+                  }).toList(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng chọn thể loại sách';
+                    }
+                    return null;
+                  },
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-
-              child: SizedBox(
-                width: double.infinity,
-                child: TextField(
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: TextFormField(
+                  controller: soluongsp,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Số lượng sách',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng nhập số lượng sách';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: TextFormField(
+                  controller: dongiasp,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Đơn giá sách',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng nhập đơn giá sách';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: TextFormField(
                   controller: motasp,
                   minLines: 4,
                   maxLines: null,
@@ -197,65 +232,70 @@ class _ProductAddState extends State<ProductAdd> {
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
                   ),
-
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng nhập mô tả sách';
+                    }
+                    return null;
+                  },
                 ),
               ),
-            ),
-            Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  Product add = Product(
-                    id: '',
-                    name: tensp.text,
-                    quantity: soluongsp.text,
-                    image: _image?.path ?? '',
-                    price: dongiasp.text,
-                    mota: motasp.text,
-                    category: selectedCategory ?? '',
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      Product add = Product(
+                        id: '',
+                        name: tensp.text,
+                        quantity: soluongsp.text,
+                        image: _image?.path ?? '',
+                        price: dongiasp.text,
+                        mota: motasp.text,
+                        category: selectedCategory ?? '',
+                        author: tacgia.text,
+                      );
 
-                    author: tacgia.text,
-
-                  );
-
-                  try {
-                    await newproduct.productAdd(add);
-                    Fluttertoast.showToast(
-                      msg: "Thêm mới sách thành công",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.green,
-                      textColor: Colors.white,
-                      fontSize: 16.0,
-                    );
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ProductManager()),
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Có lỗi xảy ra: $e'),
-                      ),
-                    );
-                  }
-                },
-                child: const Text(
-                  'Thêm mới',
-                  style: TextStyle(color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green.shade500,
-                  textStyle: const TextStyle(fontSize: 18),
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                      try {
+                        await newproduct.productAdd(add);
+                        Fluttertoast.showToast(
+                          msg: "Thêm mới sách thành công",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.green,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ProductManager()),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Có lỗi xảy ra: $e'),
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text(
+                    'Thêm mới',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade500,
+                    textStyle: const TextStyle(fontSize: 18),
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

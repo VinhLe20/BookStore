@@ -9,8 +9,8 @@ import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
-
+  EditProfile({super.key, required this.info});
+  bool info;
   @override
   State<EditProfile> createState() => _EditProfileState();
 }
@@ -185,31 +185,33 @@ class _EditProfileState extends State<EditProfile> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Index(
-                                    selectedIndex: 2,
-                                  )));
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.redAccent),
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 15),
-                      ),
-                      textStyle: MaterialStateProperty.all(
-                        const TextStyle(fontSize: 14, letterSpacing: 2.2),
-                      ),
-                    ),
-                    child: const Text(
-                      "CANCEL",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+                  widget.info
+                      ? ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Index(
+                                          selectedIndex: 2,
+                                        )));
+                          },
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.redAccent),
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 15),
+                            ),
+                            textStyle: MaterialStateProperty.all(
+                              const TextStyle(fontSize: 14, letterSpacing: 2.2),
+                            ),
+                          ),
+                          child: const Text(
+                            "CANCEL",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                      : Text(''),
                   ElevatedButton(
                     onPressed: () {
                       if (emailError.isEmpty && phoneError.isEmpty)

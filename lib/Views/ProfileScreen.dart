@@ -33,7 +33,8 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    futureUser = loadUser(User.id); // Assume User.id is a static or globally accessible ID
+    futureUser = loadUser(
+        User.id); // Assume User.id is a static or globally accessible ID
   }
 
   @override
@@ -98,12 +99,12 @@ class _ProfileState extends State<Profile> {
                     ),
                     const SizedBox(height: 20),
                     itemProfile(
-                        'Name', "${categories[index]['name']}", Icons.person),
+                        'Họ tên', "${categories[index]['name']}", Icons.person),
                     const SizedBox(height: 10),
-                    itemProfile(
-                        'Phone', "${categories[index]['phone']}", Icons.phone),
+                    itemProfile('Số điện thoại',
+                        "${categories[index]['phone']}", Icons.phone),
                     const SizedBox(height: 10),
-                    itemProfile('Address', "${categories[index]['address']}",
+                    itemProfile('Địa chỉ', "${categories[index]['address']}",
                         Icons.location_on_sharp),
                     const SizedBox(height: 10),
                     itemProfile(
@@ -120,7 +121,9 @@ class _ProfileState extends State<Profile> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => EditProfile()));
+                                        builder: (context) => EditProfile(
+                                              info: true,
+                                            )));
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red.shade500,
@@ -137,7 +140,8 @@ class _ProfileState extends State<Profile> {
                                 backgroundColor:
                                     MaterialStateProperty.resolveWith<Color>(
                                   (Set<MaterialState> states) {
-                                    if (states.contains(MaterialState.pressed)) {
+                                    if (states
+                                        .contains(MaterialState.pressed)) {
                                       return Colors.white;
                                     }
                                     return Colors.red.shade500;
@@ -146,7 +150,8 @@ class _ProfileState extends State<Profile> {
                                 foregroundColor:
                                     MaterialStateProperty.resolveWith<Color>(
                                   (Set<MaterialState> states) {
-                                    if (states.contains(MaterialState.pressed)) {
+                                    if (states
+                                        .contains(MaterialState.pressed)) {
                                       return Colors.red.shade500;
                                     }
                                     return Colors.white;
@@ -185,7 +190,8 @@ class _ProfileState extends State<Profile> {
                                 backgroundColor:
                                     MaterialStateProperty.resolveWith<Color>(
                                   (Set<MaterialState> states) {
-                                    if (states.contains(MaterialState.pressed)) {
+                                    if (states
+                                        .contains(MaterialState.pressed)) {
                                       return Colors.white;
                                     }
                                     return Colors.red.shade500;
@@ -194,7 +200,8 @@ class _ProfileState extends State<Profile> {
                                 foregroundColor:
                                     MaterialStateProperty.resolveWith<Color>(
                                   (Set<MaterialState> states) {
-                                    if (states.contains(MaterialState.pressed)) {
+                                    if (states
+                                        .contains(MaterialState.pressed)) {
                                       return Colors.red.shade500;
                                     }
                                     return Colors.white;

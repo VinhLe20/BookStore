@@ -21,9 +21,7 @@ class _CategoryAddState extends State<CategoryAdd> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         backgroundColor: Colors.green.shade500,
-
         title: Text(
           'Thêm thể loại mới',
           style: TextStyle(
@@ -45,14 +43,20 @@ class _CategoryAddState extends State<CategoryAdd> {
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(10, 40, 10, 10),
-              child: TextField(
+              padding: const EdgeInsets.all(10),
+              child: TextFormField(
                 controller: tentl,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Tên thể loại',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Vui lòng nhập tên thể loại';
+                  }
+                  return null;
+                },
               ),
             ),
             Center(

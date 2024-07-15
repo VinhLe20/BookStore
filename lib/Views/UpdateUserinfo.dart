@@ -29,29 +29,6 @@ class _UpdateuserinfoState extends State<Updateuserinfo> {
   String addressError = '';
 
   @override
-  void initState() {
-    super.initState();
-    futureUser = loadUser(User.id); // Replace '1' with the actual user ID
-  }
-
-  Future<List<Map<String, dynamic>>> loadUser(String id) async {
-    final uri = Uri.parse('${Host.host}/getuser.php');
-    var response = await http.get(uri);
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      var user = data.where((item) => item['id'] == id).toList();
-      if (user.isNotEmpty) {
-        // Initialize the controllers with user data
-        nameController.text = user[0]['name'];
-        phoneController.text = user[0]['phone'];
-        addressController.text = user[0]['address'];
-      }
-      return user.cast<Map<String, dynamic>>();
-    } else {
-      throw Exception('Failed to load user');
-    }
-  }
-
   Future<void> updateUser(String id) async {
     final uri = Uri.parse('${Host.host}/UpdateUserInfo.php');
     var response = await http.post(
@@ -67,7 +44,6 @@ class _UpdateuserinfoState extends State<Updateuserinfo> {
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       if (data['status'] == 'success') {
-
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'])),

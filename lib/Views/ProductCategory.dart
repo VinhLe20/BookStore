@@ -52,8 +52,6 @@ class _ProductcategoryState extends State<Productcategory> {
           if (snapshot.hasData) {
             var products = snapshot.data;
             return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 8.0,

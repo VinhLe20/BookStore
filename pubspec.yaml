@@ -42,18 +42,16 @@ dependencies:
   firebase_auth: ^4.20.0
   http: ^1.2.1
   sms_autofill: ^2.4.0
-  email_auth: ^1.0.4
-  
   pin_code_fields: ^8.0.1
   fluttertoast: ^8.2.6
-
   quickalert: ^1.1.0
-
   syncfusion_flutter_charts: ^26.1.40
   flutter_stripe: ^10.2.0
-  stripe_checkout: ^1.0.2
   intl: ^0.19.0
   carousel_slider: ^4.2.1
+  shared_preferences: ^2.2.3
+  get_it: ^7.7.0
+  device_info_plus: ^10.1.0
 
 
 

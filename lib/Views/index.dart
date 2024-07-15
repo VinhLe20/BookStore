@@ -27,7 +27,7 @@ class _IndexState extends State<Index> {
 
   void _onItemTapped(int index) {
     if (index == 2 && User.guest) {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Loginscreen()),
       );
@@ -54,15 +54,15 @@ class _IndexState extends State<Index> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label: 'Trang chủ',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.category),
-            label: 'Category',
+            label: 'Thể loại',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
-            label: 'Profile',
+            label: 'Cá nhân',
           ),
         ],
         currentIndex: _selectedIndex,

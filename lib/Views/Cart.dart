@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-
 class Cart extends StatefulWidget {
   const Cart({Key? key}) : super(key: key);
 
@@ -51,7 +50,6 @@ class _CartState extends State<Cart> {
   Future updateQuantity(String productId, String quantity) async {
     final uri = Uri.parse('${Host.host}/updatequantity.php');
 
-
     await http.post(uri,
         body: {'id': User.id, 'product_id': productId, 'quantity': quantity});
 
@@ -91,12 +89,10 @@ class _CartState extends State<Cart> {
     final response = await http.post(uri, body: {'user_id': User.id});
 
     if (response.statusCode == 200) {
-
       print('sách đã được xóa all thành công');
       loadCart();
     } else {
       print('Xóa sách all không thành công');
-
     }
   }
 
@@ -187,7 +183,6 @@ class _CartState extends State<Cart> {
           },
         ),
       ),
-
       body: Column(
         children: [
           Padding(
@@ -249,7 +244,7 @@ class _CartState extends State<Cart> {
                           Container(
                             padding: EdgeInsets.all(10.0),
                             width: 120,
-                            height: 170,
+                            height: 190,
                             child: Image.network(
                               "${Host.host}/uploads/${products[index]['image']}",
                               fit: BoxFit.cover,
@@ -258,95 +253,90 @@ class _CartState extends State<Cart> {
                           Expanded(
                             child: Container(
                               padding: EdgeInsets.all(10.0),
-                              height: 170,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "${products[index]['name']}",
-
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                              height: 190,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${products[index]['name']}",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
                                     ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Tác giả: ${products[index]['author']}',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                      ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Tác giả: ${products[index]['author']}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
                                     ),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            formatCurrency.format(double.parse(
-                                                products[index]["price"])),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          formatCurrency.format(double.parse(
+                                              products[index]["price"])),
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          confirmdelete(
+                                              products[index]['product_id']);
+                                        },
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        'Số lượng: ',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(Icons.remove),
+                                            onPressed: () {
+                                              decreaseQuantity(
+                                                  products[index]['product_id'],
+                                                  products[index]
+                                                      ["cart_quantity"]);
+                                            },
+                                          ),
+                                          Text(
+                                            products[index]["cart_quantity"]
+                                                .toString(),
                                             style: const TextStyle(
                                               fontSize: 14,
                                             ),
                                           ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            confirmdelete(
-                                                products[index]['product_id']);
-                                          },
-                                          icon: const Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
+                                          IconButton(
+                                            icon: Icon(Icons.add),
+                                            onPressed: () {
+                                              increaseQuantity(
+                                                  products[index]['product_id'],
+                                                  products[index]
+                                                      ["cart_quantity"]);
+                                            },
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        const Text(
-                                          'Số lượng: ',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: Icon(Icons.remove),
-                                              onPressed: () {
-                                                decreaseQuantity(
-                                                    products[index]
-                                                        ['product_id'],
-                                                    products[index]
-                                                        ["cart_quantity"]);
-                                              },
-                                            ),
-                                            Text(
-                                              products[index]["cart_quantity"]
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            IconButton(
-                                              icon: Icon(Icons.add),
-                                              onPressed: () {
-                                                increaseQuantity(
-                                                    products[index]
-                                                        ['product_id'],
-                                                    products[index]
-                                                        ["cart_quantity"]);
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -366,7 +356,6 @@ class _CartState extends State<Cart> {
         padding: EdgeInsets.all(16),
         child: ElevatedButton(
           onPressed: () {
-
             if (total != 0) {
               Navigator.push(
                   context,
@@ -377,7 +366,6 @@ class _CartState extends State<Cart> {
                             total: total.toString(),
                           )));
             }
-
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 144, 84, 80),
@@ -411,9 +399,7 @@ class _CartState extends State<Cart> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-
                 'Đặt hàng',
-
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

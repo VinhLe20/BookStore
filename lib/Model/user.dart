@@ -24,10 +24,18 @@ class User {
       required this.name,
       required this.address,
       required phone});
+  Map<String, dynamic> toJson() {
+    return {
+      'user_id': id,
+      'username': name,
+      'email': email,
+      'phone': phone,
+      'role': role,
+      'address': address,
+    };
+  }
 
   static Future<String> loadid(String email) async {
-
-
     final uri = Uri.parse('${Host.host}/getuser.php');
 
     try {
@@ -49,8 +57,6 @@ class User {
   }
 
   static Future<String> loadrole(String email) async {
-
-
     final uri = Uri.parse('${Host.host}/getuser.php');
 
     try {
@@ -72,7 +78,6 @@ class User {
   }
 
   static Future<String> loadoderid(String id) async {
-
     final uri = Uri.parse('${Host.host}/getCart.php');
 
     try {
@@ -94,7 +99,6 @@ class User {
   }
 
   static Future<bool> isUserIdInCart(String userId) async {
-
     final uri = Uri.parse('${Host.host}/getcart.php');
 
     try {

@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:bookstore/Model/host.dart';
 import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/Admin.dart';
+import 'package:bookstore/Views/EditProfile.dart';
 import 'package:bookstore/Views/ForgotPassword.dart';
 import 'package:bookstore/Views/SignupScreen.dart';
 import 'package:bookstore/Views/UpdateUserinfo.dart';
 
 import 'package:bookstore/Views/index.dart';
+import 'package:bookstore/app/app_sp.dart';
+import 'package:bookstore/app/app_sp_key.dart';
 import 'package:http/http.dart' as http;
 import 'package:bookstore/Views/SignupScreen.dart';
 
@@ -22,6 +25,30 @@ class Loginscreen extends StatefulWidget {
 class _LoginscreenState extends State<Loginscreen> {
   String _userError = '';
   String _passwordError = '';
+  late Future<List<Map<String, dynamic>>> futureUser;
+
+  Future<void> loadUser(String id) async {
+    final uri = Uri.parse('${Host.host}/getuser.php');
+    var response = await http.get(uri);
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      var user = data.where((item) => item['id'] == id).toList();
+      if (user[0]['phone'] == '') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EditProfile(
+                    info: false,
+                  )),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Index()),
+        );
+      }
+    }
+  }
 
   Future<http.Response> GetUser() async {
     Uri uri = Uri.parse('${Host.host}/getuser.php');
@@ -48,20 +75,11 @@ class _LoginscreenState extends State<Loginscreen> {
           print(User.role);
           if (User.role == 'user') {
             User.guest = false;
-              //  Navigator.pushReplacement(
-              //           context,
-              //           MaterialPageRoute(
-              //               builder: (context) => Updateuserinfo()));
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => Index()),
-              (Route<dynamic> route) => false,
-            );
+            loadUser(User.id);
           } else {
-            Navigator.pushAndRemoveUntil(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => Admin()),
-              (Route<dynamic> route) => false,
             );
           }
           print('Login successful!');
@@ -158,12 +176,10 @@ class _LoginscreenState extends State<Loginscreen> {
               children: [
                 Text(
                   'Đăng nhập',
-
                   style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
-
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -248,7 +264,6 @@ class _LoginscreenState extends State<Loginscreen> {
                         color: Colors.white, // Màu biểu tượng trắng
                       ),
                     ),
-
                   ),
                 ),
                 const SizedBox(
@@ -275,20 +290,17 @@ class _LoginscreenState extends State<Loginscreen> {
                                     password: _passwordcontroller.text,
                                   )));
                     },
-
                   ),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
 
-
                 ElevatedButton(
                   onPressed: () async {
                     validateEmail();
                     validatePassword();
                     checkLogin();
-                 
                   },
                   style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red.shade500,
@@ -326,7 +338,6 @@ class _LoginscreenState extends State<Loginscreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                 ),
                 const SizedBox(
                   height: 20,

@@ -64,7 +64,6 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -81,27 +80,24 @@ class _SearchPageState extends State<SearchPage> {
         title: TextField(
           controller: searchController,
           decoration: InputDecoration(
-            hintText: 'Search...',
+            hintText: 'Tìm kiếm...',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide.none,
-
             ),
             fillColor: Colors.white.withOpacity(0.1),
           ),
-
           style: const TextStyle(color: Colors.white),
           onSubmitted: (value) {
             _performSearch();
           },
-
         ),
         backgroundColor: Colors.green.shade500,
         actions: [
           TextButton(
             onPressed: _performSearch,
             child: const Text(
-              'Search',
+              'Tìm kiếm',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
