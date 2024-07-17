@@ -46,7 +46,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-              email: _usercontroller.text, password: '123456@123');
+              email: _usercontroller.text, password: '1111@asssss');
 
       await userCredential.user?.sendEmailVerification();
 

@@ -19,6 +19,8 @@ class _EditProfileState extends State<EditProfile> {
   late Future<List<Map<String, dynamic>>> futureUser;
   bool showPassword = false;
 
+  final _formKey = GlobalKey<FormState>();
+
   // TextEditingController for each field
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -53,6 +55,11 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> updateUser(String id) async {
+    if (!_formKey.currentState!.validate()) {
+      showFailedDialog();
+      return;
+    }
+
     final uri = Uri.parse('${Host.host}/EditProfile.php');
     var response = await http.post(
       uri,
@@ -102,162 +109,161 @@ class _EditProfileState extends State<EditProfile> {
             return const Center(child: CircularProgressIndicator());
           }
           List<Map<String, dynamic>> user = snapshot.data!;
-          return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 25),
-            children: [
-              const Center(
-                child: Text(
-                  "Edit Profile",
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+          return Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 25),
+              children: [
+                const Center(
+                  child: Text(
+                    "Edit Profile",
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 15),
-              Center(
-                child: Stack(
-                  children: [
-                    Container(width: 130, height: 130),
-                    CircleAvatar(
-                      radius: 70,
-                      backgroundColor: Colors.transparent,
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/profile.png',
-                          fit: BoxFit.cover,
-                          width: 140,
-                          height: 140,
+                const SizedBox(height: 15),
+                Center(
+                  child: Stack(
+                    children: [
+                      Container(width: 130, height: 130),
+                      CircleAvatar(
+                        radius: 70,
+                        backgroundColor: Colors.transparent,
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/profile.png',
+                            fit: BoxFit.cover,
+                            width: 140,
+                            height: 140,
+                          ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            width: 4,
-                            color: Theme.of(context).scaffoldBackgroundColor,
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              width: 4,
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                            ),
+                            color: Colors.green,
                           ),
-                          color: Colors.green,
+                          child: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 35),
+                buildTextFormField(
+                    "Full Name", nameController, "Tên không được bỏ trống"),
+                buildTextFormField("Email", emailController,
+                    "Email không được bỏ trống", validateEmail),
+                buildTextFormField("Phone", phoneController,
+                    "Số điện thoại không được bỏ trống", validatePhone),
+                buildTextFormField("Location", addressController,
+                    "Địa chỉ không được bỏ trống"),
+                const SizedBox(height: 35),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    widget.info
+                        ? ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Index(selectedIndex: 2)),
+                                (Route<dynamic> route) => false,
+                              );
+                            },
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.redAccent),
+                              padding: MaterialStateProperty.all(
+                                const EdgeInsets.symmetric(
+                                    horizontal: 30, vertical: 15),
+                              ),
+                              textStyle: MaterialStateProperty.all(
+                                const TextStyle(
+                                    fontSize: 14, letterSpacing: 2.2),
+                              ),
+                            ),
+                            child: const Text(
+                              "CANCEL",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                        : Text(''),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate())
+                          updateUser(User.id);
+                        else {
+                          showFailedDialog();
+                        }
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.green),
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 15),
                         ),
+                        textStyle: MaterialStateProperty.all(
+                          const TextStyle(fontSize: 14, letterSpacing: 2.2),
+                        ),
+                      ),
+                      child: const Text(
+                        "SAVE",
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ],
-                ),
-              ),
-              const SizedBox(height: 35),
-              buildTextField("Full Name", nameController),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 35.0),
-                child: TextField(
-                  controller: emailController,
-                  onChanged: (_) => validateEmail(),
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.only(bottom: 3),
-                    labelText: 'Email',
-                    errorText: emailError.isNotEmpty ? emailError : null,
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 35.0),
-                child: TextField(
-                  controller: phoneController,
-                  onChanged: (_) => validatePhone(),
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.only(bottom: 3),
-                    labelText: 'Phone',
-                    errorText: phoneError.isNotEmpty ? phoneError : null,
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-              buildTextField("Location", addressController),
-              const SizedBox(height: 35),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  widget.info
-                      ? ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Index(
-                                          selectedIndex: 2,
-                                        )));
-                          },
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.redAccent),
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 15),
-                            ),
-                            textStyle: MaterialStateProperty.all(
-                              const TextStyle(fontSize: 14, letterSpacing: 2.2),
-                            ),
-                          ),
-                          child: const Text(
-                            "CANCEL",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        )
-                      : Text(''),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (emailError.isEmpty && phoneError.isEmpty)
-                        updateUser(User.id);
-                      else {
-                        showFailedDIalog();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.green),
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 15),
-                      ),
-                      textStyle: MaterialStateProperty.all(
-                        const TextStyle(fontSize: 14, letterSpacing: 2.2),
-                      ),
-                    ),
-                    child: const Text(
-                      "SAVE",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              )
-            ],
+                )
+              ],
+            ),
           );
         },
       ),
     );
   }
 
-  Widget buildTextField(
+  Widget buildTextFormField(
     String labelText,
     TextEditingController controller,
-  ) {
+    String emptyErrorText, [
+    Function(String)? additionalValidator,
+  ]) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 35.0),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.only(bottom: 3),
           labelText: labelText,
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: controller.text,
         ),
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return emptyErrorText;
+          } else if (additionalValidator != null) {
+            return additionalValidator(value);
+          }
+          return null;
+        },
+        onChanged: (value) {
+          if (_formKey.currentState!.validate()) {
+            setState(() {});
+          }
+        },
       ),
     );
   }
@@ -266,20 +272,18 @@ class _EditProfileState extends State<EditProfile> {
     QuickAlert.show(
       context: context,
       type: QuickAlertType.success,
-      text: 'Cập nhật thông tin thành công!',
+      title: 'Cập nhật thông tin thành công!',
       onConfirmBtnTap: () {
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-              builder: (context) => Index(
-                    selectedIndex: 2,
-                  )),
+          MaterialPageRoute(builder: (context) => Index(selectedIndex: 2)),
+          (Route<dynamic> route) => false,
         );
       },
     );
   }
 
-  void showFailedDIalog() {
+  void showFailedDialog() {
     QuickAlert.show(
       context: context,
       type: QuickAlertType.warning,
@@ -288,17 +292,13 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  void validateEmail() {
-    setState(() {
-      final email = emailController.text.trim();
-      if (email.isEmpty) {
-        emailError = 'Email không được bỏ trống';
-      } else if (!_isValidEmail(email)) {
-        emailError = 'Email không hợp lệ';
-      } else {
-        emailError = '';
-      }
-    });
+  String? validateEmail(String email) {
+    if (email.trim().isEmpty) {
+      return 'Email không được bỏ trống';
+    } else if (!_isValidEmail(email)) {
+      return 'Email không hợp lệ';
+    }
+    return null;
   }
 
   bool _isValidEmail(String email) {
@@ -307,16 +307,12 @@ class _EditProfileState extends State<EditProfile> {
     return regex.hasMatch(email);
   }
 
-  void validatePhone() {
-    setState(() {
-      final phone = phoneController.text.trim();
-      if (phone.isEmpty) {
-        phoneError = 'Số điện thoại không được bỏ trống';
-      } else if (!isValidVietnamesePhoneNumber(phone)) {
-        phoneError = 'Số điện thoại không hợp lệ';
-      } else {
-        phoneError = '';
-      }
-    });
+  String? validatePhone(String phone) {
+    if (phone.trim().isEmpty) {
+      return 'Số điện thoại không được bỏ trống';
+    } else if (!isValidVietnamesePhoneNumber(phone)) {
+      return 'Số điện thoại không hợp lệ';
+    }
+    return null;
   }
 }

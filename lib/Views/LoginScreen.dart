@@ -15,6 +15,8 @@ import 'package:http/http.dart' as http;
 import 'package:bookstore/Views/SignupScreen.dart';
 
 import 'package:flutter/material.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class Loginscreen extends StatefulWidget {
   const Loginscreen({super.key});
@@ -42,9 +44,10 @@ class _LoginscreenState extends State<Loginscreen> {
                   )),
         );
       } else {
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => Index()),
+          (Route<dynamic> route) => false,
         );
       }
     }
@@ -77,14 +80,16 @@ class _LoginscreenState extends State<Loginscreen> {
             User.guest = false;
             loadUser(User.id);
           } else {
-            Navigator.pushReplacement(
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => Admin()),
+              (Route<dynamic> route) => false,
             );
           }
           print('Login successful!');
         } else {
           print('Login failed: ${data['message']}');
+          showFailedDIalog();
         }
       } else {
         print('Error: ${response.statusCode} - ${response.body}');
@@ -92,6 +97,17 @@ class _LoginscreenState extends State<Loginscreen> {
     } catch (e) {
       print('Error: $e');
     }
+  }
+
+  void showFailedDIalog() {
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Error!',
+        widget: Text(
+          'Email hoặc mật khẩu không chính xác',
+          style: TextStyle(fontSize: 20),
+        ));
   }
 
 //hàm kiểm tra email

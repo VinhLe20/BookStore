@@ -110,7 +110,7 @@ class _CartState extends State<Cart> {
       QuickAlert.show(
         context: context,
         type: QuickAlertType.confirm,
-        text: 'Bạn có muốn xóa sách này?',
+        title: 'Bạn có muốn xóa sách này?',
         confirmBtnText: 'Có',
         cancelBtnText: 'Không',
         confirmBtnColor: Colors.green,
@@ -129,7 +129,7 @@ class _CartState extends State<Cart> {
       QuickAlert.show(
         context: context,
         type: QuickAlertType.confirm,
-        text: 'Bạn có muốn xóa tất cả sách này?',
+        title: 'Bạn có muốn xóa tất cả sách này?',
         confirmBtnText: 'Có',
         cancelBtnText: 'Không',
         confirmBtnColor: Colors.green,
@@ -148,7 +148,7 @@ class _CartState extends State<Cart> {
       QuickAlert.show(
         context: context,
         type: QuickAlertType.confirm,
-        text: 'Bạn có muốn xóa các sách đã chọn?',
+        title: 'Bạn có muốn xóa các sách đã chọn?',
         confirmBtnText: 'Có',
         cancelBtnText: 'Không',
         confirmBtnColor: Colors.green,

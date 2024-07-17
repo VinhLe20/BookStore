@@ -8,6 +8,8 @@ import 'package:bookstore/Views/ProductEdit.dart';
 import 'package:bookstore/Views/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class ProductManager extends StatefulWidget {
   const ProductManager({Key? key}) : super(key: key);
@@ -26,6 +28,24 @@ class _ProductManagerState extends State<ProductManager> {
       mota: '',
       category: "",
       author: '');
+  void confirmdeleteSelected(String id) {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.confirm,
+      title: 'Bạn có muốn xóa các sách đã chọn?',
+      confirmBtnText: 'Có',
+      cancelBtnText: 'Không',
+      confirmBtnColor: Colors.green,
+      onCancelBtnTap: () {
+        Navigator.pop(context);
+      },
+      onConfirmBtnTap: () async {
+        await pro.DeleteProduct(id);
+        setState(() {});
+        Navigator.pop(context);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +106,7 @@ class _ProductManagerState extends State<ProductManager> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Tên sách: ${products[index]['name']}",
+                                      "${products[index]['name']}",
                                       maxLines: 2,
                                       overflow: TextOverflow.visible,
                                       style: const TextStyle(
@@ -153,7 +173,7 @@ class _ProductManagerState extends State<ProductManager> {
                                                   icon: const Icon(Icons.edit)),
                                               IconButton(
                                                   onPressed: () {
-                                                    pro.DeleteProduct(
+                                                    confirmdeleteSelected(
                                                         products[index]['id']);
                                                   },
                                                   icon:

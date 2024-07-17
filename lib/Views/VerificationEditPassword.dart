@@ -1,4 +1,6 @@
 import 'package:bookstore/Model/host.dart';
+import 'package:bookstore/Views/ChangePass.dart';
+import 'package:bookstore/Views/Editpassword.dart';
 import 'package:bookstore/Views/LoginScreen.dart';
 import 'package:bookstore/Views/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -92,9 +94,7 @@ class _VerificationeditpasswordState extends State<Verificationeditpassword> {
   Widget build(BuildContext context) {
     if (isEmailVerified) {
       deleteAccount();
-      return Index(
-        selectedIndex: 2,
-      );
+      return Changepass(email: widget.email,);
     } else {
       return Scaffold(
         body: Stack(
@@ -124,7 +124,9 @@ class _VerificationeditpasswordState extends State<Verificationeditpassword> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>  Index(selectedIndex: 2,),
+                          builder: (context) => Index(
+                            selectedIndex: 2,
+                          ),
                         ),
                       );
                     },

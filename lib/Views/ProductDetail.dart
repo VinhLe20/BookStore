@@ -150,7 +150,7 @@ class _ProductDetailState extends State<ProductDetail> {
     QuickAlert.show(
       context: context,
       type: QuickAlertType.warning,
-      title: 'Warning!',
+      title: 'Cảnh báo!',
       widget: const Center(
         child: Text('Đã có trong giỏ hàng', style: TextStyle(fontSize: 20)),
       ),

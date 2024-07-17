@@ -201,7 +201,7 @@ class _UpdateuserinfoState extends State<Updateuserinfo> {
     QuickAlert.show(
       context: context,
       type: QuickAlertType.success,
-      text: 'Cập nhật thông tin thành công!',
+      title: 'Cập nhật thông tin thành công!',
       onConfirmBtnTap: () {
         Navigator.pushReplacement(
           context,

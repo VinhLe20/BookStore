@@ -9,6 +9,8 @@ import 'package:bookstore/Views/CategoryEdit.dart';
 import 'package:bookstore/Views/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class CategoryManger extends StatefulWidget {
   const CategoryManger({super.key});
@@ -31,6 +33,26 @@ class _CategoryMangerState extends State<CategoryManger> {
     http.post(uri, body: {'id': id});
   }
 
+  void confirmdeleteSelected(String id) {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.confirm,
+      title: 'Bạn có muốn xóa thể loại đã chọn?',
+      confirmBtnText: 'Có',
+      cancelBtnText: 'Không',
+      confirmBtnColor: Colors.green,
+      onCancelBtnTap: () {
+        Navigator.pop(context);
+      },
+      onConfirmBtnTap: () async {
+        await deleteCategories(id);
+
+        setState(() {});
+        Navigator.pop(context);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,9 +63,7 @@ class _CategoryMangerState extends State<CategoryManger> {
               color: Colors.white,
             ),
           ),
-
           backgroundColor: Colors.green.shade500,
-
           leading: IconButton(
               onPressed: () {
                 Navigator.pushReplacement(
@@ -93,47 +113,8 @@ class _CategoryMangerState extends State<CategoryManger> {
                                       icon: const Icon(Icons.edit)),
                                   IconButton(
                                       onPressed: () {
-                                        bool result = false;
-                                        showDialog<void>(
-                                          context: context,
-                                          barrierDismissible:
-                                              false, // user must tap button!
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: const Text('Xác nhận xóa'),
-                                              content:
-                                                  const SingleChildScrollView(
-                                                child: ListBody(
-                                                  children: <Widget>[
-                                                    Text(
-                                                        'Bạn có chắc chắn muốn xóa thể loại này không?'),
-                                                  ],
-                                                ),
-                                              ),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: const Text('Hủy'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: const Text('Xóa'),
-                                                  onPressed: () {
-                                                    deleteCategories(
-                                                        categories[index]
-                                                            ['id']);
-                                                    result = true;
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                        if (result) {
-                                          setState(() {});
-                                        }
+                                        confirmdeleteSelected(
+                                            categories[index]['id']);
                                       },
                                       icon: const Icon(Icons.delete)),
                                 ],

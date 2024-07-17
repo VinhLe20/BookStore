@@ -10,7 +10,7 @@ import 'ProfileScreen.dart';
 class Index extends StatefulWidget {
   final int selectedIndex;
 
-  Index({Key? key, this.selectedIndex = 0}) : super(key: key);
+  Index({Key? key, this.selectedIndex = 0,}) : super(key: key);
 
   @override
   _IndexState createState() => _IndexState();

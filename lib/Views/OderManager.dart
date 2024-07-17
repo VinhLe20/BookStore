@@ -22,7 +22,7 @@ class _OderManagerState extends State<OderManager>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   Future<List> loadOrder() async {
@@ -33,7 +33,7 @@ class _OderManagerState extends State<OderManager>
   Future<void> cancelOrder(String id) async {
     final uri = Uri.parse('${Host.host}/cancelOrder.php');
     await http.post(uri, body: {'id': id});
-    setState(() {}); // Update the UI after canceling the order
+    setState(() {});
   }
 
   void confirmdelete(var xacnhan) {
@@ -92,10 +92,8 @@ class _OderManagerState extends State<OderManager>
                 Text(
                     'Trạng thái đơn hàng: ${filteredOrders[index]['order_status']}'),
                 const SizedBox(height: 10),
-
                 Text('Ngày tạo đơn hàng: ${filteredOrders[index]['create']}'),
                 const SizedBox(height: 10),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -187,6 +185,13 @@ class _OderManagerState extends State<OderManager>
                   overflow: TextOverflow.visible,
                 ),
               ),
+              Tab(
+                child: Text(
+                  'Đã hủy',
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
             ],
           ),
         ),
@@ -205,6 +210,7 @@ class _OderManagerState extends State<OderManager>
                 buildOrderList(orders, 'Đang chờ'),
                 buildOrderList(orders, 'Đang chờ giao hàng'),
                 buildOrderList(orders, 'Đã giao thành công'),
+                buildOrderList(orders, 'Đã hủy'),
               ],
             );
           }

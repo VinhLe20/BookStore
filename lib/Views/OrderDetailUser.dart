@@ -52,7 +52,7 @@ class _OrderDetailUserState extends State<OrderDetailUser> {
     QuickAlert.show(
       context: context,
       type: QuickAlertType.confirm,
-      text: 'Bạn có muốn hủy đơn này?',
+      title: 'Bạn có muốn hủy đơn này?',
       confirmBtnText: 'Có',
       cancelBtnText: 'Không',
       confirmBtnColor: Colors.green,

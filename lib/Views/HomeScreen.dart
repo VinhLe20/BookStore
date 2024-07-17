@@ -14,6 +14,7 @@ import 'package:bookstore/Views/RateManager.dart';
 import 'package:bookstore/Views/SearchScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
@@ -172,7 +173,71 @@ class _HomeState extends State<Home> {
                           return CardProduct(product: products[index]);
                         },
                       ),
-                    )
+                    ),Container(
+      padding: EdgeInsets.all(16.0),
+      color: Colors.grey.shade200,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "NHÀ SÁCH 2VSTORE",
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
+          ),
+          const SizedBox(height: 10),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+                    
+              children: const [
+                Icon(Icons.location_on, color: Colors.red),
+                SizedBox(width: 10),
+                Text("Địa chỉ: 199 Hồ Văn Huê,Quận Phú Nhuận, TP. Hồ Chí Minh"),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: const [
+              Icon(Icons.phone, color: Colors.red),
+              SizedBox(width: 10),
+              Text("Điện thoại: (05) 86465723"),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: const [
+              Icon(Icons.email, color: Colors.red),
+              SizedBox(width: 10),
+              Text("Email: vienbui.798976@gmail.com"),
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "FOLLOW US",
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.facebook, color: Colors.blue),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: FaIcon(FontAwesomeIcons.instagram,color: Colors.red,),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: FaIcon(FontAwesomeIcons.youtube,color: Colors.red,),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ],
+      ),
+    )
             ],
           ),
         ));

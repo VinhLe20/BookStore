@@ -52,6 +52,7 @@ dependencies:
   shared_preferences: ^2.2.3
   get_it: ^7.7.0
   device_info_plus: ^10.1.0
+  font_awesome_flutter: ^10.7.0
 
 
 

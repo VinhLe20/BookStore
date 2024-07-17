@@ -31,7 +31,7 @@ class _TransactionhistoryState extends State<Transactionhistory>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   Future<List> loadOder() async {
@@ -63,7 +63,7 @@ class _TransactionhistoryState extends State<Transactionhistory>
       QuickAlert.show(
         context: context,
         type: QuickAlertType.confirm,
-        text: 'Bạn có muốn hủy đơn này?',
+        title: 'Bạn có muốn hủy đơn này?',
         confirmBtnText: 'Có',
         cancelBtnText: 'Không',
         confirmBtnColor: Colors.green,
@@ -230,33 +230,42 @@ class _TransactionhistoryState extends State<Transactionhistory>
             color: Colors.white,
           ),
         ),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(
-              child: Text(
-                'Đang chờ',
-                style: TextStyle(fontSize: 15, color: Colors.white),
-                overflow: TextOverflow.visible,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(50),
+          child: TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(
+                child: Text(
+                  'Đang chờ',
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                  overflow: TextOverflow.visible,
+                ),
               ),
-            ),
-            Tab(
-              child: Text(
-                'Đang chờ giao hàng',
-                style: TextStyle(fontSize: 15, color: Colors.white),
-                overflow: TextOverflow.visible,
+              Tab(
+                child: Text(
+                  'Đang chờ giao hàng',
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                  overflow: TextOverflow.visible,
+                ),
               ),
-            ),
-            Tab(
-              child: Text(
-
-                'Đã giao thành công',
-
-                style: TextStyle(fontSize: 15, color: Colors.white),
-                overflow: TextOverflow.visible,
+              Tab(
+                child: Text(
+                  'Đã giao hàng',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                  overflow: TextOverflow.visible,
+                ),
               ),
-            ),
-          ],
+              Tab(
+                child: Text(
+                  'Đã hủy',
+                  style: TextStyle(fontSize: 15, color: Colors.white),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       body: FutureBuilder(
@@ -273,6 +282,7 @@ class _TransactionhistoryState extends State<Transactionhistory>
                 buildOrderList(orders!, 'Đang chờ'),
                 buildOrderList(orders, 'Đang chờ giao hàng'),
                 buildOrderList(orders, 'Đã giao thành công'),
+                buildOrderList(orders, 'Đã hủy'),
               ],
             );
           }

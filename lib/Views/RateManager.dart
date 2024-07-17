@@ -46,7 +46,7 @@ class _RateManagerState extends State<RateManager> {
     QuickAlert.show(
       context: context,
       type: QuickAlertType.confirm,
-      text: 'Bạn có muốn xóa đánh giá này?',
+      title: 'Bạn có muốn xóa đánh giá này?',
       confirmBtnText: 'Có',
       cancelBtnText: 'Không',
       confirmBtnColor: Colors.green,
@@ -110,7 +110,7 @@ class _RateManagerState extends State<RateManager> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
-                        Text("sách: ${comment['product_name']}"),
+                        Text("Sách: ${comment['name']}"),
                         SizedBox(height: 5),
                         Row(
                           children: [
