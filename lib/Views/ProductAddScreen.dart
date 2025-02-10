@@ -225,7 +225,7 @@ class _ProductAddState extends State<ProductAdd> {
                 child: TextFormField(
                   controller: motasp,
                   minLines: 4,
-                  maxLines: null,
+                  maxLines: 10,
                   decoration: InputDecoration(
                     labelText: 'Mô tả sách',
                     border: OutlineInputBorder(

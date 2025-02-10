@@ -171,7 +171,7 @@ class _OderManagerState extends State<OderManager>
               ),
               Tab(
                 child: Text(
-                  'Đang chờ giao hàng',
+                  'Chờ giao hàng',
                   style:
                       TextStyle(fontSize: 15), // Adjust the font size if needed
                   overflow: TextOverflow.visible,
@@ -179,7 +179,7 @@ class _OderManagerState extends State<OderManager>
               ),
               Tab(
                 child: Text(
-                  'Đã giao thành công',
+                  'Đã giao hàng',
                   style:
                       TextStyle(fontSize: 15), // Adjust the font size if needed
                   overflow: TextOverflow.visible,

@@ -26,7 +26,6 @@ class _ProductDetailState extends State<ProductDetail> {
       NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
   late TextEditingController _quantityController;
   int _quantity = 1;
-
   @override
   void initState() {
     super.initState();
@@ -175,13 +174,11 @@ class _ProductDetailState extends State<ProductDetail> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Error loading data'));
           } else {
-            final data = snapshot.data!;
-            final comment = data['comment'] as List;
-            final relatedData = data['data'] as List;
-            final categoryData = data['category'] as List;
+            final data = snapshot.data;
+            final comment = data?['comment'] as List;
+            final relatedData = data?['data'] as List;
+            final categoryData = data?['category'] as List;
             List filteredData = relatedData
                 .where((item) => item['id'] != widget.product['id'])
                 .toList();
@@ -225,6 +222,8 @@ class _ProductDetailState extends State<ProductDetail> {
                             style: const TextStyle(fontSize: 18)),
                         Text('Thể loại: ${widget.product["category_name"]}',
                             style: const TextStyle(fontSize: 18)),
+                        Text('Số lượng còn: ${widget.product["quantity"]}',
+                            style: const TextStyle(fontSize: 18)),
                         const SizedBox(height: 2),
                         Row(
                           children: [
@@ -250,10 +249,11 @@ class _ProductDetailState extends State<ProductDetail> {
                               width: 80,
                               child: TextField(
                                 controller: _quantityController,
+                                
                                 keyboardType: TextInputType.number,
                                 decoration: const InputDecoration(
                                     border: OutlineInputBorder()),
-                                onChanged: _updateQuantity,
+                                onSubmitted: _updateQuantity,
                               ),
                             ),
                             IconButton(

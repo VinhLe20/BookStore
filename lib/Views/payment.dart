@@ -374,17 +374,19 @@ class _PaymentState extends State<Payment> {
                         widget.quantity,
                       );
                     }
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Bill(
-                              products: widget.products,
-                              total: totalCost.toString(),
-                              selectedPaymentMethod: selectedPaymentMethod,
-                              selectedShippingMethod: selectedShippingMethod,
-                              shippingCost: shippingCost.toString(),
-                              quantity: widget.quantity.toString()),
-                        ));
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Bill(
+                            products: widget.products,
+                            total: totalCost.toString(),
+                            selectedPaymentMethod: selectedPaymentMethod,
+                            selectedShippingMethod: selectedShippingMethod,
+                            shippingCost: shippingCost.toString(),
+                            quantity: widget.quantity.toString()),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -507,17 +509,19 @@ class _PaymentState extends State<Payment> {
         showSuccessDialog();
         Future.delayed(Duration(seconds: 3), () {
           setState(() {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Bill(
-                      products: widget.products,
-                      total: total.toString(),
-                      selectedPaymentMethod: selectedPaymentMethod,
-                      selectedShippingMethod: selectedShippingMethod,
-                      shippingCost: shippingCost.toString(),
-                      quantity: widget.quantity.toString()),
-                ));
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Bill(
+                    products: widget.products,
+                    total: total.toString(),
+                    selectedPaymentMethod: selectedPaymentMethod,
+                    selectedShippingMethod: selectedShippingMethod,
+                    shippingCost: shippingCost.toString(),
+                    quantity: widget.quantity.toString()),
+              ),
+              (Route<dynamic> route) => false,
+            );
           });
         });
       });

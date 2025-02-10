@@ -182,21 +182,7 @@ class _TransactionhistoryState extends State<Transactionhistory>
                                       ),
                                     ],
                                   )
-                                : ElevatedButton(
-                                    onPressed: () {
-                                      cancelorder(
-                                          filteredOrders[index]['order_id']);
-                                      setState(() {});
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green.shade500),
-                                    child: const Text(
-                                      'Hủy đơn',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
+                                : Text('')
                   ],
                 ),
               ],
@@ -244,7 +230,7 @@ class _TransactionhistoryState extends State<Transactionhistory>
               ),
               Tab(
                 child: Text(
-                  'Đang chờ giao hàng',
+                  'Chờ giao hàng',
                   style: TextStyle(fontSize: 15, color: Colors.white),
                   overflow: TextOverflow.visible,
                 ),

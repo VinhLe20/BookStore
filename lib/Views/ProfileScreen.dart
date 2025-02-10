@@ -7,6 +7,7 @@ import 'package:bookstore/WelcomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:bookstore/Model/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -76,7 +77,10 @@ class _ProfileState extends State<Profile> {
                         ),
                         IconButton(
                           icon: const Icon(Icons.logout),
-                          onPressed: () {
+                          onPressed: () async {
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            prefs.clear();
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(

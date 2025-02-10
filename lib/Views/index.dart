@@ -10,7 +10,10 @@ import 'ProfileScreen.dart';
 class Index extends StatefulWidget {
   final int selectedIndex;
 
-  Index({Key? key, this.selectedIndex = 0,}) : super(key: key);
+  Index({
+    Key? key,
+    this.selectedIndex = 0,
+  }) : super(key: key);
 
   @override
   _IndexState createState() => _IndexState();
@@ -27,10 +30,8 @@ class _IndexState extends State<Index> {
 
   void _onItemTapped(int index) {
     if (index == 2 && User.guest) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Loginscreen()),
-      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Loginscreen()));
     } else {
       setState(() {
         _selectedIndex = index;
@@ -40,11 +41,7 @@ class _IndexState extends State<Index> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _widgetOptions = [
-      Home(),
-      Category(),
-      !User.guest ? Profile() : Loginscreen(),
-    ];
+    List<Widget> _widgetOptions = [Home(), Category(), Profile()];
 
     return Scaffold(
       body: Center(

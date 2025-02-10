@@ -8,6 +8,7 @@ import 'package:bookstore/Views/ProductEdit.dart';
 import 'package:bookstore/Views/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
@@ -28,6 +29,8 @@ class _ProductManagerState extends State<ProductManager> {
       mota: '',
       category: "",
       author: '');
+          NumberFormat formatCurrency =
+        NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
   void confirmdeleteSelected(String id) {
     QuickAlert.show(
       context: context,
@@ -128,7 +131,7 @@ class _ProductManagerState extends State<ProductManager> {
                                       ),
                                     ),
                                     Text(
-                                      'Đơn giá: ${products[index]["price"]} đ',
+                                      'Đơn giá: ${formatCurrency.format(double.parse(products[index]["price"]))} đ',
                                       style: const TextStyle(
                                         fontSize: 14,
                                       ),

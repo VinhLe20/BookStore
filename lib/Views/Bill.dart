@@ -33,14 +33,6 @@ class Bill extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green.shade500,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            )),
       ),
       body: SingleChildScrollView(
         child: Padding(

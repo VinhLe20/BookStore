@@ -17,6 +17,7 @@ import 'package:bookstore/Views/SignupScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Loginscreen extends StatefulWidget {
   const Loginscreen({super.key});
@@ -50,6 +51,9 @@ class _LoginscreenState extends State<Loginscreen> {
           (Route<dynamic> route) => false,
         );
       }
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('login', true);
+      await prefs.setString('user_id', User.id);
     }
   }
 

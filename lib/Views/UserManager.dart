@@ -1,5 +1,4 @@
 import 'package:bookstore/Model/host.dart';
-import 'package:bookstore/Model/user.dart';
 import 'package:bookstore/Views/Admin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -12,8 +11,8 @@ class UserManager extends StatefulWidget {
   State<UserManager> createState() => _UserManagerState();
 }
 
-Future<List<dynamic>> Getuser() async {
-  Uri uri = Uri.parse('${Host.host}/getuser.php');
+Future<List<dynamic>> getUser() async {
+  Uri uri = Uri.parse('${Host.host}/getusermanager.php');
   final response = await http.get(uri);
 
   if (response.statusCode == 200) {
@@ -23,12 +22,12 @@ Future<List<dynamic>> Getuser() async {
   }
 }
 
-Future<void> lockUserAccount(String userId) async {
-  Uri uri = Uri.parse('${Host.host}/BlockUser.php');
-  final response = await http.post(uri, body: {'id': userId});
-  print(userId);
+Future<void> toggleUserAccountStatus(String userId, bool isLocked) async {
+  String endpoint = isLocked ? '/OpenBlockUser.php' : '/BlockUser.php';
+  Uri uri = Uri.parse('${Host.host}$endpoint');
+  final response = await http.post(uri, body: {'user_id': userId});
   if (response.statusCode != 200) {
-    throw Exception('Failed to lock user account');
+    throw Exception('Failed to update user account status');
   }
 }
 
@@ -37,24 +36,26 @@ class _UserManagerState extends State<UserManager> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
-          backgroundColor: Colors.green.shade500,
-          title: const Text(
-            "Quản lý tài khoản",
-            style: TextStyle(color: Colors.white),
+        backgroundColor: Colors.green.shade500,
+        title: const Text(
+          "Quản lý tài khoản",
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Admin()),
+            );
+          },
+          icon: Icon(
+            Icons.arrow_back_outlined,
+            color: Colors.white,
           ),
-
-          leading: IconButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Admin()));
-              },
-              icon: Icon(
-                Icons.arrow_back_outlined,
-                color: Colors.white,
-              ))),
+        ),
+      ),
       body: FutureBuilder<List<dynamic>>(
-        future: Getuser(),
+        future: getUser(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -67,9 +68,10 @@ class _UserManagerState extends State<UserManager> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 var user = snapshot.data![index];
+                bool isLocked = user['status'] == '0';
+
                 return Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -89,29 +91,39 @@ class _UserManagerState extends State<UserManager> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Name: ${user['name']}"),
+                          Text("Họ tên: ${user['name']}"),
                           const SizedBox(height: 5),
                           Text("Email: ${user['email']}"),
                           const SizedBox(height: 5),
-                          Text("Password: ${user['password']}"),
+                          Text("Số điện thoại: ${user['phone']}"),
                           const SizedBox(height: 5),
-                          Text("Phone: ${user['phone']}"),
+                          Text("Địa chỉ: ${user['address']}"),
                           const SizedBox(height: 5),
-                          Text("Address: ${user['address']}"),
-                          const SizedBox(height: 10),
+                          Text(
+                            "Trạng thái: ${isLocked ? 'Đã khóa' : 'Hoạt động'}",
+                          ),
                         ],
                       ),
                       IconButton(
-                        icon: const Icon(Icons.lock),
+                        icon: Icon(isLocked ? Icons.lock : Icons.lock_open_outlined),
                         onPressed: () async {
                           try {
-                            await lockUserAccount("${user['id']}");
+                            await toggleUserAccountStatus(user['id'], isLocked);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('User account locked')),
+                              SnackBar(
+                                content: Text(
+                                  isLocked
+                                      ? 'Tài khoản đã được mở khóa'
+                                      : 'Tài khoản đã bị khóa',
+                                ),
+                              ),
                             );
+                            setState(() {});
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Failed to lock account')),
+                              SnackBar(
+                                content: Text('Failed to update account status'),
+                              ),
                             );
                           }
                         },
